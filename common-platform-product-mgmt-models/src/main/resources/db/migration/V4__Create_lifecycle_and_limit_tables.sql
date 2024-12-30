@@ -1,7 +1,7 @@
 -- V4__Create_lifecycle_and_limit_tables.sql
 
 -- Product Lifecycle
-CREATE TABLE product_lifecycle (
+CREATE TABLE IF NOT EXISTS product_lifecycle (
                                    product_lifecycle_id SERIAL PRIMARY KEY,
                                    product_id INTEGER NOT NULL REFERENCES product(product_id),
                                    lifecycle_status lifecycle_status_enum NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE product_lifecycle (
 );
 
 -- Product Limit
-CREATE TABLE product_limit (
+CREATE TABLE IF NOT EXISTS product_limit (
                                product_limit_id SERIAL PRIMARY KEY,
                                product_id INTEGER NOT NULL REFERENCES product(product_id),
                                limit_type limit_type_enum NOT NULL,

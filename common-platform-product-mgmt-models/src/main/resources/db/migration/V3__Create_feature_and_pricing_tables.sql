@@ -1,7 +1,7 @@
 -- V3__Create_feature_and_pricing_tables.sql
 
 -- Product Feature
-CREATE TABLE product_feature (
+CREATE TABLE IF NOT EXISTS product_feature (
                                  product_feature_id SERIAL PRIMARY KEY,
                                  product_id INTEGER NOT NULL REFERENCES product(product_id),
                                  feature_name VARCHAR(100) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE product_feature (
 );
 
 -- Product Pricing
-CREATE TABLE product_pricing (
+CREATE TABLE IF NOT EXISTS product_pricing (
                                  product_pricing_id SERIAL PRIMARY KEY,
                                  product_id INTEGER NOT NULL REFERENCES product(product_id),
                                  pricing_type pricing_type_enum NOT NULL,
@@ -27,7 +27,7 @@ CREATE TABLE product_pricing (
 );
 
 -- Product Documentation
-CREATE TABLE product_documentation (
+CREATE TABLE IF NOT EXISTS product_documentation (
                                        product_documentation_id SERIAL PRIMARY KEY,
                                        product_id INTEGER NOT NULL REFERENCES product(product_id),
                                        doc_type doc_type_enum NOT NULL,

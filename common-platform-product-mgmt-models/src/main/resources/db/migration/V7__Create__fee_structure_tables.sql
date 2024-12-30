@@ -1,7 +1,7 @@
 -- V7__Create_fee_structure_tables.sql
 
 -- Fee Structure
-CREATE TABLE fee_structure (
+CREATE TABLE IF NOT EXISTS fee_structure (
                                fee_structure_id SERIAL PRIMARY KEY,
                                fee_structure_name VARCHAR(100) NOT NULL,
                                fee_structure_description TEXT,
@@ -11,7 +11,7 @@ CREATE TABLE fee_structure (
 );
 
 -- Fee Component
-CREATE TABLE fee_component (
+CREATE TABLE IF NOT EXISTS fee_component (
                                fee_component_id SERIAL PRIMARY KEY,
                                fee_structure_id INTEGER NOT NULL REFERENCES fee_structure(fee_structure_id),
                                fee_type fee_type_enum NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE fee_component (
 );
 
 -- Product Fee Structure
-CREATE TABLE product_fee_structure (
+CREATE TABLE IF NOT EXISTS product_fee_structure (
                                        product_fee_structure_id SERIAL PRIMARY KEY,
                                        product_id INTEGER NOT NULL REFERENCES product(product_id),
                                        fee_structure_id INTEGER NOT NULL REFERENCES fee_structure(fee_structure_id),
@@ -34,7 +34,7 @@ CREATE TABLE product_fee_structure (
 );
 
 -- Fee Application Rule
-CREATE TABLE fee_application_rule (
+CREATE TABLE IF NOT EXISTS fee_application_rule (
                                       fee_application_rule_id SERIAL PRIMARY KEY,
                                       fee_component_id INTEGER NOT NULL REFERENCES fee_component(fee_component_id),
                                       rule_description TEXT,

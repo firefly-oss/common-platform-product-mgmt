@@ -1,7 +1,7 @@
 -- V5__Create_bundle_and_relationship_tables.sql
 
 -- Product Bundle
-CREATE TABLE product_bundle (
+CREATE TABLE IF NOT EXISTS product_bundle (
                                 product_bundle_id SERIAL PRIMARY KEY,
                                 bundle_name VARCHAR(100) NOT NULL,
                                 bundle_description TEXT,
@@ -11,7 +11,7 @@ CREATE TABLE product_bundle (
 );
 
 -- Product Bundle Item
-CREATE TABLE product_bundle_item (
+CREATE TABLE IF NOT EXISTS product_bundle_item (
                                      product_bundle_item_id SERIAL PRIMARY KEY,
                                      product_bundle_id INTEGER NOT NULL REFERENCES product_bundle(product_bundle_id),
                                      product_id INTEGER NOT NULL REFERENCES product(product_id),
@@ -21,7 +21,7 @@ CREATE TABLE product_bundle_item (
 );
 
 -- Product Relationship
-CREATE TABLE product_relationship (
+CREATE TABLE IF NOT EXISTS product_relationship (
                                       product_relationship_id SERIAL PRIMARY KEY,
                                       product_id INTEGER NOT NULL REFERENCES product(product_id),
                                       related_product_id INTEGER NOT NULL REFERENCES product(product_id),

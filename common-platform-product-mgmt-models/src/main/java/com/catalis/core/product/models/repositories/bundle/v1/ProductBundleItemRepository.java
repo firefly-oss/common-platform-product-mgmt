@@ -12,13 +12,11 @@ public interface ProductBundleItemRepository extends BaseRepository<ProductBundl
     Flux<ProductBundleItem> findByProductBundleId(Long bundleId);
     Flux<ProductBundleItem> findByProductId(Long productId);
 
-    // Find items in multiple bundles
-    Flux<ProductBundleItem> findByProductBundleIdIn(Iterable<Long> bundleIds);
-
     // Pagination for bundle items
     Flux<ProductBundleItem> findByProductBundleId(Long bundleId, Pageable pageable);
     Mono<Long> countByProductBundleId(Long bundleId);
 
     Flux<ProductBundleItem> findByProductId(Long productId, Pageable pageable);
     Mono<Long> countByProductId(Long productId);
+
 }

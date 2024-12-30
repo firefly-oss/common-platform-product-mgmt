@@ -1,7 +1,7 @@
 -- V6__Create_version_and_localization_tables.sql
 
 -- Product Version
-CREATE TABLE product_version (
+CREATE TABLE IF NOT EXISTS product_version (
                                  product_version_id SERIAL PRIMARY KEY,
                                  product_id INTEGER NOT NULL REFERENCES product(product_id),
                                  version_number INTEGER NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE product_version (
 );
 
 -- Product Localization
-CREATE TABLE product_localization (
+CREATE TABLE IF NOT EXISTS product_localization (
                                       product_localization_id SERIAL PRIMARY KEY,
                                       product_id INTEGER NOT NULL REFERENCES product(product_id),
                                       language_code VARCHAR(5) NOT NULL,
@@ -23,7 +23,7 @@ CREATE TABLE product_localization (
 );
 
 -- Product Pricing Localization
-CREATE TABLE product_pricing_localization (
+CREATE TABLE IF NOT EXISTS product_pricing_localization (
                                               product_pricing_localization_id SERIAL PRIMARY KEY,
                                               product_pricing_id INTEGER NOT NULL REFERENCES product_pricing(product_pricing_id),
                                               currency_code VARCHAR(3) NOT NULL,

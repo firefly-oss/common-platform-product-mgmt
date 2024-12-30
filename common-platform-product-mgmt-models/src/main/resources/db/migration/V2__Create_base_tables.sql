@@ -1,7 +1,7 @@
 -- V2__Create_base_tables.sql
 
 -- Product Category
-CREATE TABLE product_category (
+CREATE TABLE IF NOT EXISTS product_category (
                                   product_category_id SERIAL PRIMARY KEY,
                                   category_name VARCHAR(100) NOT NULL,
                                   category_description TEXT,
@@ -11,7 +11,7 @@ CREATE TABLE product_category (
 );
 
 -- Product Subtype
-CREATE TABLE product_subtype (
+CREATE TABLE IF NOT EXISTS product_subtype (
                                  product_subtype_id SERIAL PRIMARY KEY,
                                  product_category_id INTEGER NOT NULL REFERENCES product_category(product_category_id),
                                  subtype_name VARCHAR(100) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE product_subtype (
 );
 
 -- Product
-CREATE TABLE product (
+CREATE TABLE IF NOT EXISTS product (
                          product_id SERIAL PRIMARY KEY,
                          product_subtype_id INTEGER NOT NULL REFERENCES product_subtype(product_subtype_id),
                          product_type product_type_enum NOT NULL,
