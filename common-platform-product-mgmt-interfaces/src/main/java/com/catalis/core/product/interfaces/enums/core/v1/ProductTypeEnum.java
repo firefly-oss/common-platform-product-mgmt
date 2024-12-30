@@ -1,4 +1,4 @@
-package com.catalis.core.product.interfaces.enums.product.v1;
+package com.catalis.core.product.interfaces.enums.core.v1;
 
 public enum ProductTypeEnum {
     FINANCIAL,
