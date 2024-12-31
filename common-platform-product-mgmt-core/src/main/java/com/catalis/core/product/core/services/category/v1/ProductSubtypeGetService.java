@@ -4,12 +4,16 @@ import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.core.product.core.mappers.category.v1.ProductSubtypeMapper;
 import com.catalis.core.product.interfaces.dtos.category.v1.ProductSubtypeDTO;
+import com.catalis.core.product.models.entities.category.v1.ProductSubtype;
 import com.catalis.core.product.models.repositories.category.v1.ProductSubtypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,10 +41,49 @@ public class ProductSubtypeGetService {
                 .onErrorMap(ex -> new RuntimeException("An error occurred while retrieving the product subtype.", ex));
     }
 
-    public Mono<PaginationResponse<ProductSubtypeDTO>> getAllProductSubtypesByCategoryId(Long categoryId, PaginationRequest pagination) {
-        return null;
-        // TODO: Pending implementation
-    }
+    /**
+     * Retrieves a paginated list of ProductSubtypeDTOs by the given category ID.
+     * If the category ID is not found, an empty paginated response is returned.
+     *
+     * @param categoryId        the unique identifier of the product category
+     * @param paginationRequest the pagination request containing page size and number
+     * @return a Mono emitting a PaginationResponse of ProductSubtypeDTOs
+     */
+    public Mono<PaginationResponse<ProductSubtypeDTO>> getAllProductSubtypesByCategoryId(Long categoryId,
+                                                                                         PaginationRequest paginationRequest) {
+        // Convert PaginationRequest to Pageable for pagination settings
+        Pageable pageable = paginationRequest.toPageable();
 
+        // Fetch the paginated list of ProductSubtype entities from the repository
+        Flux<ProductSubtype> subtypes = repository.findByProductCategoryId(categoryId, pageable);
+
+        // Fetch the total count of ProductSubtype entities
+        Mono<Long> count = repository.count();
+
+        // Transform entities into DTOs, combine with the count, and return a paginated response
+        return subtypes
+                // Map each ProductSubtype entity to a ProductSubtypeDTO using the mapper
+                .map(mapper::toDto)
+
+                // Collect all mapped DTOs into a List
+                .collectList()
+
+                // Combine the collected list of DTOs with the total count
+                .zipWith(count)
+
+                // Generate and return the paginated response object
+                .map(tuple -> {
+                    List<ProductSubtypeDTO> subtypeDTOS = tuple.getT1(); // Extract the list of DTOs
+                    long total = tuple.getT2(); // Extract the total count
+
+                    // Create and return a PaginationResponse with the list, total count, total pages, and current page
+                    return new PaginationResponse<>(
+                            subtypeDTOS,
+                            total,
+                            (int) Math.ceil((double) total / pageable.getPageSize()), // Calculate and set total pages
+                            pageable.getPageNumber() // Set the current page number
+                    );
+                });
+    }
 
 }

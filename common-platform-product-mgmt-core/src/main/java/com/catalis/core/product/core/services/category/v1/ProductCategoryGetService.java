@@ -1,14 +1,19 @@
 package com.catalis.core.product.core.services.category.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
+import com.catalis.common.core.queries.PaginationResponse;
 import com.catalis.core.product.core.mappers.category.v1.ProductCategoryMapper;
 import com.catalis.core.product.interfaces.dtos.category.v1.ProductCategoryDTO;
+import com.catalis.core.product.models.entities.category.v1.ProductCategory;
 import com.catalis.core.product.models.repositories.category.v1.ProductCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,47 +42,46 @@ public class ProductCategoryGetService {
      * Retrieves all product categories with pagination support.
      *
      * @param paginationRequest the request object containing pagination details
-     * @return a Flux of ProductCategoryDTO, representing the paginated list of product categories;
-     *         emits an error if no product categories are found or if any issue occurs during fetching
+     * @return a Mono emitting a PaginationResponse of ProductCategoryDTO, representing the paginated list of product categories;
+     * emits an error if any issue occurs during fetching
      */
-    public Flux<ProductCategoryDTO> getAllProductCategories(PaginationRequest paginationRequest) {
-        return repository.findAllBy(paginationRequest.toPageable())
-                .switchIfEmpty(Flux.error(new IllegalArgumentException("No product categories found.")))
+    public Mono<PaginationResponse<ProductCategoryDTO>> getAllProductCategories(PaginationRequest paginationRequest) {
+
+        // Convert PaginationRequest to Pageable for pagination settings
+        Pageable pageable = paginationRequest.toPageable();
+
+        // Fetch the paginated list of ProductCategory entities from the repository
+        Flux<ProductCategory> categories = repository.findAllBy(pageable);
+
+        // Fetch the total count of ProductCategory entities
+        Mono<Long> count = repository.count();
+
+        // Transform entities into DTOs, combine with the count, and return a paginated response
+        return categories
+                // Map each ProductCategory entity to a ProductCategoryDTO using the mapper
                 .map(mapper::toDto)
-                .onErrorMap(throwable -> new RuntimeException("An error occurred while fetching product categories.", throwable));
+
+                // Collect all mapped DTOs into a List
+                .collectList()
+
+                // Combine the collected list of DTOs with the total count
+                .zipWith(count)
+
+                // Generate and return the paginated response object
+                .map(tuple -> {
+                    List<ProductCategoryDTO> categoryDTOS = tuple.getT1(); // Extract the list of DTOs
+                    long total = tuple.getT2(); // Extract the total count
+
+                    // Create and return a PaginationResponse with the list, total count, total pages, and current page
+                    return new PaginationResponse<>(
+                            categoryDTOS,
+                            total,
+                            (int) Math.ceil((double) total / pageable.getPageSize()), // Calculate and set total pages
+                            pageable.getPageNumber() // Set the current page number
+                    );
+                });
+
     }
 
-    /**
-     * Searches for product categories with names containing the specified substring, ignoring case.
-     * The results are paginated based on the provided pagination request.
-     *
-     * @param categoryName the substring to search for within product category names 
-     *                     (case-insensitive match)
-     * @param paginationRequest the pagination parameters (e.g., page number, page size)
-     * @return a Flux emitting ProductCategoryDTO objects matching the search criteria, 
-     *         or an error if no results are found or an exception occurs during processing
-     */
-    public Flux<ProductCategoryDTO> findByCategoryNameContainingIgnoreCase(String categoryName, PaginationRequest paginationRequest) {
-        return repository.findByCategoryNameContainingIgnoreCase(categoryName, paginationRequest.toPageable())
-                .switchIfEmpty(Flux.error(new IllegalArgumentException("No product categories found containing: " + categoryName)))
-                .map(mapper::toDto)
-                .onErrorMap(throwable -> new RuntimeException("An error occurred while searching for product categories.", throwable));
-    }
-
-    /**
-     * Retrieves all product categories that have the specified parent category ID,
-     * with support for pagination.
-     *
-     * @param parentCategoryId the ID of the parent category for which to find child categories
-     * @param paginationRequest the request object containing pagination details such as page size and page number
-     * @return a Flux emitting ProductCategoryDTO objects representing the child categories;
-     *         emits an error if no categories are found or if an exception occurs during processing
-     */
-    public Flux<ProductCategoryDTO> findAllByParentCategoryId(Long parentCategoryId, PaginationRequest paginationRequest) {
-        return repository.findByParentCategoryId(parentCategoryId, paginationRequest.toPageable())
-                .switchIfEmpty(Flux.error(new IllegalArgumentException("No product categories found for parent category ID: " + parentCategoryId)))
-                .map(mapper::toDto)
-                .onErrorMap(throwable -> new RuntimeException("An error occurred while fetching product categories by parent category ID.", throwable));
-    }
 
 }
