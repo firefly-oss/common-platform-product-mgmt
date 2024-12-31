@@ -3,6 +3,7 @@ package com.catalis.core.product.interfaces.dtos.lifecycle.v1;
 import com.catalis.core.product.interfaces.dtos.BaseDTO;
 import com.catalis.core.product.interfaces.enums.lifecycle.v1.LimitTypeEnum;
 import com.catalis.core.product.interfaces.enums.lifecycle.v1.TimePeriodEnum;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductLimitDTO extends BaseDTO {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+
     private Long productLimitId;
     private Long productId;
     private LimitTypeEnum limitType;

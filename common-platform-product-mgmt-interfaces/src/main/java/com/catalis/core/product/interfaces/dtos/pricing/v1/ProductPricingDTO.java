@@ -2,6 +2,7 @@ package com.catalis.core.product.interfaces.dtos.pricing.v1;
 
 import com.catalis.core.product.interfaces.dtos.BaseDTO;
 import com.catalis.core.product.interfaces.enums.pricing.v1.PricingTypeEnum;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductPricingDTO extends BaseDTO {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long productPricingId;
+
     private Long productId;
     private PricingTypeEnum pricingType;
     private BigDecimal amountValue;

@@ -3,6 +3,7 @@ package com.catalis.core.product.interfaces.dtos.fee.v1;
 import com.catalis.core.product.interfaces.dtos.BaseDTO;
 import com.catalis.core.product.interfaces.enums.fee.v1.FeeTypeEnum;
 import com.catalis.core.product.interfaces.enums.fee.v1.FeeUnitEnum;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,9 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FeeComponentDTO extends BaseDTO {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long feeComponentId;
+
     private Long feeStructureId;
     private FeeTypeEnum feeType;
     private String feeDescription;

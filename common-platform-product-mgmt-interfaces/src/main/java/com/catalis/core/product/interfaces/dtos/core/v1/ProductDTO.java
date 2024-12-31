@@ -3,6 +3,7 @@ package com.catalis.core.product.interfaces.dtos.core.v1;
 import com.catalis.core.product.interfaces.dtos.BaseDTO;
 import com.catalis.core.product.interfaces.enums.core.v1.ProductStatusEnum;
 import com.catalis.core.product.interfaces.enums.core.v1.ProductTypeEnum;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDTO extends BaseDTO {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long productId;
+
     private Long productSubtypeId;
     private ProductTypeEnum productType;
     private String productName;

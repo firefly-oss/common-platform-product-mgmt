@@ -2,6 +2,7 @@ package com.catalis.core.product.interfaces.dtos.lifecycle.v1;
 
 import com.catalis.core.product.interfaces.dtos.BaseDTO;
 import com.catalis.core.product.interfaces.enums.lifecycle.v1.LifecycleStatusEnum;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductLifecycleDTO extends BaseDTO {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long productLifecycleId;
+
     private Long productId;
     private LifecycleStatusEnum lifecycleStatus;
     private LocalDateTime statusStartDate;
