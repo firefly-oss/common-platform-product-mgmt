@@ -34,7 +34,7 @@ public class ProductLifecycleGetService {
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Product Lifecycle not found for ID: " + productLifecycleId)));
     }
 
-    public Mono<PaginationResponse<ProductLifecycleDTO> findByProductId(Long productId, PaginationRequest paginatio){
+    public Mono<PaginationResponse<ProductLifecycleDTO>> findByProductId(Long productId, PaginationRequest paginatio){
         return null;
         //TODO: Pending implementation
     }
