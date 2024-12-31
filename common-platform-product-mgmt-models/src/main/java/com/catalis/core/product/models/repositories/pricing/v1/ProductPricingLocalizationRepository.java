@@ -9,6 +9,7 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface ProductPricingLocalizationRepository extends BaseRepository<ProductPricingLocalization, Long> {
     Flux<ProductPricingLocalization> findByProductPricingId(Long pricingId);
+
     Flux<ProductPricingLocalization> findByCurrencyCode(String currencyCode);
 
     // Find all localizations for a specific pricing and currency

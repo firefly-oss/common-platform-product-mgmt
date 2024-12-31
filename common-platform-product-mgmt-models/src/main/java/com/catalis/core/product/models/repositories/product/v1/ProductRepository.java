@@ -16,7 +16,7 @@ public interface ProductRepository extends BaseRepository<Product, Long> {
     Flux<Product> findByProductSubtypeId(Long subtypeId);
     Flux<Product> findByProductStatus(ProductStatusEnum status);
     Flux<Product> findByProductType(ProductTypeEnum type);
-    Flux<Product> findByProductNameContainingIgnoreCase(String namePattern);
+    Flux<Product> findByProductNameContainingIgnoreCase(String namePattern, Pageable pageable);
     Flux<Product> findByLaunchDateBetween(LocalDate startDate, LocalDate endDate);
 
     // Custom pageable queries

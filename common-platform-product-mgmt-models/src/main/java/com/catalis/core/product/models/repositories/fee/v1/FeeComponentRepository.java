@@ -12,8 +12,9 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface FeeComponentRepository extends BaseRepository<FeeComponent, Long> {
     Flux<FeeComponent> findByFeeStructureId(Long structureId);
-    Flux<FeeComponent> findByFeeType(FeeTypeEnum type);
-    Flux<FeeComponent> findByFeeUnit(FeeUnitEnum unit);
+
+    Flux<FeeComponent> findByFeeType(FeeTypeEnum type, Pageable pageable);
+    Mono<Long> countByFeeType(FeeTypeEnum type);
 
     Flux<FeeComponent> findByFeeStructureId(Long structureId, Pageable pageable);
     Mono<Long> countByFeeStructureId(Long structureId);
