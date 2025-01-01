@@ -13,7 +13,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 
 @SpringBootApplication(
         scanBasePackages = {
-                "com.catalis.core.customers",
+                "com.catalis.core.product",
                 "com.catalis.common.web"  // Scan common web library configurations
         }
 )
