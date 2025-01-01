@@ -2,6 +2,7 @@ package com.catalis.core.product.core.services.fee.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
+import com.catalis.common.core.queries.PaginationUtils;
 import com.catalis.core.product.core.mappers.fee.v1.FeeApplicationRuleMapper;
 import com.catalis.core.product.interfaces.dtos.fee.v1.FeeApplicationRuleDTO;
 import com.catalis.core.product.models.entities.fee.v1.FeeApplicationRule;
@@ -50,39 +51,12 @@ public class FeeApplicationRuleGetService {
     public Mono<PaginationResponse<FeeApplicationRuleDTO>> findByFeeComponentId(Long feeComponentId,
                                                                                 PaginationRequest paginationRequest) {
 
-        // Convert PaginationRequest to Pageable for pagination settings
-        Pageable pageable = paginationRequest.toPageable();
-
-        // Fetch the paginated list of FeeApplicationRule entities from the repository
-        Flux<FeeApplicationRule> rules = repository.findByFeeComponentId(feeComponentId, pageable);
-
-        // Fetch the total count of FeeApplicationRule entities for the given feeComponentId
-        Mono<Long> count = repository.countByFeeComponentId(feeComponentId);
-
-        // Transform entities into DTOs, combine with the count, and return a paginated response
-        return rules
-                // Map each FeeApplicationRule entity to a FeeApplicationRuleDTO using the mapper
-                .map(mapper::toDto)
-
-                // Collect all mapped DTOs into a List
-                .collectList()
-
-                // Combine the collected list of DTOs with the total count
-                .zipWith(count)
-
-                // Generate and return the paginated response object
-                .map(tuple -> {
-                    List<FeeApplicationRuleDTO> feeApplicationRuleDTOS = tuple.getT1(); // Extract the list of DTOs
-                    long total = tuple.getT2(); // Extract the total count
-
-                    // Create and return a PaginationResponse with the list, total count, total pages, and current page
-                    return new PaginationResponse<>(
-                            feeApplicationRuleDTOS,
-                            total,
-                            (int) Math.ceil((double) total / pageable.getPageSize()), // Calculate and set total pages
-                            pageable.getPageNumber() // Set the current page number
-                    );
-                });
+        return PaginationUtils.paginateQuery(
+                paginationRequest,
+                mapper::toDto,
+                pageable -> repository.findByFeeComponentId(feeComponentId, pageable),
+                () -> repository.countByFeeComponentId(feeComponentId)
+        );
 
     }
 

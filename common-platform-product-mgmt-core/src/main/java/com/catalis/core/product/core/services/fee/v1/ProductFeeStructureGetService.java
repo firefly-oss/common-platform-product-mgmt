@@ -2,6 +2,7 @@ package com.catalis.core.product.core.services.fee.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
+import com.catalis.common.core.queries.PaginationUtils;
 import com.catalis.core.product.core.mappers.fee.v1.ProductFeeStructureMapper;
 import com.catalis.core.product.interfaces.dtos.fee.v1.ProductFeeStructureDTO;
 import com.catalis.core.product.models.entities.fee.v1.ProductFeeStructure;
@@ -39,48 +40,21 @@ public class ProductFeeStructureGetService {
     }
 
     /**
-     * Retrieves a paginated list of ProductFeeStructureDTO objects for the specified product ID.
-     * The method applies pagination and transforms the ProductFeeStructure entities into their corresponding DTOs.
+     * Retrieves a paginated list of ProductFeeStructureDTOs associated with a specified product ID.
      *
-     * @param productId the unique identifier of the product whose fee structures are being retrieved
-     * @param paginationRequest the configuration object specifying pagination details such as page number and size
-     * @return a Mono containing the paginated response of ProductFeeStructureDTO objects along with metadata such as total count and pages
+     * @param productId the unique identifier of the product whose associated fee structures are to be retrieved
+     * @param paginationRequest the pagination request containing pagination details such as page size and page number
+     * @return a Mono emitting a PaginationResponse containing a list of ProductFeeStructureDTOs and pagination metadata
      */
     public Mono<PaginationResponse<ProductFeeStructureDTO>> findByProductId(Long productId,
                                                                             PaginationRequest paginationRequest) {
-        // Convert PaginationRequest to Pageable for pagination settings
-        Pageable pageable = paginationRequest.toPageable();
+        return PaginationUtils.paginateQuery(
+                paginationRequest,
+                mapper::toDto,
+                pageable -> repository.findByProductId(productId, pageable),
+                () -> repository.countByProductId(productId)
+        );
 
-        // Fetch the paginated list of ProductFeeStructure entities from the repository
-        Flux<ProductFeeStructure> structures = repository.findByProductId(productId, pageable);
-
-        // Fetch the total count of ProductFeeStructure entities for the given productId
-        Mono<Long> count = repository.countByProductId(productId);
-
-        // Transform entities into DTOs, combine with the count, and return a paginated response
-        return structures
-                // Map each ProductFeeStructure entity to a ProductFeeStructureDTO using the mapper
-                .map(mapper::toDto)
-
-                // Collect all mapped DTOs into a List
-                .collectList()
-
-                // Combine the collected list of DTOs with the total count
-                .zipWith(count)
-
-                // Generate and return the paginated response object
-                .map(tuple -> {
-                    List<ProductFeeStructureDTO> productFeeStructureDTOS = tuple.getT1(); // Extract the list of DTOs
-                    long total = tuple.getT2(); // Extract the total count
-
-                    // Create and return a PaginationResponse with the list, total count, total pages, and current page
-                    return new PaginationResponse<>(
-                            productFeeStructureDTOS,
-                            total,
-                            (int) Math.ceil((double) total / pageable.getPageSize()), // Calculate and set total pages
-                            pageable.getPageNumber() // Set the current page number
-                    );
-                });
     }
 
 }

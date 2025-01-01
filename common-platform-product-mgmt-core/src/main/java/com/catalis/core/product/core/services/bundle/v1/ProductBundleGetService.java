@@ -2,6 +2,7 @@ package com.catalis.core.product.core.services.bundle.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
+import com.catalis.common.core.queries.PaginationUtils;
 import com.catalis.core.product.core.mappers.bundle.v1.ProductBundleMapper;
 import com.catalis.core.product.interfaces.dtos.bundle.v1.ProductBundleDTO;
 import com.catalis.core.product.models.entities.bundle.v1.ProductBundle;
@@ -43,47 +44,22 @@ public class ProductBundleGetService {
                 .onErrorResume(e -> Mono.error(new RuntimeException("Failed to retrieve ProductBundle", e)));
     }
 
+
     /**
-     * Retrieves a paginated list of ProductBundleDTO objects based on the provided PaginationRequest.
-     * Transforms ProductBundle entities into DTOs and aggregates them into a paginated response.
+     * Retrieves all product bundles with pagination support and maps them to a {@link ProductBundleDTO}.
+     * The method applies the pagination criteria, converts the retrieved entities to DTOs, and calculates the total count.
      *
-     * @param paginationRequest the request containing pagination parameters such as page number and size
-     * @return a Mono emitting a PaginationResponse containing a list of ProductBundleDTOs and pagination metadata
+     * @param paginationRequest the pagination information including page number, page size, and sorting details
+     * @return a {@link Mono} emitting a {@link PaginationResponse} containing the paginated list of {@link ProductBundleDTO}
+     *         and the total number of product bundles
      */
-    private Mono<PaginationResponse<ProductBundleDTO>> getAll(PaginationRequest paginationRequest) {
-        // Convert PaginationRequest to Spring's Pageable object for pagination settings
-        Pageable pageable = paginationRequest.toPageable();
-
-        // Fetch the paginated list of ProductBundle entities using the repository
-        Flux<ProductBundle> bundles = repository.findAllBy(pageable);
-
-        // Fetch the total count of ProductBundle entities from the repository
-        Mono<Long> count = repository.count();
-
-        // Transform the fetched entities into DTOs, combine with the count, and return them as a paginated response
-        return bundles
-                // Map each ProductBundle entity to a ProductBundleDTO using the mapper
-                .map(mapper::toDto)
-
-                // Collect the transformed DTOs into a list
-                .collectList()
-
-                // Combine the list of DTOs with the total count
-                .zipWith(count)
-
-                // Create a PaginationResponse object with the DTOs, total count, and pagination details
-                .map(tuple -> {
-                    List<ProductBundleDTO> bundlesDTO = tuple.getT1(); // Extract the list of DTOs
-                    long total = tuple.getT2(); // Extract the total count
-
-                    // Return a new PaginationResponse object containing the list, total count, total pages, and current page
-                    return new PaginationResponse<>(
-                            bundlesDTO,
-                            total,
-                            (int) Math.ceil((double) total / pageable.getPageSize()), // Calculate total pages
-                            pageable.getPageNumber() // Current page number
-                    );
-                });
+    public Mono<PaginationResponse<ProductBundleDTO>> getAllProductBundles(PaginationRequest paginationRequest) {
+        return PaginationUtils.paginateQuery(
+                paginationRequest,
+                mapper::toDto,
+                repository::findAllBy,
+                repository::count
+        );
     }
 
 }

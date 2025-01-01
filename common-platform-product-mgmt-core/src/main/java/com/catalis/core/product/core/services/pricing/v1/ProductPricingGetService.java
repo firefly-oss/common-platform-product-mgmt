@@ -2,6 +2,7 @@ package com.catalis.core.product.core.services.pricing.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
+import com.catalis.common.core.queries.PaginationUtils;
 import com.catalis.core.product.core.mappers.pricing.v1.ProductPricingMapper;
 import com.catalis.core.product.interfaces.dtos.pricing.v1.ProductPricingDTO;
 import com.catalis.core.product.models.entities.pricing.v1.ProductPricing;
@@ -39,50 +40,22 @@ public class ProductPricingGetService {
     }
 
     /**
-     * Retrieves paginated pricing information for a specific product identified by its product ID.
-     * The method fetches the pricing details, calculates the total count of pricing records,
-     * and constructs a paginated response.
+     * Retrieves paginated pricing information for a specific product identified by the given product ID.
+     * The method applies pagination and maps the results to a DTO representation.
      *
-     * @param productId the unique identifier of the product whose pricing details are to be retrieved
-     * @param paginationRequest the object containing pagination information such as page number and size
-     * @return a Mono emitting a PaginationResponse containing a list of ProductPricingDTOs, total records,
-     *         total pages, and the current page number
+     * @param productId the unique identifier of the product whose pricing information is to be retrieved
+     * @param paginationRequest the pagination request containing page size, page number, and other pagination parameters
+     * @return a Mono emitting a PaginationResponse containing a list of ProductPricingDTO objects for the specified product ID
      */
     public Mono<PaginationResponse<ProductPricingDTO>> findByProductId(Long productId,
                                                                        PaginationRequest paginationRequest) {
-        // Convert PaginationRequest to Pageable for pagination settings
-        Pageable pageable = paginationRequest.toPageable();
 
-        // Fetch the paginated list of ProductPricing entities from the repository
-        Flux<ProductPricing> pricings = repository.findByProductId(productId, pageable);
-
-        // Fetch the total count of ProductPricing entities for the given productId
-        Mono<Long> count = repository.countByProductId(productId);
-
-        // Transform entities into DTOs, combine with the count, and return a paginated response
-        return pricings
-                // Map each ProductPricing entity to a ProductPricingDTO using the mapper
-                .map(mapper::toDto)
-
-                // Collect all mapped DTOs into a List
-                .collectList()
-
-                // Combine the collected list of DTOs with the total count
-                .zipWith(count)
-
-                // Generate and return the paginated response object
-                .map(tuple -> {
-                    List<ProductPricingDTO> productPricingDTOS = tuple.getT1(); // Extract the list of DTOs
-                    long total = tuple.getT2(); // Extract the total count
-
-                    // Create and return a PaginationResponse with the list, total count, total pages, and current page
-                    return new PaginationResponse<>(
-                            productPricingDTOS,
-                            total,
-                            (int) Math.ceil((double) total / pageable.getPageSize()), // Calculate and set total pages
-                            pageable.getPageNumber() // Get the current page number
-                    );
-                });
+        return PaginationUtils.paginateQuery(
+                paginationRequest,
+                mapper::toDto,
+                pageable -> repository.findByProductId(productId, pageable),
+                () -> repository.countByProductId(productId)
+        );
 
     }
 

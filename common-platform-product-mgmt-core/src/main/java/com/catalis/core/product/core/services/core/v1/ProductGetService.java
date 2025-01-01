@@ -2,6 +2,7 @@ package com.catalis.core.product.core.services.core.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
+import com.catalis.common.core.queries.PaginationUtils;
 import com.catalis.core.product.core.mappers.core.v1.ProductMapper;
 import com.catalis.core.product.interfaces.dtos.core.v1.ProductDTO;
 import com.catalis.core.product.interfaces.enums.core.v1.ProductTypeEnum;
@@ -44,60 +45,42 @@ public class ProductGetService {
     }
 
     /**
-     * Retrieves a paginated list of products filtered by their type.
+     * Retrieves a paginated list of products filtered by the specified product type.
+     * Converts the retrieved Product entities to ProductDTOs and applies pagination based on the provided request.
      *
-     * @param type              the type of the products to retrieve
+     * @param type the type of products to filter by
      * @param paginationRequest the pagination settings including page number and page size
-     * @return a Mono emitting a PaginationResponse containing a list of ProductDTOs
+     * @return a Mono emitting a PaginationResponse containing a list of ProductDTOs that match the specified product type
      */
     public Mono<PaginationResponse<ProductDTO>> getProductsByType(ProductTypeEnum type,
                                                                   PaginationRequest paginationRequest) {
-        return getPaginatedProducts(
-                repository.findByProductType(type, paginationRequest.toPageable()),
-                paginationRequest
+
+        return PaginationUtils.paginateQuery(
+                paginationRequest,
+                mapper::toDto,
+                pageable -> repository.findByProductType(type, pageable),
+                () -> repository.countByProductType(type)
         );
+
     }
 
     /**
-     * Retrieves a paginated list of products by name containing the given value (case-insensitive).
+     * Retrieves a paginated list of products whose names contain the specified string, ignoring case sensitivity.
+     * Converts the retrieved Product entities to ProductDTOs and applies pagination based on the provided request.
      *
-     * @param productName       the value to search for in product names
+     * @param productName       the substring to search for within product names, case-insensitively
      * @param paginationRequest the pagination settings including page number and page size
-     * @return a Mono emitting a PaginationResponse containing a list of ProductDTOs
+     * @return a Mono emitting a PaginationResponse containing a list of ProductDTOs that match the search criteria
      */
     public Mono<PaginationResponse<ProductDTO>> findByProductNameContainingIgnoreCase(
             String productName, PaginationRequest paginationRequest) {
-        return getPaginatedProducts(
-                repository.findByProductNameContainingIgnoreCase(productName, paginationRequest.toPageable()),
-                paginationRequest
+
+        return PaginationUtils.paginateQuery(
+                paginationRequest,
+                mapper::toDto,
+                pageable -> repository.findByProductNameContainingIgnoreCase(productName, pageable),
+                () -> repository.countByProductNameContainingIgnoreCase(productName)
         );
-    }
 
-    /**
-     * Helper method to handle the pagination logic and response transformation.
-     *
-     * @param products          Flux of Product entities
-     * @param paginationRequest Pagination settings
-     * @return a Mono emitting a PaginationResponse containing a list of ProductDTOs
-     */
-    private Mono<PaginationResponse<ProductDTO>> getPaginatedProducts(Flux<Product> products,
-                                                                      PaginationRequest paginationRequest) {
-        Pageable pageable = paginationRequest.toPageable();
-        Mono<Long> count = repository.count();
-
-        // Process the products and map them to PaginationResponse
-        return products.map(mapper::toDto)
-                .collectList()
-                .zipWith(count)
-                .map(tuple -> {
-                    List<ProductDTO> productDTOS = tuple.getT1();
-                    long total = tuple.getT2();
-                    return new PaginationResponse<>(
-                            productDTOS,
-                            total,
-                            (int) Math.ceil((double) total / pageable.getPageSize()),
-                            pageable.getPageNumber()
-                    );
-                });
     }
 }

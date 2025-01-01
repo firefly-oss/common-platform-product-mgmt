@@ -2,6 +2,7 @@ package com.catalis.core.product.core.services.pricing.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
+import com.catalis.common.core.queries.PaginationUtils;
 import com.catalis.core.product.core.mappers.pricing.v1.ProductPricingLocalizationMapper;
 import com.catalis.core.product.interfaces.dtos.pricing.v1.ProductPricingLocalizationDTO;
 import com.catalis.core.product.models.entities.pricing.v1.ProductPricingLocalization;
@@ -40,50 +41,23 @@ public class ProductPricingLocalizationGetService {
     }
 
     /**
-     * Retrieves a paginated list of product pricing localizations for the specified product pricing ID.
-     * The list includes localization details such as currency code and localized amount.
+     * Retrieves paginated product pricing localization data for the specified pricing ID.
+     * Applies pagination and maps the results to their DTO representation.
      *
-     * @param pricingId the unique identifier of the product pricing for which localizations are to be fetched
-     * @param paginationRequest the pagination request containing page size and page number
-     * @return a Mono emitting the paginated response containing a list of ProductPricingLocalizationDTO objects,
-     *         the total count of matching records, total pages, and the current page number
+     * @param pricingId the unique identifier of the product pricing to retrieve localization data for
+     * @param paginationRequest the pagination request containing page size, page number, and other pagination parameters
+     * @return a Mono emitting a PaginationResponse containing a list of ProductPricingLocalizationDTO objects
+     *         for the specified pricing ID
      */
     public Mono<PaginationResponse<ProductPricingLocalizationDTO>> findByProductPricingId(
             Long pricingId, PaginationRequest paginationRequest) {
 
-        // Convert PaginationRequest to Pageable for pagination settings
-        Pageable pageable = paginationRequest.toPageable();
-
-        // Fetch the paginated list of ProductPricingLocalization entities from the repository
-        Flux<ProductPricingLocalization> pricingLocalization = repository.findByProductPricingId(pricingId, pageable);
-
-        // Fetch the total count of ProductPricingLocalization entities for the given pricing ID
-        Mono<Long> count = repository.countByProductPricingId(pricingId);
-
-        // Transform entities into DTOs, combine with the count, and return a paginated response
-        return pricingLocalization
-                // Map each ProductPricingLocalization entity to a ProductPricingLocalizationDTO using the mapper
-                .map(mapper::toDto)
-
-                // Collect all mapped DTOs into a List
-                .collectList()
-
-                // Combine the collected list of DTOs with the total count
-                .zipWith(count)
-
-                // Generate and return the paginated response object
-                .map(tuple -> {
-                    List<ProductPricingLocalizationDTO> productPricingLocalizationDTOS = tuple.getT1(); // Extract the list of DTOs
-                    long total = tuple.getT2(); // Extract the total count
-
-                    // Create and return a PaginationResponse with the list, total count, total pages, and current page
-                    return new PaginationResponse<>(
-                            productPricingLocalizationDTOS,
-                            total,
-                            (int) Math.ceil((double) total / pageable.getPageSize()), // Calculate and set total pages
-                            pageable.getPageNumber() // Get the current page number
-                    );
-                });
+        return PaginationUtils.paginateQuery(
+                paginationRequest,
+                mapper::toDto,
+                pageable -> repository.findByProductPricingId(pricingId, pageable),
+                () -> repository.countByProductPricingId(pricingId)
+        );
 
     }
 
