@@ -20,15 +20,16 @@ public class FeeStructureCreateService {
     private FeeStructureMapper mapper;
 
     /**
-     * Creates a new FeeStructure and returns the corresponding FeeStructureDTO.
-     * This method saves the provided FeeStructure entity in the repository and retrieves the saved entity
-     * from the database to convert it into its DTO representation.
+     * Creates a new Fee Structure based on the provided FeeStructureDTO.
+     * Converts the DTO to a FeeStructure entity, saves it to the database,
+     * and retrieves the saved entity as a FeeStructureDTO.
      *
-     * @param feeStructure the FeeStructure entity to be created
-     * @return a Mono containing the FeeStructureDTO of the created entity
+     * @param feeStructure the FeeStructureDTO containing details for the Fee Structure to be created
+     * @return a Mono emitting the created FeeStructureDTO after being successfully stored and retrieved
      */
-    public Mono<FeeStructureDTO> createFeeStructure(FeeStructure feeStructure) {
-        return repository.save(feeStructure)
+    public Mono<FeeStructureDTO> createFeeStructure(FeeStructureDTO feeStructure) {
+        FeeStructure entity = mapper.toEntity(feeStructure);
+        return repository.save(entity)
                 .flatMap(savedEntity -> repository.findById(savedEntity.getFeeStructureId())
                         .map(mapper::toDto));
     }

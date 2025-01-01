@@ -20,17 +20,22 @@ public class FeeApplicationRuleCreateService {
     private FeeApplicationRuleMapper mapper;
 
     /**
-     * Creates a new FeeApplicationRule and returns the corresponding FeeApplicationRuleDTO.
-     * This method saves the provided FeeApplicationRule entity in the repository and retrieves the saved entity
-     * from the database to convert it into its DTO representation.
+     * Creates a new Fee Application Rule in the system.
+     * Converts the provided FeeApplicationRuleDTO to a FeeApplicationRule entity,
+     * saves it in the repository, and then maps the saved entity back to a DTO.
+     * Updates the returned DTO with the generated feeApplicationRuleId from the saved entity.
      *
-     * @param feeApplicationRule the FeeApplicationRule entity to be created
-     * @return a Mono containing the FeeApplicationRuleDTO of the created entity
+     * @param feeApplicationRule the FeeApplicationRuleDTO object containing the details of the rule to be created
+     * @return a Mono emitting the created FeeApplicationRuleDTO with the assigned ID and other details
      */
-    public Mono<FeeApplicationRuleDTO> createFeeApplicationRule(FeeApplicationRule feeApplicationRule) {
-        return repository.save(feeApplicationRule)
-                .flatMap(savedEntity -> repository.findById(savedEntity.getFeeApplicationRuleId())
-                        .map(mapper::toDto));
+    public Mono<FeeApplicationRuleDTO> createFeeApplicationRule(FeeApplicationRuleDTO feeApplicationRule) {
+        FeeApplicationRule entity = mapper.toEntity(feeApplicationRule);
+        return repository.save(entity)
+                .map(savedEntity -> {
+                    FeeApplicationRuleDTO dto = mapper.toDto(savedEntity);
+                    dto.setFeeApplicationRuleId(savedEntity.getFeeApplicationRuleId());
+                    return dto;
+                });
     }
 
 }
