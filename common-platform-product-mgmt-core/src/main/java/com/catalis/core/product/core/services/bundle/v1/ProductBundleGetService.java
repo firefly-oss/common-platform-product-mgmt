@@ -37,7 +37,7 @@ public class ProductBundleGetService {
      * @throws IllegalArgumentException if the ProductBundle with the given ID does not exist
      * @throws RuntimeException if there is a failure during the retrieval process
      */
-    private Mono<ProductBundleDTO> getById(Long id) {
+    public Mono<ProductBundleDTO> getById(Long id) {
         return repository.findById(id)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("ProductBundle with id " + id + " not found")))
                 .map(mapper::toDto)
