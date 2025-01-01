@@ -10,6 +10,8 @@ import reactor.core.publisher.Mono;
 @Repository
 public interface ProductSubtypeRepository extends BaseRepository<ProductSubtype, Long> {
     Flux<ProductSubtype> findByProductCategoryId(Long categoryId, Pageable pageable);
+    Mono<Long> countByProductCategoryId(Long categoryId);
     Mono<ProductSubtype> findBySubtypeName(String name);
     Flux<ProductSubtype> findBySubtypeNameContainingIgnoreCase(String namePattern, Pageable pageable);
+    Mono<Long> countBySubtypeNameContainingIgnoreCase(String namePattern);
 }
