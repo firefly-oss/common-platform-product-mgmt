@@ -43,7 +43,7 @@ springdoc:
     operationsSorter: method
     docExpansion: none
     filter: true
-  packages-to-scan: com.catalis.core.customers.web.controllers
+  packages-to-scan: com.catalis.core.product.web.controllers
   paths-to-match: /api/**
 
 management:
