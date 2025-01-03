@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -51,14 +52,16 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/{id}")
-    public Mono<ProductDTO> getProductById(@PathVariable Long id) {
-        return getService.getProduct(id);
+    public Mono<ResponseEntity<ProductDTO>> getProductById(@PathVariable Long id) {
+        return getService.getProduct(id)
+                .map(product -> ResponseEntity.ok(product))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     /**
      * Retrieves products by product type with pagination.
      *
-     * @param type the product type filter
+     * @param type              the product type filter
      * @param paginationRequest pagination details (page size and page number)
      * @return a Mono emitting a PaginationResponse of ProductDTOs
      */
@@ -69,9 +72,10 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/type/{type}")
-    public Mono<PaginationResponse<ProductDTO>> getProductsByType(@PathVariable ProductTypeEnum type,
-                                                                  PaginationRequest paginationRequest) {
-        return getService.getProductsByType(type, paginationRequest);
+    public Mono<ResponseEntity<PaginationResponse<ProductDTO>>> getProductsByType(@PathVariable ProductTypeEnum type,
+                                                                                  PaginationRequest paginationRequest) {
+        return getService.getProductsByType(type, paginationRequest)
+                .map(ResponseEntity::ok);
     }
 
     /**
@@ -88,9 +92,10 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/search")
-    public Mono<PaginationResponse<ProductDTO>> searchProductsByName(@RequestParam String productName,
-                                                                     PaginationRequest paginationRequest) {
-        return getService.findByProductNameContainingIgnoreCase(productName, paginationRequest);
+    public Mono<ResponseEntity<PaginationResponse<ProductDTO>>> searchProductsByName(@RequestParam String productName,
+                                                                                     PaginationRequest paginationRequest) {
+        return getService.findByProductNameContainingIgnoreCase(productName, paginationRequest)
+                .map(ResponseEntity::ok);
     }
 
     /**
@@ -107,9 +112,9 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ProductDTO> createProduct(@RequestBody ProductDTO request) {
-        return createService.createProduct(request);
+    public Mono<ResponseEntity<ProductDTO>> createProduct(@RequestBody ProductDTO request) {
+        return createService.createProduct(request)
+                .map(product -> ResponseEntity.status(HttpStatus.CREATED).body(product));
     }
 
     /**
@@ -128,8 +133,10 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO request) {
-        return updateService.updateProduct(id, request);
+    public Mono<ResponseEntity<ProductDTO>> updateProduct(@PathVariable Long id, @RequestBody ProductDTO request) {
+        return updateService.updateProduct(id, request)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     /**
@@ -145,8 +152,9 @@ public class ProductController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteProduct(@PathVariable Long id) {
-        return deleteService.deleteProduct(id);
+    public Mono<ResponseEntity<Void>> deleteProduct(@PathVariable Long id) {
+        return deleteService.deleteProduct(id)
+                .<ResponseEntity<Void>> map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }

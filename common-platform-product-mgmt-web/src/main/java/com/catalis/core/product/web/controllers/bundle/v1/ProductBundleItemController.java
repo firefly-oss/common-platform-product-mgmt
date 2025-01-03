@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -35,13 +36,6 @@ public class ProductBundleItemController {
     @Autowired
     private ProductBundleItemDeleteService deleteService;
 
-    /**
-     * Retrieves all product bundle items for a given product, with pagination support.
-     *
-     * @param productId         the ID of the product to fetch its bundle items
-     * @param paginationRequest pagination parameters
-     * @return a Mono emitting a paginated response of ProductBundleItemDTOs
-     */
     @Operation(summary = "Retrieve all product bundle items for a given product ID with pagination")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved product bundle items",
@@ -49,17 +43,12 @@ public class ProductBundleItemController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/{productId}")
-    public Mono<PaginationResponse<ProductBundleItemDTO>> getAllBundleItemsByProductId(
+    public Mono<ResponseEntity<PaginationResponse<ProductBundleItemDTO>>> getAllBundleItemsByProductId(
             @PathVariable Long productId, PaginationRequest paginationRequest) {
-        return getService.getAllProductCategories(productId, paginationRequest);
+        return getService.getAllProductCategories(productId, paginationRequest)
+                .map(ResponseEntity::ok);
     }
 
-    /**
-     * Retrieves a specific product bundle item by its ID.
-     *
-     * @param id the ID of the product bundle item to retrieve
-     * @return a Mono emitting the requested ProductBundleItemDTO
-     */
     @Operation(summary = "Retrieve a specific product bundle item by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the product bundle item",
@@ -68,16 +57,12 @@ public class ProductBundleItemController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/item/{id}")
-    public Mono<ProductBundleItemDTO> getBundleItemById(@PathVariable Long id) {
-        return getService.get(id);
+    public Mono<ResponseEntity<ProductBundleItemDTO>> getBundleItemById(@PathVariable Long id) {
+        return getService.get(id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Creates a new product bundle item.
-     *
-     * @param request the details of the product bundle item to create
-     * @return a Mono emitting the newly created ProductBundleItemDTO
-     */
     @Operation(summary = "Create a new product bundle item")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created the product bundle item",
@@ -86,18 +71,11 @@ public class ProductBundleItemController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ProductBundleItemDTO> createBundleItem(@RequestBody ProductBundleItemDTO request) {
-        return createService.create(request);
+    public Mono<ResponseEntity<ProductBundleItemDTO>> createBundleItem(@RequestBody ProductBundleItemDTO request) {
+        return createService.create(request)
+                .map(productBundleItemDTO -> ResponseEntity.status(HttpStatus.CREATED).body(productBundleItemDTO));
     }
 
-    /**
-     * Updates an existing product bundle item.
-     *
-     * @param id      the ID of the product bundle item to update
-     * @param request the updated details of the product bundle item
-     * @return a Mono emitting the updated ProductBundleItemDTO
-     */
     @Operation(summary = "Update an existing product bundle item by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated the product bundle item",
@@ -107,16 +85,12 @@ public class ProductBundleItemController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<ProductBundleItemDTO> updateBundleItem(@PathVariable Long id, @RequestBody ProductBundleItemDTO request) {
-        return updateService.update(id, request);
+    public Mono<ResponseEntity<ProductBundleItemDTO>> updateBundleItem(@PathVariable Long id, @RequestBody ProductBundleItemDTO request) {
+        return updateService.update(id, request)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Deletes a specific product bundle item by its ID.
-     *
-     * @param id the ID of the product bundle item to delete
-     * @return a Mono indicating completion of the delete operation
-     */
     @Operation(summary = "Delete a specific product bundle item by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successfully deleted the product bundle item", content = @Content),
@@ -124,8 +98,8 @@ public class ProductBundleItemController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteBundleItem(@PathVariable Long id) {
-        return deleteService.delete(id);
+    public Mono<ResponseEntity<Void>> deleteBundleItem(@PathVariable Long id) {
+        return deleteService.delete(id).<ResponseEntity<Void>> map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }

@@ -2,8 +2,11 @@ package com.catalis.core.product.web.controllers.feature.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.feature.v1.*;
-        import com.catalis.core.product.interfaces.dtos.feature.v1.ProductFeatureDTO;
+import com.catalis.core.product.core.services.feature.v1.ProductFeatureCreateService;
+import com.catalis.core.product.core.services.feature.v1.ProductFeatureDeleteService;
+import com.catalis.core.product.core.services.feature.v1.ProductFeatureGetService;
+import com.catalis.core.product.core.services.feature.v1.ProductFeatureUpdateService;
+import com.catalis.core.product.interfaces.dtos.feature.v1.ProductFeatureDTO;
 import com.catalis.core.product.interfaces.enums.feature.v1.FeatureTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,8 +16,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-        import reactor.core.publisher.Mono;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/product-features")
@@ -33,12 +37,6 @@ public class ProductFeatureController {
     @Autowired
     private ProductFeatureDeleteService deleteService;
 
-    /**
-     * Retrieve a product feature by its ID.
-     *
-     * @param productFeatureId The ID of the product feature to retrieve.
-     * @return A {@code Mono<ProductFeatureDTO>} containing the requested product feature.
-     */
     @Operation(summary = "Retrieve a product feature by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the product feature",
@@ -47,17 +45,12 @@ public class ProductFeatureController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/{productFeatureId}")
-    public Mono<ProductFeatureDTO> getProductFeature(@PathVariable Long productFeatureId) {
-        return getService.getProductFeature(productFeatureId);
+    public Mono<ResponseEntity<ProductFeatureDTO>> getProductFeature(@PathVariable Long productFeatureId) {
+        return getService.getProductFeature(productFeatureId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Retrieve a paginated list of product features filtered by feature type.
-     *
-     * @param featureType       The feature type to filter by.
-     * @param paginationRequest Object containing pagination settings.
-     * @return A {@code Mono<PaginationResponse<ProductFeatureDTO>>} containing the paginated list of features.
-     */
     @Operation(summary = "Retrieve product features by feature type with pagination")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved product features",
@@ -65,17 +58,12 @@ public class ProductFeatureController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/feature-type/{featureType}")
-    public Mono<PaginationResponse<ProductFeatureDTO>> getProductFeaturesByFeatureType(
+    public Mono<ResponseEntity<PaginationResponse<ProductFeatureDTO>>> getProductFeaturesByFeatureType(
             @PathVariable FeatureTypeEnum featureType, PaginationRequest paginationRequest) {
-        return getService.findByFeatureType(featureType, paginationRequest);
+        return getService.findByFeatureType(featureType, paginationRequest)
+                .map(ResponseEntity::ok);
     }
 
-    /**
-     * Creates a new product feature.
-     *
-     * @param request The {@code ProductFeatureDTO} containing the feature details.
-     * @return A {@code Mono<ProductFeatureDTO>} containing the created product feature.
-     */
     @Operation(summary = "Create a new product feature")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created the product feature",
@@ -85,17 +73,11 @@ public class ProductFeatureController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ProductFeatureDTO> createProductFeature(@RequestBody ProductFeatureDTO request) {
-        return createService.createProductFeature(request);
+    public Mono<ResponseEntity<ProductFeatureDTO>> createProductFeature(@RequestBody ProductFeatureDTO request) {
+        return createService.createProductFeature(request)
+                .map(feature -> ResponseEntity.status(HttpStatus.CREATED).body(feature));
     }
 
-    /**
-     * Updates an existing product feature by its ID.
-     *
-     * @param id      The ID of the product feature to update.
-     * @param request The {@code ProductFeatureDTO} containing the updated feature details.
-     * @return A {@code Mono<ProductFeatureDTO>} containing the updated product feature.
-     */
     @Operation(summary = "Update an existing product feature by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated the product feature",
@@ -105,16 +87,12 @@ public class ProductFeatureController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<ProductFeatureDTO> updateProductFeature(@PathVariable Long id, @RequestBody ProductFeatureDTO request) {
-        return updateService.updateProductFeature(id, request);
+    public Mono<ResponseEntity<ProductFeatureDTO>> updateProductFeature(@PathVariable Long id, @RequestBody ProductFeatureDTO request) {
+        return updateService.updateProductFeature(id, request)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Deletes a product feature by its ID.
-     *
-     * @param id The ID of the product feature to delete.
-     * @return A {@code Mono<Void>} indicating whether the operation completed successfully.
-     */
     @Operation(summary = "Delete a product feature by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successfully deleted the product feature", content = @Content),
@@ -123,7 +101,9 @@ public class ProductFeatureController {
     })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteProductFeature(@PathVariable Long id) {
-        return deleteService.deleteProductFeature(id);
+    public Mono<ResponseEntity<Void>> deleteProductFeature(@PathVariable Long id) {
+        return deleteService.deleteProductFeature(id)
+                .<ResponseEntity<Void>> map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }

@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -35,12 +36,6 @@ public class FeeApplicationRuleController {
     @Autowired
     private FeeApplicationRuleDeleteService deleteService;
 
-    /**
-     * Retrieves a Fee Application Rule by its ID.
-     *
-     * @param feeApplicationRuleId The ID of the Fee Application Rule to retrieve.
-     * @return The requested Fee Application Rule.
-     */
     @Operation(summary = "Retrieve a Fee Application Rule by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Fee Application Rule found",
@@ -49,17 +44,12 @@ public class FeeApplicationRuleController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/{feeApplicationRuleId}")
-    public Mono<FeeApplicationRuleDTO> getFeeApplicationRule(@PathVariable Long feeApplicationRuleId) {
-        return getService.getFeeApplicationRule(feeApplicationRuleId);
+    public Mono<ResponseEntity<FeeApplicationRuleDTO>> getFeeApplicationRule(@PathVariable Long feeApplicationRuleId) {
+        return getService.getFeeApplicationRule(feeApplicationRuleId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Retrieves a paginated list of Fee Application Rules for a specific fee component.
-     *
-     * @param feeComponentId The Fee Component ID to filter by.
-     * @param paginationRequest The pagination details (page size, page number, etc.).
-     * @return A paginated response containing Fee Application Rules.
-     */
     @Operation(summary = "Retrieve Fee Application Rules for a specific Fee Component with pagination")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Fee Application Rules retrieved successfully",
@@ -67,17 +57,13 @@ public class FeeApplicationRuleController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/fee-component/{feeComponentId}")
-    public Mono<PaginationResponse<FeeApplicationRuleDTO>> getFeeApplicationRulesByComponentId(
+    public Mono<ResponseEntity<PaginationResponse<FeeApplicationRuleDTO>>> getFeeApplicationRulesByComponentId(
             @PathVariable Long feeComponentId, PaginationRequest paginationRequest) {
-        return getService.findByFeeComponentId(feeComponentId, paginationRequest);
+        return getService.findByFeeComponentId(feeComponentId, paginationRequest)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
-    /**
-     * Creates a new Fee Application Rule.
-     *
-     * @param feeApplicationRuleDTO The details of the Fee Application Rule to be created.
-     * @return The created Fee Application Rule.
-     */
     @Operation(summary = "Create a new Fee Application Rule")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Fee Application Rule created successfully",
@@ -86,18 +72,11 @@ public class FeeApplicationRuleController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<FeeApplicationRuleDTO> createFeeApplicationRule(@RequestBody FeeApplicationRuleDTO feeApplicationRuleDTO) {
-        return createService.createFeeApplicationRule(feeApplicationRuleDTO);
+    public Mono<ResponseEntity<FeeApplicationRuleDTO>> createFeeApplicationRule(@RequestBody FeeApplicationRuleDTO feeApplicationRuleDTO) {
+        return createService.createFeeApplicationRule(feeApplicationRuleDTO)
+                .map(rule -> ResponseEntity.status(HttpStatus.CREATED).body(rule));
     }
 
-    /**
-     * Updates an existing Fee Application Rule by its ID.
-     *
-     * @param id The ID of the Fee Application Rule to update.
-     * @param feeApplicationRuleDTO The updated Fee Application Rule details.
-     * @return The updated Fee Application Rule.
-     */
     @Operation(summary = "Update an existing Fee Application Rule")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Fee Application Rule updated successfully",
@@ -107,17 +86,13 @@ public class FeeApplicationRuleController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<FeeApplicationRuleDTO> updateFeeApplicationRule(
+    public Mono<ResponseEntity<FeeApplicationRuleDTO>> updateFeeApplicationRule(
             @PathVariable Long id, @RequestBody FeeApplicationRuleDTO feeApplicationRuleDTO) {
-        return updateService.updateFeeApplicationRule(id, feeApplicationRuleDTO);
+        return updateService.updateFeeApplicationRule(id, feeApplicationRuleDTO)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Deletes a Fee Application Rule by its ID.
-     *
-     * @param id The ID of the Fee Application Rule to delete.
-     * @return A response indicating the deletion was successful.
-     */
     @Operation(summary = "Delete a Fee Application Rule by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Fee Application Rule deleted successfully", content = @Content),
@@ -125,8 +100,9 @@ public class FeeApplicationRuleController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteFeeApplicationRule(@PathVariable Long id) {
-        return deleteService.deleteFeeApplicationRule(id);
+    public Mono<ResponseEntity<Void>> deleteFeeApplicationRule(@PathVariable Long id) {
+        return deleteService.deleteFeeApplicationRule(id)
+                .<ResponseEntity<Void>> map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }

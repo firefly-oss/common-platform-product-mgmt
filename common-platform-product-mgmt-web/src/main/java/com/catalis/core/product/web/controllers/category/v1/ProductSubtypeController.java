@@ -2,7 +2,10 @@ package com.catalis.core.product.web.controllers.category.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.category.v1.*;
+import com.catalis.core.product.core.services.category.v1.ProductSubtypeCreateService;
+import com.catalis.core.product.core.services.category.v1.ProductSubtypeDeleteService;
+import com.catalis.core.product.core.services.category.v1.ProductSubtypeGetService;
+import com.catalis.core.product.core.services.category.v1.ProductSubtypeUpdateService;
 import com.catalis.core.product.interfaces.dtos.category.v1.ProductSubtypeDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -46,9 +50,10 @@ public class ProductSubtypeController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/category/{categoryId}")
-    public Mono<PaginationResponse<ProductSubtypeDTO>> getAllProductSubtypesByCategoryId(
+    public Mono<ResponseEntity<PaginationResponse<ProductSubtypeDTO>>> getAllProductSubtypesByCategoryId(
             @PathVariable Long categoryId, PaginationRequest paginationRequest) {
-        return getService.getAllProductSubtypesByCategoryId(categoryId, paginationRequest);
+        return getService.getAllProductSubtypesByCategoryId(categoryId, paginationRequest)
+                .map(ResponseEntity::ok);
     }
 
     /**
@@ -65,8 +70,10 @@ public class ProductSubtypeController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/{id}")
-    public Mono<ProductSubtypeDTO> getProductSubtypeById(@PathVariable Long id) {
-        return getService.getProductSubtype(id);
+    public Mono<ResponseEntity<ProductSubtypeDTO>> getProductSubtypeById(@PathVariable Long id) {
+        return getService.getProductSubtype(id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     /**
@@ -84,8 +91,9 @@ public class ProductSubtypeController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ProductSubtypeDTO> createProductSubtype(@RequestBody ProductSubtypeDTO request) {
-        return createService.create(request);
+    public Mono<ResponseEntity<ProductSubtypeDTO>> createProductSubtype(@RequestBody ProductSubtypeDTO request) {
+        return createService.create(request)
+                .map(createdSubtype -> ResponseEntity.status(HttpStatus.CREATED).body(createdSubtype));
     }
 
     /**
@@ -104,8 +112,10 @@ public class ProductSubtypeController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<ProductSubtypeDTO> updateProductSubtype(@PathVariable Long id, @RequestBody ProductSubtypeDTO request) {
-        return updateService.update(id, request);
+    public Mono<ResponseEntity<ProductSubtypeDTO>> updateProductSubtype(@PathVariable Long id, @RequestBody ProductSubtypeDTO request) {
+        return updateService.update(id, request)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     /**
@@ -121,8 +131,9 @@ public class ProductSubtypeController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteProductSubtype(@PathVariable Long id) {
-        return deleteService.deleteProductSubtype(id);
+    public Mono<ResponseEntity<Void>> deleteProductSubtype(@PathVariable Long id) {
+        return deleteService.deleteProductSubtype(id).
+                        <ResponseEntity<Void>> map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }

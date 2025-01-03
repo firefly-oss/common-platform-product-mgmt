@@ -2,7 +2,10 @@ package com.catalis.core.product.web.controllers.lifecycle.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.lifecycle.v1.*;
+import com.catalis.core.product.core.services.lifecycle.v1.ProductLimitCreateService;
+import com.catalis.core.product.core.services.lifecycle.v1.ProductLimitDeleteService;
+import com.catalis.core.product.core.services.lifecycle.v1.ProductLimitGetService;
+import com.catalis.core.product.core.services.lifecycle.v1.ProductLimitUpdateService;
 import com.catalis.core.product.interfaces.dtos.lifecycle.v1.ProductLimitDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -46,14 +50,16 @@ public class ProductLimitController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping("/{productLimitId}")
-    public Mono<ProductLimitDTO> getProductLimit(@PathVariable Long productLimitId) {
-        return getService.getProductLimit(productLimitId);
+    public Mono<ResponseEntity<ProductLimitDTO>> getProductLimit(@PathVariable Long productLimitId) {
+        return getService.getProductLimit(productLimitId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     /**
      * Retrieves a paginated list of product limits for a specific product ID.
      *
-     * @param productId The unique ID of the product.
+     * @param productId         The unique ID of the product.
      * @param paginationRequest Pagination details such as page size and page number.
      * @return A Mono containing a paginated response of ProductLimitDTOs.
      */
@@ -65,9 +71,11 @@ public class ProductLimitController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping("/product/{productId}")
-    public Mono<PaginationResponse<ProductLimitDTO>> findByProductId(
+    public Mono<ResponseEntity<PaginationResponse<ProductLimitDTO>>> findByProductId(
             @PathVariable Long productId, PaginationRequest paginationRequest) {
-        return getService.findByProductId(productId, paginationRequest);
+        return getService.findByProductId(productId, paginationRequest)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
     /**
@@ -84,15 +92,15 @@ public class ProductLimitController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ProductLimitDTO> createProductLimit(@RequestBody ProductLimitDTO request) {
-        return createService.createProductLimit(request);
+    public Mono<ResponseEntity<ProductLimitDTO>> createProductLimit(@RequestBody ProductLimitDTO request) {
+        return createService.createProductLimit(request)
+                .map(productLimit -> ResponseEntity.status(HttpStatus.CREATED).body(productLimit));
     }
 
     /**
      * Updates an existing product limit by ID.
      *
-     * @param id The unique ID of the product limit to update.
+     * @param id      The unique ID of the product limit to update.
      * @param request The ProductLimitDTO containing updated details.
      * @return A Mono containing the updated ProductLimitDTO.
      */
@@ -105,8 +113,10 @@ public class ProductLimitController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<ProductLimitDTO> updateProductLimit(@PathVariable Long id, @RequestBody ProductLimitDTO request) {
-        return updateService.updateProductLimit(id, request);
+    public Mono<ResponseEntity<ProductLimitDTO>> updateProductLimit(@PathVariable Long id, @RequestBody ProductLimitDTO request) {
+        return updateService.updateProductLimit(id, request)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     /**
@@ -122,8 +132,9 @@ public class ProductLimitController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteProductLimit(@PathVariable Long id) {
-        return deleteService.deleteProductLimit(id);
+    public Mono<ResponseEntity<Void>> deleteProductLimit(@PathVariable Long id) {
+        return deleteService.deleteProductLimit(id)
+                .<ResponseEntity<Void>>map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }

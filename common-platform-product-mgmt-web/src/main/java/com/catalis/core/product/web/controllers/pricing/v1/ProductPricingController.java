@@ -2,7 +2,10 @@ package com.catalis.core.product.web.controllers.pricing.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.pricing.v1.*;
+import com.catalis.core.product.core.services.pricing.v1.ProductPricingCreateService;
+import com.catalis.core.product.core.services.pricing.v1.ProductPricingDeleteService;
+import com.catalis.core.product.core.services.pricing.v1.ProductPricingGetService;
+import com.catalis.core.product.core.services.pricing.v1.ProductPricingUpdateService;
 import com.catalis.core.product.interfaces.dtos.pricing.v1.ProductPricingDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -32,12 +36,6 @@ public class ProductPricingController {
     @Autowired
     private ProductPricingDeleteService deleteService;
 
-    /**
-     * Retrieves the details of a specific product pricing by ID.
-     *
-     * @param productPricingId The ID of the product pricing.
-     * @return A Mono containing the ProductPricingDTO.
-     */
     @Operation(summary = "Get product pricing by ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Product pricing retrieved successfully",
@@ -46,17 +44,12 @@ public class ProductPricingController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping("/{productPricingId}")
-    public Mono<ProductPricingDTO> getProductPricing(@PathVariable Long productPricingId) {
-        return getService.getProductPricing(productPricingId);
+    public Mono<ResponseEntity<ProductPricingDTO>> getProductPricing(@PathVariable Long productPricingId) {
+        return getService.getProductPricing(productPricingId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Retrieves a paginated list of pricing for a specific product ID.
-     *
-     * @param productId The product ID.
-     * @param paginationRequest Pagination request details.
-     * @return A Mono containing paginated pricing for the product.
-     */
     @Operation(summary = "Get paginated product pricing by product ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Product pricing retrieved successfully",
@@ -65,17 +58,13 @@ public class ProductPricingController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping("/product/{productId}")
-    public Mono<PaginationResponse<ProductPricingDTO>> findByProductId(
+    public Mono<ResponseEntity<PaginationResponse<ProductPricingDTO>>> findByProductId(
             @PathVariable Long productId, PaginationRequest paginationRequest) {
-        return getService.findByProductId(productId, paginationRequest);
+        return getService.findByProductId(productId, paginationRequest)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Creates a new product pricing.
-     *
-     * @param request The ProductPricingDTO.
-     * @return A Mono containing the created ProductPricingDTO.
-     */
     @Operation(summary = "Create product pricing")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Product pricing created successfully",
@@ -84,18 +73,11 @@ public class ProductPricingController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ProductPricingDTO> createProductPricing(@RequestBody ProductPricingDTO request) {
-        return createService.createProductPricing(request);
+    public Mono<ResponseEntity<ProductPricingDTO>> createProductPricing(@RequestBody ProductPricingDTO request) {
+        return createService.createProductPricing(request)
+                .map(createdProductPricing -> ResponseEntity.status(HttpStatus.CREATED).body(createdProductPricing));
     }
 
-    /**
-     * Updates an existing product pricing by ID.
-     *
-     * @param id The ID of the product pricing to update.
-     * @param request The updated ProductPricingDTO.
-     * @return A Mono containing the updated ProductPricingDTO.
-     */
     @Operation(summary = "Update product pricing by ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Product pricing updated successfully",
@@ -105,16 +87,12 @@ public class ProductPricingController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<ProductPricingDTO> updateProductPricing(@PathVariable Long id, @RequestBody ProductPricingDTO request) {
-        return updateService.updateProductPricing(id, request);
+    public Mono<ResponseEntity<ProductPricingDTO>> updateProductPricing(@PathVariable Long id, @RequestBody ProductPricingDTO request) {
+        return updateService.updateProductPricing(id, request)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Deletes product pricing by ID.
-     *
-     * @param id The ID of the product pricing to delete.
-     * @return A Mono indicating deletion completion.
-     */
     @Operation(summary = "Delete product pricing by ID")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Product pricing deleted successfully", content = @Content),
@@ -122,8 +100,9 @@ public class ProductPricingController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteProductPricing(@PathVariable Long id) {
-        return deleteService.deleteProductPricing(id);
+    public Mono<ResponseEntity<Void>> deleteProductPricing(@PathVariable Long id) {
+        return deleteService.deleteProductPricing(id)
+                .<ResponseEntity<Void>>map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }

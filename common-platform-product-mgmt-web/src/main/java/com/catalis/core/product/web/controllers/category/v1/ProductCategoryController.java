@@ -15,8 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-        import reactor.core.publisher.Mono;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/product-categories")
@@ -35,12 +36,6 @@ public class ProductCategoryController {
     @Autowired
     private ProductCategoryDeleteService deleteService;
 
-    /**
-     * Retrieves a paginated list of all product categories.
-     *
-     * @param paginationRequest Pagination details such as page size and page number
-     * @return A Mono emitting a paginated list of ProductCategoryDTOs
-     */
     @Operation(summary = "Retrieve a paginated list of all product categories")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved product categories",
@@ -48,16 +43,11 @@ public class ProductCategoryController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping
-    public Mono<PaginationResponse<ProductCategoryDTO>> getAllProductCategories(PaginationRequest paginationRequest) {
-        return getService.getAllProductCategories(paginationRequest);
+    public Mono<ResponseEntity<PaginationResponse<ProductCategoryDTO>>> getAllProductCategories(PaginationRequest paginationRequest) {
+        return getService.getAllProductCategories(paginationRequest)
+                .map(ResponseEntity::ok);
     }
 
-    /**
-     * Retrieves a product category by its unique ID.
-     *
-     * @param id The ID of the product category
-     * @return A Mono emitting the requested ProductCategoryDTO
-     */
     @Operation(summary = "Retrieve a product category by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the product category",
@@ -66,16 +56,12 @@ public class ProductCategoryController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/{id}")
-    public Mono<ProductCategoryDTO> getProductCategoryById(@PathVariable Long id) {
-        return getService.getProductCategory(id);
+    public Mono<ResponseEntity<ProductCategoryDTO>> getProductCategoryById(@PathVariable Long id) {
+        return getService.getProductCategory(id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Creates a new product category.
-     *
-     * @param request The ProductCategoryDTO containing the details of the new category
-     * @return A Mono emitting the newly created ProductCategoryDTO
-     */
     @Operation(summary = "Create a new product category")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created the product category",
@@ -84,18 +70,11 @@ public class ProductCategoryController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ProductCategoryDTO> createProductCategory(@RequestBody ProductCategoryDTO request) {
-        return createService.create(request);
+    public Mono<ResponseEntity<ProductCategoryDTO>> createProductCategory(@RequestBody ProductCategoryDTO request) {
+        return createService.create(request)
+                .map(productCategoryDTO -> ResponseEntity.status(HttpStatus.CREATED).body(productCategoryDTO));
     }
 
-    /**
-     * Updates an existing product category by its ID.
-     *
-     * @param id      The ID of the product category to update
-     * @param request The ProductCategoryDTO containing the updated details
-     * @return A Mono emitting the updated ProductCategoryDTO
-     */
     @Operation(summary = "Update an existing product category by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated the product category",
@@ -105,16 +84,12 @@ public class ProductCategoryController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<ProductCategoryDTO> updateProductCategory(@PathVariable Long id, @RequestBody ProductCategoryDTO request) {
-        return updateService.update(id, request);
+    public Mono<ResponseEntity<ProductCategoryDTO>> updateProductCategory(@PathVariable Long id, @RequestBody ProductCategoryDTO request) {
+        return updateService.update(id, request)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Deletes a product category by its ID.
-     *
-     * @param id The ID of the product category to delete
-     * @return A Mono indicating completion of the delete operation
-     */
     @Operation(summary = "Delete a product category by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successfully deleted the product category", content = @Content),
@@ -122,8 +97,10 @@ public class ProductCategoryController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteProductCategory(@PathVariable Long id) {
-        return deleteService.deleteProductCategory(id);
+    public Mono<ResponseEntity<Void>> deleteProductCategory(@PathVariable Long id) {
+        return deleteService.deleteProductCategory(id).
+                        <ResponseEntity<Void>>map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
+
 }

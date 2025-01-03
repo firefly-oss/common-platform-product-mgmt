@@ -2,8 +2,11 @@ package com.catalis.core.product.web.controllers.documentantion.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.documentantion.v1.*;
-        import com.catalis.core.product.interfaces.dtos.documentation.v1.ProductDocumentationDTO;
+import com.catalis.core.product.core.services.documentantion.v1.ProductDocumentationCreateService;
+import com.catalis.core.product.core.services.documentantion.v1.ProductDocumentationDeleteService;
+import com.catalis.core.product.core.services.documentantion.v1.ProductDocumentationGetService;
+import com.catalis.core.product.core.services.documentantion.v1.ProductDocumentationUpdateService;
+import com.catalis.core.product.interfaces.dtos.documentation.v1.ProductDocumentationDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,8 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-        import reactor.core.publisher.Mono;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/product-documentations")
@@ -32,12 +36,6 @@ public class ProductDocumentationController {
     @Autowired
     private ProductDocumentationDeleteService deleteService;
 
-    /**
-     * Retrieves a specific product documentation by its ID.
-     *
-     * @param productDocumentationId the ID of the documentation to retrieve
-     * @return a Mono emitting the requested ProductDocumentationDTO
-     */
     @Operation(summary = "Retrieve a product documentation by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the product documentation",
@@ -46,17 +44,12 @@ public class ProductDocumentationController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/{productDocumentationId}")
-    public Mono<ProductDocumentationDTO> getProductDocumentationById(@PathVariable Long productDocumentationId) {
-        return getService.getProductDocumentation(productDocumentationId);
+    public Mono<ResponseEntity<ProductDocumentationDTO>> getProductDocumentationById(@PathVariable Long productDocumentationId) {
+        return getService.getProductDocumentation(productDocumentationId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Retrieves a paginated list of documentation for a specific product by product ID.
-     *
-     * @param productId the ID of the product
-     * @param paginationRequest pagination details
-     * @return a Mono emitting a paginated list of ProductDocumentationDTOs
-     */
     @Operation(summary = "Retrieve product documentations for a specific product with pagination")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the product documentation list",
@@ -65,17 +58,13 @@ public class ProductDocumentationController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @GetMapping("/product/{productId}")
-    public Mono<PaginationResponse<ProductDocumentationDTO>> getProductDocumentations(
+    public Mono<ResponseEntity<PaginationResponse<ProductDocumentationDTO>>> getProductDocumentations(
             @PathVariable Long productId, PaginationRequest paginationRequest) {
-        return getService.getProductDocumentationsByProductId(productId, paginationRequest);
+        return getService.getProductDocumentationsByProductId(productId, paginationRequest)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Creates a new product documentation record.
-     *
-     * @param request the ProductDocumentationDTO with the details of the new documentation
-     * @return a Mono emitting the created ProductDocumentationDTO
-     */
     @Operation(summary = "Create a new product documentation")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created the product documentation",
@@ -85,17 +74,11 @@ public class ProductDocumentationController {
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ProductDocumentationDTO> createProductDocumentation(@RequestBody ProductDocumentationDTO request) {
-        return createService.createProductDocumentation(request);
+    public Mono<ResponseEntity<ProductDocumentationDTO>> createProductDocumentation(@RequestBody ProductDocumentationDTO request) {
+        return createService.createProductDocumentation(request)
+                .map(createdDoc -> ResponseEntity.status(HttpStatus.CREATED).body(createdDoc));
     }
 
-    /**
-     * Updates an existing product documentation by its ID.
-     *
-     * @param id      the ID of the documentation to update
-     * @param request the ProductDocumentationDTO containing updated fields
-     * @return a Mono emitting the updated ProductDocumentationDTO
-     */
     @Operation(summary = "Update an existing product documentation by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully updated the product documentation",
@@ -105,17 +88,13 @@ public class ProductDocumentationController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<ProductDocumentationDTO> updateProductDocumentation(@PathVariable Long id,
-                                                                    @RequestBody ProductDocumentationDTO request) {
-        return updateService.updateProductDocumentation(id, request);
+    public Mono<ResponseEntity<ProductDocumentationDTO>> updateProductDocumentation(@PathVariable Long id,
+                                                                                    @RequestBody ProductDocumentationDTO request) {
+        return updateService.updateProductDocumentation(id, request)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Deletes a product documentation record by its ID.
-     *
-     * @param id the ID of the documentation to delete
-     * @return a Mono indicating the delete operation has completed
-     */
     @Operation(summary = "Delete a product documentation by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Successfully deleted the product documentation", content = @Content),
@@ -123,8 +102,9 @@ public class ProductDocumentationController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
     })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteProductDocumentation(@PathVariable Long id) {
-        return deleteService.deleteProductDocumentation(id);
+    public Mono<ResponseEntity<Void>> deleteProductDocumentation(@PathVariable Long id) {
+        return deleteService.deleteProductDocumentation(id)
+                .<ResponseEntity<Void>> map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }

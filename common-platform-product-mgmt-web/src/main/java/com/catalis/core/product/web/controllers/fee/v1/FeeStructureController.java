@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -36,12 +37,6 @@ public class FeeStructureController {
     @Autowired
     private FeeStructureDeleteService deleteService;
 
-    /**
-     * Retrieve a Fee Structure by ID.
-     *
-     * @param feeStructureId The Fee Structure ID.
-     * @return A Mono containing the FeeStructureDTO.
-     */
     @Operation(summary = "Retrieve a Fee Structure by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -56,17 +51,12 @@ public class FeeStructureController {
                     content = @Content)
     })
     @GetMapping("/{feeStructureId}")
-    public Mono<FeeStructureDTO> getFeeStructure(@PathVariable Long feeStructureId) {
-        return getService.getFeeStructure(feeStructureId);
+    public Mono<ResponseEntity<FeeStructureDTO>> getFeeStructure(@PathVariable Long feeStructureId) {
+        return getService.getFeeStructure(feeStructureId)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Retrieve a paginated list of Fee Structures by Fee Structure Type.
-     *
-     * @param feeStructureType The Fee Structure Type.
-     * @param paginationRequest The pagination request details.
-     * @return A Mono containing a PaginationResponse of FeeStructureDTOs.
-     */
     @Operation(summary = "Retrieve a paginated list of Fee Structures by Fee Structure Type")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -81,17 +71,12 @@ public class FeeStructureController {
                     content = @Content)
     })
     @GetMapping("/type/{feeStructureType}")
-    public Mono<PaginationResponse<FeeStructureDTO>> findByFeeStructureType(
+    public Mono<ResponseEntity<PaginationResponse<FeeStructureDTO>>> findByFeeStructureType(
             @PathVariable FeeStructureTypeEnum feeStructureType, PaginationRequest paginationRequest) {
-        return getService.findByFeeStructureType(feeStructureType, paginationRequest);
+        return getService.findByFeeStructureType(feeStructureType, paginationRequest)
+                .map(ResponseEntity::ok);
     }
 
-    /**
-     * Create a new Fee Structure.
-     *
-     * @param feeStructureDTO The details of the Fee Structure to create.
-     * @return A Mono containing the created FeeStructureDTO.
-     */
     @Operation(summary = "Create a new Fee Structure")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201",
@@ -106,18 +91,11 @@ public class FeeStructureController {
                     content = @Content)
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<FeeStructureDTO> createFeeStructure(@RequestBody FeeStructureDTO feeStructureDTO) {
-        return createService.createFeeStructure(feeStructureDTO);
+    public Mono<ResponseEntity<FeeStructureDTO>> createFeeStructure(@RequestBody FeeStructureDTO feeStructureDTO) {
+        return createService.createFeeStructure(feeStructureDTO)
+                .map(created -> ResponseEntity.status(HttpStatus.CREATED).body(created));
     }
 
-    /**
-     * Update an existing Fee Structure by ID.
-     *
-     * @param id The Fee Structure ID.
-     * @param feeStructureDTO The updated details.
-     * @return A Mono containing the updated FeeStructureDTO.
-     */
     @Operation(summary = "Update an existing Fee Structure by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -135,16 +113,12 @@ public class FeeStructureController {
                     content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<FeeStructureDTO> updateFeeStructure(@PathVariable Long id, @RequestBody FeeStructureDTO feeStructureDTO) {
-        return updateService.updateFeeStructure(id, feeStructureDTO);
+    public Mono<ResponseEntity<FeeStructureDTO>> updateFeeStructure(@PathVariable Long id, @RequestBody FeeStructureDTO feeStructureDTO) {
+        return updateService.updateFeeStructure(id, feeStructureDTO)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Delete a Fee Structure by ID.
-     *
-     * @param id The Fee Structure ID.
-     * @return A Mono completing upon successful deletion.
-     */
     @Operation(summary = "Delete a Fee Structure by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204",
@@ -158,8 +132,9 @@ public class FeeStructureController {
                     content = @Content)
     })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteFeeStructure(@PathVariable Long id) {
-        return deleteService.deleteFeeStructure(id);
+    public Mono<ResponseEntity<Void>> deleteFeeStructure(@PathVariable Long id) {
+        return deleteService.deleteFeeStructure(id)
+                .<ResponseEntity<Void>> map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }

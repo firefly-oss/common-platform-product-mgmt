@@ -2,7 +2,10 @@ package com.catalis.core.product.web.controllers.pricing.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.pricing.v1.*;
+import com.catalis.core.product.core.services.pricing.v1.ProductPricingLocalizationCreateService;
+import com.catalis.core.product.core.services.pricing.v1.ProductPricingLocalizationDeleteService;
+import com.catalis.core.product.core.services.pricing.v1.ProductPricingLocalizationGetService;
+import com.catalis.core.product.core.services.pricing.v1.ProductPricingLocalizationUpdateService;
 import com.catalis.core.product.interfaces.dtos.pricing.v1.ProductPricingLocalizationDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -46,14 +50,16 @@ public class ProductPricingLocalizationController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping("/{id}")
-    public Mono<ProductPricingLocalizationDTO> getProductPricingLocalization(@PathVariable Long id) {
-        return getService.getProductPricingLocalization(id);
+    public Mono<ResponseEntity<ProductPricingLocalizationDTO>> getProductPricingLocalization(@PathVariable Long id) {
+        return getService.getProductPricingLocalization(id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     /**
      * Retrieves a paginated list of product pricing localization records for a specific pricing ID.
      *
-     * @param pricingId The ID of the product pricing.
+     * @param pricingId         The ID of the product pricing.
      * @param paginationRequest The pagination details.
      * @return A Mono containing a paginated response of localized product pricing.
      */
@@ -65,9 +71,10 @@ public class ProductPricingLocalizationController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @GetMapping("/pricing/{pricingId}")
-    public Mono<PaginationResponse<ProductPricingLocalizationDTO>> findByProductPricingId(
+    public Mono<ResponseEntity<PaginationResponse<ProductPricingLocalizationDTO>>> findByProductPricingId(
             @PathVariable Long pricingId, PaginationRequest paginationRequest) {
-        return getService.findByProductPricingId(pricingId, paginationRequest);
+        return getService.findByProductPricingId(pricingId, paginationRequest)
+                .map(ResponseEntity::ok);
     }
 
     /**
@@ -84,15 +91,15 @@ public class ProductPricingLocalizationController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ProductPricingLocalizationDTO> createProductPricingLocalization(@RequestBody ProductPricingLocalizationDTO request) {
-        return createService.createProductPricingLocalization(request);
+    public Mono<ResponseEntity<ProductPricingLocalizationDTO>> createProductPricingLocalization(@RequestBody ProductPricingLocalizationDTO request) {
+        return createService.createProductPricingLocalization(request)
+                .map(productPricingLocalization -> ResponseEntity.status(HttpStatus.CREATED).body(productPricingLocalization));
     }
 
     /**
      * Updates an existing product pricing localization by ID.
      *
-     * @param id The ID of the product pricing localization to update.
+     * @param id      The ID of the product pricing localization to update.
      * @param request The updated ProductPricingLocalizationDTO object.
      * @return A Mono containing the updated ProductPricingLocalizationDTO.
      */
@@ -105,9 +112,11 @@ public class ProductPricingLocalizationController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @PutMapping("/{id}")
-    public Mono<ProductPricingLocalizationDTO> updateProductPricingLocalization(
+    public Mono<ResponseEntity<ProductPricingLocalizationDTO>> updateProductPricingLocalization(
             @PathVariable Long id, @RequestBody ProductPricingLocalizationDTO request) {
-        return updateService.updateProductPricingLocalization(id, request);
+        return updateService.updateProductPricingLocalization(id, request)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     /**
@@ -123,8 +132,9 @@ public class ProductPricingLocalizationController {
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<Void> deleteProductPricingLocalization(@PathVariable Long id) {
-        return deleteService.deleteProductPricingLocalization(id);
+    public Mono<ResponseEntity<Void>> deleteProductPricingLocalization(@PathVariable Long id) {
+        return deleteService.deleteProductPricingLocalization(id)
+                .<ResponseEntity<Void>>map(deleted -> ResponseEntity.noContent().build())
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 }
