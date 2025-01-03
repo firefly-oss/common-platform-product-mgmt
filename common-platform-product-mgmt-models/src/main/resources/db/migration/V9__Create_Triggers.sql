@@ -6,25 +6,26 @@ DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'update_timestamp') THEN
 CREATE FUNCTION update_timestamp()
-    RETURNS TRIGGER AS $$
+    RETURNS TRIGGER AS $func$
 BEGIN
             NEW.date_updated = CURRENT_TIMESTAMP;
 RETURN NEW;
 END;
-        $$ language 'plpgsql';
+        $func$ LANGUAGE plpgsql;
 END IF;
 
     IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'set_initial_timestamps') THEN
 CREATE FUNCTION set_initial_timestamps()
-    RETURNS TRIGGER AS $$
+    RETURNS TRIGGER AS $func$
 BEGIN
             NEW.date_created = CURRENT_TIMESTAMP;
             NEW.date_updated = CURRENT_TIMESTAMP;
 RETURN NEW;
 END;
-        $$ language 'plpgsql';
+        $func$ LANGUAGE plpgsql;
 END IF;
-END $$;
+END
+$$;
 
 -- === PRODUCT_CATEGORY TABLE TRIGGERS ===
 CREATE TRIGGER product_category_timestamp_insert
