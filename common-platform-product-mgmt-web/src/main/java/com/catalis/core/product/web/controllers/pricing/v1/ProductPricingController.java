@@ -2,107 +2,149 @@ package com.catalis.core.product.web.controllers.pricing.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.pricing.v1.ProductPricingCreateService;
-import com.catalis.core.product.core.services.pricing.v1.ProductPricingDeleteService;
-import com.catalis.core.product.core.services.pricing.v1.ProductPricingGetService;
-import com.catalis.core.product.core.services.pricing.v1.ProductPricingUpdateService;
+import com.catalis.core.product.core.services.pricing.v1.ProductPricingServiceImpl;
 import com.catalis.core.product.interfaces.dtos.pricing.v1.ProductPricingDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+@Tag(name = "Product Pricing", description = "APIs for managing pricing records associated with a specific product")
 @RestController
-@RequestMapping("/api/v1/product-pricing")
-@Tag(name = "Product Pricing Management API", description = "Manage product pricing details")
-public class ProductPricingController {
+@RequestMapping("/api/v1/products/{productId}/pricings")
+public class ProductPricingController{
 
     @Autowired
-    private ProductPricingGetService getService;
+    private ProductPricingServiceImpl service;
 
-    @Autowired
-    private ProductPricingCreateService createService;
-
-    @Autowired
-    private ProductPricingUpdateService updateService;
-
-    @Autowired
-    private ProductPricingDeleteService deleteService;
-
-    @Operation(summary = "Get product pricing by ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Product pricing retrieved successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductPricingDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Product pricing not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    @Operation(
+            summary = "List Product Pricings",
+            description = "Retrieve a paginated list of all pricing records associated with the specified product."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the product pricings",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))),
+            @ApiResponse(responseCode = "404", description = "No pricing records found for the specified product",
+                    content = @Content)
     })
-    @GetMapping("/{productPricingId}")
-    public Mono<ResponseEntity<ProductPricingDTO>> getProductPricing(@PathVariable Long productPricingId) {
-        return getService.getProductPricing(productPricingId)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<PaginationResponse<ProductPricingDTO>>> getAllPricings(
+            @Parameter(description = "Unique identifier of the product", required = true)
+            @PathVariable Long productId,
+
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
+    ) {
+        return service.getAllPricings(productId, paginationRequest)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get paginated product pricing by product ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Product pricing retrieved successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PaginationResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid pagination request", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    @Operation(
+            summary = "Create Product Pricing",
+            description = "Create a new pricing record and associate it with a product."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product pricing created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductPricingDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid product pricing data provided",
+                    content = @Content)
     })
-    @GetMapping("/product/{productId}")
-    public Mono<ResponseEntity<PaginationResponse<ProductPricingDTO>>> findByProductId(
-            @PathVariable Long productId, PaginationRequest paginationRequest) {
-        return getService.findByProductId(productId, paginationRequest)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<ProductPricingDTO>> createPricing(
+            @Parameter(description = "Unique identifier of the product", required = true)
+            @PathVariable Long productId,
+
+            @Parameter(description = "Data for the new product pricing", required = true,
+                    schema = @Schema(implementation = ProductPricingDTO.class))
+            @RequestBody ProductPricingDTO productPricingDTO
+    ) {
+        return service.createPricing(productId, productPricingDTO)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
+    }
+
+    @Operation(
+            summary = "Get Product Pricing by ID",
+            description = "Retrieve a specific product pricing record using its unique identifier, ensuring it matches the specified product."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the product pricing record",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductPricingDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Product pricing not found",
+                    content = @Content)
+    })
+    @GetMapping(value = "/{pricingId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<ProductPricingDTO>> getPricing(
+            @Parameter(description = "Unique identifier of the product", required = true)
+            @PathVariable Long productId,
+
+            @Parameter(description = "Unique identifier of the product pricing record", required = true)
+            @PathVariable Long pricingId
+    ) {
+        return service.getPricing(productId, pricingId)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Create product pricing")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Product pricing created successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductPricingDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid data for creating product pricing", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
-    })
-    @PostMapping
-    public Mono<ResponseEntity<ProductPricingDTO>> createProductPricing(@RequestBody ProductPricingDTO request) {
-        return createService.createProductPricing(request)
-                .map(createdProductPricing -> ResponseEntity.status(HttpStatus.CREATED).body(createdProductPricing));
-    }
-
-    @Operation(summary = "Update product pricing by ID")
-    @ApiResponses({
+    @Operation(
+            summary = "Update Product Pricing",
+            description = "Update an existing pricing record associated with the specified product."
+    )
+    @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Product pricing updated successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductPricingDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid data for updating product pricing", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Product pricing not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductPricingDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Product pricing not found",
+                    content = @Content)
     })
-    @PutMapping("/{id}")
-    public Mono<ResponseEntity<ProductPricingDTO>> updateProductPricing(@PathVariable Long id, @RequestBody ProductPricingDTO request) {
-        return updateService.updateProductPricing(id, request)
+    @PutMapping(value = "/{pricingId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<ProductPricingDTO>> updatePricing(
+            @Parameter(description = "Unique identifier of the product", required = true)
+            @PathVariable Long productId,
+
+            @Parameter(description = "Unique identifier of the product pricing record to update", required = true)
+            @PathVariable Long pricingId,
+
+            @Parameter(description = "Updated product pricing data", required = true,
+                    schema = @Schema(implementation = ProductPricingDTO.class))
+            @RequestBody ProductPricingDTO productPricingDTO
+    ) {
+        return service.updatePricing(productId, pricingId, productPricingDTO)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Delete product pricing by ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Product pricing deleted successfully", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Product pricing not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    @Operation(
+            summary = "Delete Product Pricing",
+            description = "Remove an existing pricing record from a product by its unique identifier."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Product pricing deleted successfully",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Product pricing not found",
+                    content = @Content)
     })
-    @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<Void>> deleteProductPricing(@PathVariable Long id) {
-        return deleteService.deleteProductPricing(id)
-                .<ResponseEntity<Void>>map(deleted -> ResponseEntity.noContent().build())
-                .onErrorReturn(ResponseEntity.notFound().build());
+    @DeleteMapping(value = "/{pricingId}")
+    public Mono<ResponseEntity<Void>> deletePricing(
+            @Parameter(description = "Unique identifier of the product", required = true)
+            @PathVariable Long productId,
+
+            @Parameter(description = "Unique identifier of the product pricing record to delete", required = true)
+            @PathVariable Long pricingId
+    ) {
+        return service.deletePricing(productId, pricingId)
+                .then(Mono.just(ResponseEntity.noContent().build()));
     }
 }

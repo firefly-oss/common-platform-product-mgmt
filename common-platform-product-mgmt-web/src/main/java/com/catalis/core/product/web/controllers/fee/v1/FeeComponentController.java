@@ -2,121 +2,147 @@ package com.catalis.core.product.web.controllers.fee.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.fee.v1.FeeComponentCreateService;
-import com.catalis.core.product.core.services.fee.v1.FeeComponentDeleteService;
-import com.catalis.core.product.core.services.fee.v1.FeeComponentGetService;
-import com.catalis.core.product.core.services.fee.v1.FeeComponentUpdateService;
+import com.catalis.core.product.core.services.fee.v1.FeeComponentServiceImpl;
 import com.catalis.core.product.interfaces.dtos.fee.v1.FeeComponentDTO;
-import com.catalis.core.product.interfaces.enums.fee.v1.FeeTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+@Tag(name = "Product Fee Structure", description = "APIs for managing components under a specific fee structure")
 @RestController
-@RequestMapping("/api/v1/fee-components")
-@Tag(name = "Product Fee Management API", description = "APIs for managing and maintaining product fees")
+@RequestMapping("/api/v1/fee-structures/{feeStructureId}/components")
 public class FeeComponentController {
 
     @Autowired
-    private FeeComponentCreateService createService;
+    private FeeComponentServiceImpl service;
 
-    @Autowired
-    private FeeComponentGetService getService;
-
-    @Autowired
-    private FeeComponentUpdateService updateService;
-
-    @Autowired
-    private FeeComponentDeleteService deleteService;
-
-    @Operation(summary = "Retrieve a Fee Component by ID")
+    @Operation(
+            summary = "List Fee Components by Fee Structure",
+            description = "Retrieve a paginated list of fee components associated with a specific fee structure."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Fee Component retrieved successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = FeeComponentDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Fee Component not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved fee components",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))),
+            @ApiResponse(responseCode = "404", description = "No fee components found for the specified structure",
+                    content = @Content)
     })
-    @GetMapping("/{feeComponentId}")
-    public Mono<ResponseEntity<FeeComponentDTO>> getFeeComponent(@PathVariable Long feeComponentId) {
-        return getService.getFeeComponent(feeComponentId)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<PaginationResponse<FeeComponentDTO>>> getByFeeStructureId(
+            @Parameter(description = "Unique identifier of the fee structure", required = true)
+            @PathVariable Long feeStructureId,
+
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
+    ) {
+        return service.getByFeeStructureId(feeStructureId, paginationRequest)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Retrieve a paginated list of Fee Components by Fee Type")
+    @Operation(
+            summary = "Create Fee Component",
+            description = "Create a new fee component, which can be attached to a fee structure."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Fee Components retrieved successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PaginationResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid pagination request", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Fee component created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FeeComponentDTO.class)))
     })
-    @GetMapping("/fee-type/{feeType}")
-    public Mono<ResponseEntity<PaginationResponse<FeeComponentDTO>>> findByFeeType(
-            @PathVariable FeeTypeEnum feeType, PaginationRequest paginationRequest) {
-        return getService.findByFeeType(feeType, paginationRequest)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<FeeComponentDTO>> createFeeComponent(
+            @Parameter(description = "Unique identifier of the fee structure", required = true)
+            @PathVariable Long feeStructureId,
+
+            @Parameter(description = "Data for the new fee component", required = true,
+                    schema = @Schema(implementation = FeeComponentDTO.class))
+            @RequestBody FeeComponentDTO feeComponentDTO
+    ) {
+        return service.createFeeComponent(feeStructureId, feeComponentDTO)
                 .map(ResponseEntity::ok);
     }
 
-    @Operation(summary = "Retrieve a paginated list of Fee Components by Fee Structure ID")
+    @Operation(
+            summary = "Get Fee Component by ID",
+            description = "Retrieve a specific fee component by its unique identifier."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Fee Components retrieved successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PaginationResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid pagination request", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the fee component",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FeeComponentDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Fee component not found",
+                    content = @Content)
     })
-    @GetMapping("/fee-structure/{feeStructureId}")
-    public Mono<ResponseEntity<PaginationResponse<FeeComponentDTO>>> findByFeeStructureId(
-            @PathVariable Long feeStructureId, PaginationRequest paginationRequest) {
-        return getService.findByFeeStructureId(feeStructureId, paginationRequest)
-                .map(ResponseEntity::ok);
-    }
+    @GetMapping(value = "/{componentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<FeeComponentDTO>> getFeeComponent(
+            @Parameter(description = "Unique identifier of the fee structure", required = true)
+            @PathVariable Long feeStructureId,
 
-    @Operation(summary = "Create a new Fee Component")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Fee Component created successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = FeeComponentDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
-    })
-    @PostMapping
-    public Mono<ResponseEntity<FeeComponentDTO>> createFeeComponent(@RequestBody FeeComponentDTO feeComponentDTO) {
-        return createService.createFeeComponent(feeComponentDTO)
-                .map(component -> ResponseEntity.status(HttpStatus.CREATED).body(component));
-    }
-
-    @Operation(summary = "Update a Fee Component by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Fee Component updated successfully",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = FeeComponentDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Fee Component not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
-    })
-    @PutMapping("/{id}")
-    public Mono<ResponseEntity<FeeComponentDTO>> updateFeeComponent(@PathVariable Long id, @RequestBody FeeComponentDTO feeComponentDTO) {
-        return updateService.updateFeeComponent(id, feeComponentDTO)
+            @Parameter(description = "Unique identifier of the fee component", required = true)
+            @PathVariable Long componentId
+    ) {
+        return service.getFeeComponent(feeStructureId, componentId)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Delete a Fee Component by ID")
+    @Operation(
+            summary = "Update Fee Component",
+            description = "Update an existing fee component by its unique identifier."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Fee Component deleted successfully", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Fee Component not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Fee component updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FeeComponentDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Fee component not found",
+                    content = @Content)
     })
-    @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<Void>> deleteFeeComponent(@PathVariable Long id) {
-        return deleteService.deleteFeeComponent(id)
-                .<ResponseEntity<Void>> map(deleted -> ResponseEntity.noContent().build())
-                .onErrorReturn(ResponseEntity.notFound().build());
+    @PutMapping(value = "/{componentId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<FeeComponentDTO>> updateFeeComponent(
+            @Parameter(description = "Unique identifier of the fee structure", required = true)
+            @PathVariable Long feeStructureId,
+
+            @Parameter(description = "Unique identifier of the fee component to update", required = true)
+            @PathVariable Long componentId,
+
+            @Parameter(description = "Updated data for the fee component", required = true,
+                    schema = @Schema(implementation = FeeComponentDTO.class))
+            @RequestBody FeeComponentDTO feeComponentDTO
+    ) {
+        return service.updateFeeComponent(feeStructureId, componentId, feeComponentDTO)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @Operation(
+            summary = "Delete Fee Component",
+            description = "Remove an existing fee component by its unique identifier."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Fee component deleted successfully",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Fee component not found",
+                    content = @Content)
+    })
+    @DeleteMapping(value = "/{componentId}")
+    public Mono<ResponseEntity<Void>> deleteFeeComponent(
+            @Parameter(description = "Unique identifier of the fee structure", required = true)
+            @PathVariable Long feeStructureId,
+
+            @Parameter(description = "Unique identifier of the fee component to delete", required = true)
+            @PathVariable Long componentId
+    ) {
+        return service.deleteFeeComponent(feeStructureId, componentId)
+                .then(Mono.just(ResponseEntity.noContent().build()));
     }
 }

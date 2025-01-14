@@ -2,108 +2,150 @@ package com.catalis.core.product.web.controllers.feature.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.feature.v1.ProductFeatureCreateService;
-import com.catalis.core.product.core.services.feature.v1.ProductFeatureDeleteService;
-import com.catalis.core.product.core.services.feature.v1.ProductFeatureGetService;
-import com.catalis.core.product.core.services.feature.v1.ProductFeatureUpdateService;
+import com.catalis.core.product.core.services.feature.v1.ProductFeatureServiceImpl;
 import com.catalis.core.product.interfaces.dtos.feature.v1.ProductFeatureDTO;
-import com.catalis.core.product.interfaces.enums.feature.v1.FeatureTypeEnum;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+@Tag(name = "Product Feature", description = "APIs for managing features associated with a specific product")
 @RestController
-@RequestMapping("/api/v1/product-features")
-@Tag(name = "Product Feature Management API", description = "Operations for managing product features")
+@RequestMapping("/api/v1/products/{productId}/features")
 public class ProductFeatureController {
 
     @Autowired
-    private ProductFeatureCreateService createService;
+    private ProductFeatureServiceImpl service;
 
-    @Autowired
-    private ProductFeatureGetService getService;
+    @Operation(
+            summary = "List Product Features",
+            description = "Retrieve a paginated list of all features associated with the specified product."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of product features",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))),
+            @ApiResponse(responseCode = "404", description = "No features found for the specified product",
+                    content = @Content)
+    })
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<PaginationResponse<ProductFeatureDTO>>> getAllFeatures(
+            @Parameter(description = "Unique identifier of the product", required = true)
+            @PathVariable Long productId,
 
-    @Autowired
-    private ProductFeatureUpdateService updateService;
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
+    ) {
+        return service.getAllFeatures(productId, paginationRequest)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
 
-    @Autowired
-    private ProductFeatureDeleteService deleteService;
+    @Operation(
+            summary = "Create Product Feature",
+            description = "Create a new feature linked to the specified product."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Product feature created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductFeatureDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid feature data provided",
+                    content = @Content)
+    })
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<ProductFeatureDTO>> createFeature(
+            @Parameter(description = "Unique identifier of the product", required = true)
+            @PathVariable Long productId,
 
-    @Operation(summary = "Retrieve a product feature by ID")
+            @Parameter(description = "Data for the new product feature", required = true,
+                    schema = @Schema(implementation = ProductFeatureDTO.class))
+            @RequestBody ProductFeatureDTO featureDTO
+    ) {
+        return service.createFeature(productId, featureDTO)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
+    }
+
+    @Operation(
+            summary = "Get Product Feature by ID",
+            description = "Retrieve a specific product feature using its unique identifier, ensuring it matches the product."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the product feature",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductFeatureDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Product feature not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductFeatureDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Product feature not found",
+                    content = @Content)
     })
-    @GetMapping("/{productFeatureId}")
-    public Mono<ResponseEntity<ProductFeatureDTO>> getProductFeature(@PathVariable Long productFeatureId) {
-        return getService.getProductFeature(productFeatureId)
+    @GetMapping(value = "/{featureId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<ProductFeatureDTO>> getFeature(
+            @Parameter(description = "Unique identifier of the product", required = true)
+            @PathVariable Long productId,
+
+            @Parameter(description = "Unique identifier of the feature", required = true)
+            @PathVariable Long featureId
+    ) {
+        return service.getFeature(productId, featureId)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Retrieve product features by feature type with pagination")
+    @Operation(
+            summary = "Update Product Feature",
+            description = "Update an existing feature associated with the specified product."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved product features",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PaginationResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+            @ApiResponse(responseCode = "200", description = "Product feature updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductFeatureDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Product feature not found",
+                    content = @Content)
     })
-    @GetMapping("/feature-type/{featureType}")
-    public Mono<ResponseEntity<PaginationResponse<ProductFeatureDTO>>> getProductFeaturesByFeatureType(
-            @PathVariable FeatureTypeEnum featureType, PaginationRequest paginationRequest) {
-        return getService.findByFeatureType(featureType, paginationRequest)
-                .map(ResponseEntity::ok);
-    }
+    @PutMapping(value = "/{featureId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<ProductFeatureDTO>> updateFeature(
+            @Parameter(description = "Unique identifier of the product", required = true)
+            @PathVariable Long productId,
 
-    @Operation(summary = "Create a new product feature")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Successfully created the product feature",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductFeatureDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data provided", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
-    })
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<ResponseEntity<ProductFeatureDTO>> createProductFeature(@RequestBody ProductFeatureDTO request) {
-        return createService.createProductFeature(request)
-                .map(feature -> ResponseEntity.status(HttpStatus.CREATED).body(feature));
-    }
+            @Parameter(description = "Unique identifier of the product feature to update", required = true)
+            @PathVariable Long featureId,
 
-    @Operation(summary = "Update an existing product feature by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully updated the product feature",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductFeatureDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Product feature not found for the given ID", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
-    })
-    @PutMapping("/{id}")
-    public Mono<ResponseEntity<ProductFeatureDTO>> updateProductFeature(@PathVariable Long id, @RequestBody ProductFeatureDTO request) {
-        return updateService.updateProductFeature(id, request)
+            @Parameter(description = "Updated product feature data", required = true,
+                    schema = @Schema(implementation = ProductFeatureDTO.class))
+            @RequestBody ProductFeatureDTO featureDTO
+    ) {
+        return service.updateFeature(productId, featureId, featureDTO)
                 .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Delete a product feature by ID")
+    @Operation(
+            summary = "Delete Product Feature",
+            description = "Remove an existing feature from the specified product."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Successfully deleted the product feature", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Product feature not found for the given ID", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+            @ApiResponse(responseCode = "204", description = "Product feature deleted successfully",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Product feature not found",
+                    content = @Content)
     })
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public Mono<ResponseEntity<Void>> deleteProductFeature(@PathVariable Long id) {
-        return deleteService.deleteProductFeature(id)
-                .<ResponseEntity<Void>> map(deleted -> ResponseEntity.noContent().build())
-                .onErrorReturn(ResponseEntity.notFound().build());
+    @DeleteMapping(value = "/{featureId}")
+    public Mono<ResponseEntity<Void>> deleteFeature(
+            @Parameter(description = "Unique identifier of the product", required = true)
+            @PathVariable Long productId,
+
+            @Parameter(description = "Unique identifier of the product feature to delete", required = true)
+            @PathVariable Long featureId
+    ) {
+        return service.deleteFeature(productId, featureId)
+                .then(Mono.just(ResponseEntity.noContent().build()));
     }
 }

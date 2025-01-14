@@ -2,117 +2,143 @@ package com.catalis.core.product.web.controllers.bundle.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.bundle.v1.ProductBundleCreateService;
-import com.catalis.core.product.core.services.bundle.v1.ProductBundleDeleteService;
-import com.catalis.core.product.core.services.bundle.v1.ProductBundleGetService;
-import com.catalis.core.product.core.services.bundle.v1.ProductBundleUpdateService;
+import com.catalis.core.product.core.services.bundle.v1.ProductBundleServiceImpl;
 import com.catalis.core.product.interfaces.dtos.bundle.v1.ProductBundleDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+@Tag(name = "Product Bundle", description = "APIs for managing product bundles in the product management platform")
 @RestController
-@RequestMapping("/api/v1/product-bundles")
-@Tag(name = "Product Bundle Management API", description = "Operations for managing product bundles")
+@RequestMapping("/api/v1/bundles")
 public class ProductBundleController {
 
     @Autowired
-    private ProductBundleGetService productBundleGetService;
+    private ProductBundleServiceImpl service;
 
-    @Autowired
-    private ProductBundleCreateService productBundleCreateService;
-
-    @Autowired
-    private ProductBundleUpdateService productBundleUpdateService;
-
-    @Autowired
-    private ProductBundleDeleteService productBundleDeleteService;
-
-    @Operation(summary = "Retrieve all product bundles with pagination")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Successfully retrieved product bundles",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = PaginationResponse.class))}
-            ),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
-    })
-    @GetMapping
-    public Mono<ResponseEntity<PaginationResponse<ProductBundleDTO>>> getAllProductBundles(PaginationRequest paginationRequest) {
-        return productBundleGetService.getAllProductBundles(paginationRequest)
-                .map(ResponseEntity::ok);
-    }
-
-    @Operation(summary = "Retrieve a single product bundle by its ID")
+    @Operation(
+            summary = "Get Product Bundle by ID",
+            description = "Retrieve a specific product bundle using its unique identifier."
+    )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Successfully retrieved the product bundle",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ProductBundleDTO.class))}
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductBundleDTO.class))
             ),
-            @ApiResponse(responseCode = "404", description = "Product bundle not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid Bundle ID provided", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Product bundle not found", content = @Content)
     })
-    @GetMapping("/{id}")
-    public Mono<ResponseEntity<ProductBundleDTO>> getProductBundleById(@PathVariable Long id) {
-        return productBundleGetService.getById(id)
+    @GetMapping(value = "/{bundleId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<ProductBundleDTO>> getById(
+            @Parameter(description = "The unique identifier of the product bundle", required = true)
+            @PathVariable Long bundleId
+    ) {
+        return service.getById(bundleId)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().build()));
     }
 
-    @Operation(summary = "Create a new product bundle")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Successfully created the product bundle",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ProductBundleDTO.class))}
-            ),
-            @ApiResponse(responseCode = "400", description = "Invalid ProductBundleDTO", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
-    })
-    @PostMapping
-    public Mono<ResponseEntity<ProductBundleDTO>> createProductBundle(@RequestBody ProductBundleDTO request) {
-        return productBundleCreateService.create(request)
-                .map(bundle -> ResponseEntity.status(HttpStatus.CREATED).body(bundle));
-    }
-
-    @Operation(summary = "Update an existing product bundle by its ID")
+    @Operation(
+            summary = "List Product Bundles",
+            description = "Retrieve a paginated list of all product bundles."
+    )
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Successfully updated the product bundle",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ProductBundleDTO.class))}
+                    description = "Successfully retrieved the list of product bundles",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))
             ),
-            @ApiResponse(responseCode = "404", description = "Product bundle not found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Invalid ProductBundleDTO", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid pagination parameters", content = @Content)
     })
-    @PutMapping("/{id}")
-    public Mono<ResponseEntity<ProductBundleDTO>> updateProductBundle(@PathVariable Long id, @RequestBody ProductBundleDTO request) {
-        return productBundleUpdateService.update(id, request)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<PaginationResponse<ProductBundleDTO>>> getAll(
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
+    ) {
+        return service.getAll(paginationRequest)
                 .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
+                .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().build()));
     }
 
-    @Operation(summary = "Delete a product bundle by its ID")
+    @Operation(
+            summary = "Create Product Bundle",
+            description = "Create a new product bundle containing multiple products or offerings."
+    )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Successfully deleted the product bundle", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Product bundle not found", content = @Content),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error", content = @Content)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Product bundle created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductBundleDTO.class))
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid input data provided", content = @Content)
     })
-    @DeleteMapping("/{id}")
-    public Mono<ResponseEntity<Void>> deleteProductBundle(@PathVariable Long id) {
-        return productBundleDeleteService.delete(id)
-                .<ResponseEntity<Void>> map(deleted -> ResponseEntity.noContent().build())
-                .onErrorReturn(ResponseEntity.notFound().build());
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<ProductBundleDTO>> create(
+            @Parameter(description = "Data for the new product bundle", required = true,
+                    schema = @Schema(implementation = ProductBundleDTO.class))
+            @RequestBody ProductBundleDTO productBundleDTO
+    ) {
+        return service.create(productBundleDTO)
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().build()));
     }
 
+    @Operation(
+            summary = "Update Product Bundle",
+            description = "Update the information of an existing product bundle by its unique identifier."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Product bundle updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ProductBundleDTO.class))
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid input data or bundle ID provided", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Product bundle not found", content = @Content)
+    })
+    @PutMapping(value = "/{bundleId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<ProductBundleDTO>> update(
+            @Parameter(description = "The unique identifier of the product bundle to update", required = true)
+            @PathVariable Long bundleId,
+
+            @Parameter(description = "Updated product bundle data", required = true,
+                    schema = @Schema(implementation = ProductBundleDTO.class))
+            @RequestBody ProductBundleDTO productBundleDTO
+    ) {
+        return service.update(bundleId, productBundleDTO)
+                .map(ResponseEntity::ok)
+                .onErrorResume(e -> Mono.just(ResponseEntity.badRequest().build()));
+    }
+
+    @Operation(
+            summary = "Delete Product Bundle",
+            description = "Delete an existing product bundle by its unique identifier."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Product bundle deleted successfully", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Product bundle not found", content = @Content)
+    })
+    @DeleteMapping(value = "/{bundleId}")
+    public Mono<ResponseEntity<Void>> delete(
+            @Parameter(description = "The unique identifier of the product bundle to delete", required = true)
+            @PathVariable Long bundleId
+    ) {
+        return service.delete(bundleId)
+                .then(Mono.just(ResponseEntity.noContent().build()));
+    }
 }
