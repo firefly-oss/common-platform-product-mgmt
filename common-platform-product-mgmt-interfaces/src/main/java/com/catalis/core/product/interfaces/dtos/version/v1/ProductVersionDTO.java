@@ -1,4 +1,4 @@
-package com.catalis.core.product.interfaces.dtos.category.v1;
+package com.catalis.core.product.interfaces.dtos.version.v1;
 
 import com.catalis.core.product.interfaces.dtos.BaseDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,15 +7,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 @Data
-@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductSubtypeDTO extends BaseDTO {
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productSubtypeId;
+@SuperBuilder
+public class ProductVersionDTO extends BaseDTO {
 
-    private Long productCategoryId;
-    private String subtypeName;
-    private String subtypeDescription;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Long productVersionId;
+
+    private Long productId;
+    private Long versionNumber;
+    private String versionDescription;
+    private LocalDateTime effectiveDate;
+
 }
