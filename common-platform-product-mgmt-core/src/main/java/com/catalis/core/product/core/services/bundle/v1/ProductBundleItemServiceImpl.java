@@ -39,8 +39,7 @@ public class ProductBundleItemServiceImpl implements ProductBundleItemService {
                     entity.setProductBundleId(bundleId);
                     return repository.save(entity);
                 })
-                .map(mapper::toDto)
-                .onErrorMap(e -> new RuntimeException("An error occurred while creating the product bundle item", e));
+                .map(mapper::toDto);
     }
 
     @Override
@@ -54,8 +53,7 @@ public class ProductBundleItemServiceImpl implements ProductBundleItemService {
                     return repository.save(existing);
                 })
                 .map(mapper::toDto)
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("Product bundle item not found")))
-                .onErrorMap(e -> new RuntimeException("An error occurred while updating the product bundle item", e));
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("Product bundle item not found")));
     }
 
     @Override
@@ -63,7 +61,6 @@ public class ProductBundleItemServiceImpl implements ProductBundleItemService {
         return bundleService.getById(bundleId)
                 .flatMap(bundle -> repository.findById(itemId))
                 .filter(item -> item.getProductBundleId().equals(bundleId))
-                .flatMap(repository::delete)
-                .onErrorMap(e -> new RuntimeException("An error occurred while deleting the product bundle item", e));
+                .flatMap(repository::delete);
     }
 }
