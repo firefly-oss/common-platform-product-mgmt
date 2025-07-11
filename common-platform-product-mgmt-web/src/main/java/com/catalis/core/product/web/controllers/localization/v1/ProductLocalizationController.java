@@ -33,9 +33,7 @@ public class ProductLocalizationController {
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Successfully retrieved the list of product localizations",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PaginationResponse.class))
+                    description = "Successfully retrieved the list of product localizations"
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -43,7 +41,7 @@ public class ProductLocalizationController {
                     content = @Content
             )
     })
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductLocalizationDTO>>> getAllLocalizations(
             @Parameter(
                     in = ParameterIn.PATH,
@@ -52,8 +50,7 @@ public class ProductLocalizationController {
             )
             @PathVariable Long productId,
 
-            @ParameterObject
-            @ModelAttribute PaginationRequest paginationRequest
+            @RequestBody PaginationRequest paginationRequest
     ) {
         return service.getAllLocalizations(productId, paginationRequest)
                 .map(ResponseEntity::ok)

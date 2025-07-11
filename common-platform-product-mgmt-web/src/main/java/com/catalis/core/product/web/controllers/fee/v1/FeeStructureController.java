@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-@Tag(name = "Product Fee Structure", description = "APIs for managing fee structures in the product platform")
+@Tag(name = "Fee Structure", description = "APIs for managing fee structures in the product platform")
 @RestController
 @RequestMapping("/api/v1/fee-structures")
 public class FeeStructureController {

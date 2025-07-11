@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-@Tag(name = "Product Fee Structure", description = "APIs for managing components under a specific fee structure")
+@Tag(name = "Product Fee Component", description = "APIs for managing components under a specific fee structure")
 @RestController
 @RequestMapping("/api/v1/fee-structures/{feeStructureId}/components")
 public class FeeComponentController {
@@ -31,19 +31,16 @@ public class FeeComponentController {
             description = "Retrieve a paginated list of fee components associated with a specific fee structure."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved fee components",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PaginationResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved fee components"),
             @ApiResponse(responseCode = "404", description = "No fee components found for the specified structure",
                     content = @Content)
     })
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<FeeComponentDTO>>> getByFeeStructureId(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
             @PathVariable Long feeStructureId,
 
-            @ParameterObject
-            @ModelAttribute PaginationRequest paginationRequest
+            @RequestBody PaginationRequest paginationRequest
     ) {
         return service.getByFeeStructureId(feeStructureId, paginationRequest)
                 .map(ResponseEntity::ok)

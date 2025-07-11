@@ -1,4 +1,4 @@
-package com.catalis.core.product.web.controllers.core.v1;
+package com.catalis.core.product.web.controllers.documentation.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
@@ -31,19 +31,16 @@ public class ProductDocumentationController {
             description = "Retrieve a paginated list of all documentation items linked to a given product."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved product documentation list",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PaginationResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved product documentation list"),
             @ApiResponse(responseCode = "404", description = "No documentation found for the specified product",
                     content = @Content)
     })
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductDocumentationDTO>>> getAllDocumentation(
             @Parameter(description = "Unique identifier of the product", required = true)
             @PathVariable Long productId,
 
-            @ParameterObject
-            @ModelAttribute PaginationRequest paginationRequest
+            @RequestBody PaginationRequest paginationRequest
     ) {
         return service.getAllDocumentations(productId, paginationRequest)
                 .map(ResponseEntity::ok)

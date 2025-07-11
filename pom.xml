@@ -18,6 +18,7 @@
         <module>common-platform-product-mgmt-interfaces</module>
         <module>common-platform-product-mgmt-models</module>
         <module>common-platform-product-mgmt-web</module>
+        <module>common-platform-product-mgmt-sdk</module>
     </modules>
 
     <properties>

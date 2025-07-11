@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-@Tag(name = "Product Lifecycle", description = "APIs for managing limits (restrictions, thresholds, etc.) associated with a specific product")
+@Tag(name = "Product Limit", description = "APIs for managing limits (restrictions, thresholds, etc.) associated with a specific product")
 @RestController
 @RequestMapping("/api/v1/products/{productId}/limits")
 public class ProductLimitController {
@@ -31,19 +31,16 @@ public class ProductLimitController {
             description = "Retrieve a paginated list of all limits associated with the specified product."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the product limits",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PaginationResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the product limits"),
             @ApiResponse(responseCode = "404", description = "No limits found for the specified product",
                     content = @Content)
     })
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductLimitDTO>>> getAllProductLimits(
             @Parameter(description = "Unique identifier of the product", required = true)
             @PathVariable Long productId,
 
-            @ParameterObject
-            @ModelAttribute PaginationRequest paginationRequest
+            @RequestBody PaginationRequest paginationRequest
     ) {
         return service.getAllProductLimits(productId, paginationRequest)
                 .map(ResponseEntity::ok)

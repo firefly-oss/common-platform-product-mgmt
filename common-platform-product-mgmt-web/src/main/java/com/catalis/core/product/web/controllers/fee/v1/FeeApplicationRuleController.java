@@ -18,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-@Tag(name = "Product Fee Structure", description = "APIs for managing fee application rules in a specific fee structure component")
+@Tag(name = "Product Fee Application Rule", description = "APIs for managing fee application rules in a specific fee structure component")
 @RestController
 @RequestMapping("/api/v1/fee-structures/{feeStructureId}/components/{componentId}/rules")
 public class FeeApplicationRuleController {
@@ -32,13 +32,11 @@ public class FeeApplicationRuleController {
             description = "Retrieve a paginated list of fee application rules associated with a specific fee component."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of fee application rules",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PaginationResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of fee application rules"),
             @ApiResponse(responseCode = "404", description = "No rules found for the specified component",
                     content = @Content)
     })
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<FeeApplicationRuleDTO>>> getRulesByComponentId(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
             @PathVariable Long feeStructureId,
@@ -46,8 +44,7 @@ public class FeeApplicationRuleController {
             @Parameter(description = "Unique identifier of the fee component", required = true)
             @PathVariable Long componentId,
 
-            @ParameterObject
-            @ModelAttribute PaginationRequest paginationRequest
+            @RequestBody PaginationRequest paginationRequest
     ) {
         return service
                 .getRulesByComponentId(feeStructureId, componentId, paginationRequest)

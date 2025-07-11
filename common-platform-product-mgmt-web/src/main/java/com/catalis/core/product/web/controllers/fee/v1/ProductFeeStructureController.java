@@ -31,19 +31,16 @@ public class ProductFeeStructureController {
             description = "Retrieve a paginated list of fee structures associated with a given product."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved fee structures",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PaginationResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved fee structures"),
             @ApiResponse(responseCode = "404", description = "No fee structures found for the specified product",
                     content = @Content)
     })
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductFeeStructureDTO>>> getAllFeeStructures(
             @Parameter(description = "Unique identifier of the product", required = true)
             @PathVariable Long productId,
 
-            @ParameterObject
-            @ModelAttribute PaginationRequest paginationRequest
+            @RequestBody PaginationRequest paginationRequest
     ) {
         return service.getAllFeeStructuresByProduct(productId, paginationRequest)
                 .map(ResponseEntity::ok)

@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-@Tag(name = "Product Pricing", description = "APIs for managing localized pricing data under a specific product pricing record")
+@Tag(name = "Product Pricing Localization", description = "APIs for managing localized pricing data under a specific product pricing record")
 @RestController
 @RequestMapping("/api/v1/products/{productId}/pricings/{pricingId}/localizations")
 public class ProductPricingLocalizationController {
@@ -30,13 +30,11 @@ public class ProductPricingLocalizationController {
             description = "Retrieve a paginated list of all localization records associated with a specific product pricing."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the localization records",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PaginationResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the localization records"),
             @ApiResponse(responseCode = "404", description = "No localization records found for the specified pricing",
                     content = @Content)
     })
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductPricingLocalizationDTO>>> getAllLocalizations(
             @Parameter(description = "Unique identifier of the product (unused in the service, but kept for hierarchy)", required = true)
             @PathVariable Long productId,
@@ -44,8 +42,7 @@ public class ProductPricingLocalizationController {
             @Parameter(description = "Unique identifier of the product pricing record", required = true)
             @PathVariable Long pricingId,
 
-            @ParameterObject
-            @ModelAttribute PaginationRequest paginationRequest
+            @RequestBody PaginationRequest paginationRequest
     ) {
         return service.getAllLocalizations(pricingId, paginationRequest)
                 .map(ResponseEntity::ok)

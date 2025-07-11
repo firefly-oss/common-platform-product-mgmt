@@ -24,13 +24,10 @@ hs_err_pid*
 replay_pid*
 
 
-# IntelliJ IDEA-specific files
+# IntelliJ IDEA specific files
 .idea/
 *.iml
-out/
+*.iws
 
-# IntelliJ IDEA plugin-specific files
-.idea_modules/
-
-# Maven target directory
+# Target folder
 target/

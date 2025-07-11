@@ -32,18 +32,15 @@ public class ProductCategorySubtypeController {
             description = "Retrieve a paginated list of product subtypes belonging to a specific category."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved product subtypes",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = PaginationResponse.class))),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved product subtypes"),
             @ApiResponse(responseCode = "404", description = "No subtypes found for the specified category",
                     content = @Content)
     })
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductCategorySubtypeDTO>>> getAllSubtypes(
             @Parameter(description = "Unique identifier of the product category", required = true)
             @PathVariable Long categoryId,
-            @ParameterObject
-            @ModelAttribute PaginationRequest paginationRequest
+            @RequestBody PaginationRequest paginationRequest
     ) {
         return service.getAllByCategoryId(categoryId, paginationRequest)
                 .map(ResponseEntity::ok)
