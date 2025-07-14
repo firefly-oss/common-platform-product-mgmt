@@ -30,11 +30,13 @@ public class ProductPricingLocalizationController {
             description = "Retrieve a paginated list of all localization records associated with a specific product pricing."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the localization records"),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the localization records",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))),
             @ApiResponse(responseCode = "404", description = "No localization records found for the specified pricing",
                     content = @Content)
     })
-    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductPricingLocalizationDTO>>> getAllLocalizations(
             @Parameter(description = "Unique identifier of the product (unused in the service, but kept for hierarchy)", required = true)
             @PathVariable Long productId,
@@ -42,7 +44,8 @@ public class ProductPricingLocalizationController {
             @Parameter(description = "Unique identifier of the product pricing record", required = true)
             @PathVariable Long pricingId,
 
-            @RequestBody PaginationRequest paginationRequest
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
     ) {
         return service.getAllLocalizations(pricingId, paginationRequest)
                 .map(ResponseEntity::ok)

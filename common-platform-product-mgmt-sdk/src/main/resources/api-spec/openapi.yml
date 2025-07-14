@@ -28,14 +28,14 @@ tags:
       specific product
   - name: Product Relationship
     description: APIs for managing relationships between products
-  - name: Product Fee Application Rule
-    description: >-
-      APIs for managing fee application rules in a specific fee structure
-      component
   - name: Product Pricing Localization
     description: >-
       APIs for managing localized pricing data under a specific product pricing
       record
+  - name: Fee Application Rule
+    description: >-
+      APIs for managing fee application rules in a specific fee structure
+      component
   - name: Product
     description: APIs for managing core product entities in the product management platform
   - name: Product Fee Component
@@ -1199,7 +1199,7 @@ paths:
   '/api/v1/fee-structures/{feeStructureId}/components/{componentId}/rules/{ruleId}':
     get:
       tags:
-        - Product Fee Application Rule
+        - Fee Application Rule
       summary: Get Fee Application Rule by ID
       description: Retrieve a specific fee application rule using its unique identifier.
       operationId: getRule
@@ -1236,7 +1236,7 @@ paths:
           description: Fee application rule not found
     put:
       tags:
-        - Product Fee Application Rule
+        - Fee Application Rule
       summary: Update Fee Application Rule
       description: Update an existing fee application rule by its unique identifier.
       operationId: updateRule
@@ -1287,7 +1287,7 @@ paths:
           description: Fee application rule not found
     delete:
       tags:
-        - Product Fee Application Rule
+        - Fee Application Rule
       summary: Delete Fee Application Rule
       description: Remove an existing fee application rule by its unique identifier.
       operationId: deleteRule
@@ -1871,8 +1871,8 @@ paths:
           description: Product bundle deleted successfully
         '404':
           description: Product bundle not found
-  '/api/v1/products/{productId}/versions/filter':
-    post:
+  '/api/v1/products/{productId}/versions':
+    get:
       tags:
         - Product Version
       summary: List Product Versions
@@ -1888,30 +1888,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved the product versions
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseProductVersionDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No product versions found for the specified product
-  '/api/v1/products/{productId}/versions':
     post:
       tags:
         - Product Version
@@ -1949,8 +1973,8 @@ paths:
                 $ref: '#/components/schemas/ProductVersionDTO'
         '400':
           description: Invalid product version data provided
-  '/api/v1/products/{productId}/relationships/filter':
-    post:
+  '/api/v1/products/{productId}/relationships':
+    get:
       tags:
         - Product Relationship
       summary: List Product Relationships
@@ -1966,30 +1990,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved the product relationships
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseProductRelationshipDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No relationships found for the specified product
-  '/api/v1/products/{productId}/relationships':
     post:
       tags:
         - Product Relationship
@@ -2027,8 +2075,8 @@ paths:
                 $ref: '#/components/schemas/ProductRelationshipDTO'
         '400':
           description: Invalid product relationship data provided
-  '/api/v1/products/{productId}/pricings/{pricingId}/localizations/filter':
-    post:
+  '/api/v1/products/{productId}/pricings/{pricingId}/localizations':
+    get:
       tags:
         - Product Pricing Localization
       summary: List Localizations for Product Pricing
@@ -2053,31 +2101,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved the localization records
           content:
             application/json:
               schema:
-                $ref: >-
-                  #/components/schemas/PaginationResponseProductPricingLocalizationDTO
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No localization records found for the specified pricing
-  '/api/v1/products/{productId}/pricings/{pricingId}/localizations':
     post:
       tags:
         - Product Pricing Localization
@@ -2126,8 +2197,8 @@ paths:
                 $ref: '#/components/schemas/ProductPricingLocalizationDTO'
         '400':
           description: Invalid localization data provided
-  '/api/v1/products/{productId}/pricings/filter':
-    post:
+  '/api/v1/products/{productId}/pricings':
+    get:
       tags:
         - Product Pricing
       summary: List Product Pricings
@@ -2143,30 +2214,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved the product pricings
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseProductPricingDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No pricing records found for the specified product
-  '/api/v1/products/{productId}/pricings':
     post:
       tags:
         - Product Pricing
@@ -2204,8 +2299,8 @@ paths:
                 $ref: '#/components/schemas/ProductPricingDTO'
         '400':
           description: Invalid product pricing data provided
-  '/api/v1/products/{productId}/localizations/filter':
-    post:
+  '/api/v1/products/{productId}/localizations':
+    get:
       tags:
         - Product Localization
       summary: List Product Localizations
@@ -2221,30 +2316,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved the list of product localizations
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseProductLocalizationDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No localizations found for the specified product
-  '/api/v1/products/{productId}/localizations':
     post:
       tags:
         - Product Localization
@@ -2282,8 +2401,8 @@ paths:
                 $ref: '#/components/schemas/ProductLocalizationDTO'
         '400':
           description: Invalid product localization data provided
-  '/api/v1/products/{productId}/limits/filter':
-    post:
+  '/api/v1/products/{productId}/limits':
+    get:
       tags:
         - Product Limit
       summary: List Product Limits
@@ -2299,30 +2418,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved the product limits
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseProductLimitDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No limits found for the specified product
-  '/api/v1/products/{productId}/limits':
     post:
       tags:
         - Product Limit
@@ -2360,8 +2503,8 @@ paths:
                 $ref: '#/components/schemas/ProductLimitDTO'
         '400':
           description: Invalid product limit data provided
-  '/api/v1/products/{productId}/lifecycle/filter':
-    post:
+  '/api/v1/products/{productId}/lifecycle':
+    get:
       tags:
         - Product Lifecycle
       summary: List Product Lifecycles
@@ -2377,30 +2520,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved lifecycles
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseProductLifecycleDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No lifecycle entries found for the specified product
-  '/api/v1/products/{productId}/lifecycle':
     post:
       tags:
         - Product Lifecycle
@@ -2438,8 +2605,8 @@ paths:
                 $ref: '#/components/schemas/ProductLifecycleDTO'
         '400':
           description: Invalid lifecycle data provided
-  '/api/v1/products/{productId}/fee-structures/filter':
-    post:
+  '/api/v1/products/{productId}/fee-structures':
+    get:
       tags:
         - Product Fee Structure
       summary: List Fee Structures by Product
@@ -2455,30 +2622,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved fee structures
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseProductFeeStructureDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No fee structures found for the specified product
-  '/api/v1/products/{productId}/fee-structures':
     post:
       tags:
         - Product Fee Structure
@@ -2516,8 +2707,8 @@ paths:
                 $ref: '#/components/schemas/ProductFeeStructureDTO'
         '400':
           description: Invalid fee structure data provided
-  '/api/v1/products/{productId}/features/filter':
-    post:
+  '/api/v1/products/{productId}/features':
+    get:
       tags:
         - Product Feature
       summary: List Product Features
@@ -2533,30 +2724,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved the list of product features
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseProductFeatureDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No features found for the specified product
-  '/api/v1/products/{productId}/features':
     post:
       tags:
         - Product Feature
@@ -2594,8 +2809,8 @@ paths:
                 $ref: '#/components/schemas/ProductFeatureDTO'
         '400':
           description: Invalid feature data provided
-  '/api/v1/products/{productId}/documentation/filter':
-    post:
+  '/api/v1/products/{productId}/documentation':
+    get:
       tags:
         - Product Documentation
       summary: List Product Documentation
@@ -2611,30 +2826,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved product documentation list
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseProductDocumentationDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No documentation found for the specified product
-  '/api/v1/products/{productId}/documentation':
     post:
       tags:
         - Product Documentation
@@ -2674,28 +2913,53 @@ paths:
                 $ref: '#/components/schemas/ProductDocumentationDTO'
         '400':
           description: Invalid product documentation data provided
-  /api/v1/products/filter:
-    post:
+  /api/v1/products:
+    get:
       tags:
         - Product
       summary: List Products
       description: Retrieve a paginated list of products.
       operationId: getAllProducts
       parameters:
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved the list of products
@@ -2705,7 +2969,6 @@ paths:
                 $ref: '#/components/schemas/PaginationResponseProductDTO'
         '404':
           description: No products found
-  /api/v1/products:
     post:
       tags:
         - Product
@@ -2736,10 +2999,10 @@ paths:
                 $ref: '#/components/schemas/ProductDTO'
         '400':
           description: Invalid product data provided
-  '/api/v1/fee-structures/{feeStructureId}/components/{componentId}/rules/filter':
-    post:
+  '/api/v1/fee-structures/{feeStructureId}/components/{componentId}/rules':
+    get:
       tags:
-        - Product Fee Application Rule
+        - Fee Application Rule
       summary: List Fee Application Rules
       description: >-
         Retrieve a paginated list of fee application rules associated with a
@@ -2760,33 +3023,57 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved the list of fee application rules
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseFeeApplicationRuleDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No rules found for the specified component
-  '/api/v1/fee-structures/{feeStructureId}/components/{componentId}/rules':
     post:
       tags:
-        - Product Fee Application Rule
+        - Fee Application Rule
       summary: Create Fee Application Rule
       description: >-
         Create a new fee application rule for the specified fee structure
@@ -2828,8 +3115,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeeApplicationRuleDTO'
-  '/api/v1/fee-structures/{feeStructureId}/components/filter':
-    post:
+  '/api/v1/fee-structures/{feeStructureId}/components':
+    get:
       tags:
         - Product Fee Component
       summary: List Fee Components by Fee Structure
@@ -2845,30 +3132,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved fee components
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseFeeComponentDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No fee components found for the specified structure
-  '/api/v1/fee-structures/{feeStructureId}/components':
     post:
       tags:
         - Product Fee Component
@@ -2933,8 +3244,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeeStructureDTO'
-  '/api/v1/categories/{categoryId}/subtypes/filter':
-    post:
+  '/api/v1/categories/{categoryId}/subtypes':
+    get:
       tags:
         - Product Category
       summary: List Category Subtypes
@@ -2950,31 +3261,54 @@ paths:
           schema:
             type: integer
             format: int64
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved product subtypes
           content:
             application/json:
               schema:
-                $ref: >-
-                  #/components/schemas/PaginationResponseProductCategorySubtypeDTO
+                $ref: '#/components/schemas/PaginationResponse'
         '404':
           description: No subtypes found for the specified category
-  '/api/v1/categories/{categoryId}/subtypes':
     post:
       tags:
         - Product Category
@@ -3075,38 +3409,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProductBundleItemDTO'
-  /api/v1/bundles/filter:
-    post:
+  /api/v1/bundles:
+    get:
       tags:
         - Product Bundle
       summary: List Product Bundles
       description: Retrieve a paginated list of all product bundles.
       operationId: getAll
       parameters:
-        - name: X-Idempotency-Key
-          in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
           required: false
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PaginationRequest'
-        required: true
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: 'The direction of sorting, either ASC or DESC.'
+          required: false
+          schema:
+            type: string
+            description: 'The direction of sorting, either ASC or DESC.'
+            example: DESC
+            default: DESC
+          example: DESC
       responses:
         '200':
           description: Successfully retrieved the list of product bundles
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginationResponseProductBundleDTO'
+                $ref: '#/components/schemas/PaginationResponse'
         '400':
           description: Invalid pagination parameters
-  /api/v1/bundles:
     post:
       tags:
         - Product Bundle
@@ -3657,248 +4015,15 @@ components:
             - ACTIVE
             - RETIRED
             - PROMO
-    PaginationRequest:
-      type: object
-      properties:
-        pageNumber:
-          type: integer
-          description: The zero-based page number to retrieve.
-          format: int32
-          example: 0
-          default: 0
-        pageSize:
-          type: integer
-          description: The number of items per page.
-          format: int32
-          example: 10
-          default: 10
-        sortBy:
-          type: string
-          description: The field to sort the results by.
-          example: name
-        sortDirection:
-          type: string
-          description: 'The direction of sorting, either ASC or DESC.'
-          example: DESC
-          default: DESC
-      description: >-
-        Represents a pagination request for retrieving paginated results,
-        including page number, size, sort field, and direction.
-    PaginationResponseProductVersionDTO:
+    PaginationResponse:
       type: object
       properties:
         content:
           type: array
           description: The list of items for the current page.
           items:
-            $ref: '#/components/schemas/ProductVersionDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductRelationshipDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductRelationshipDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductPricingLocalizationDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductPricingLocalizationDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductPricingDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductPricingDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductLocalizationDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductLocalizationDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductLimitDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductLimitDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductLifecycleDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductLifecycleDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductFeeStructureDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductFeeStructureDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductFeatureDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductFeatureDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductDocumentationDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductDocumentationDTO'
+            type: object
+            description: The list of items for the current page.
         totalElements:
           type: integer
           description: The total number of elements across all pages.
@@ -3922,98 +4047,6 @@ components:
           description: The list of items for the current page.
           items:
             $ref: '#/components/schemas/ProductDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseFeeApplicationRuleDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/FeeApplicationRuleDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseFeeComponentDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/FeeComponentDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductCategorySubtypeDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductCategorySubtypeDTO'
-        totalElements:
-          type: integer
-          description: The total number of elements across all pages.
-          format: int64
-        totalPages:
-          type: integer
-          description: The total number of pages based on the data size and page size.
-          format: int32
-        currentPage:
-          type: integer
-          description: 'The current page number, typically zero-based.'
-          format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
-    PaginationResponseProductBundleDTO:
-      type: object
-      properties:
-        content:
-          type: array
-          description: The list of items for the current page.
-          items:
-            $ref: '#/components/schemas/ProductBundleDTO'
         totalElements:
           type: integer
           description: The total number of elements across all pages.

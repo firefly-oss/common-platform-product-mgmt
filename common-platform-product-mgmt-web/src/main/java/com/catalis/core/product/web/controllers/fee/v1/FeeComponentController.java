@@ -31,16 +31,19 @@ public class FeeComponentController {
             description = "Retrieve a paginated list of fee components associated with a specific fee structure."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved fee components"),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved fee components",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))),
             @ApiResponse(responseCode = "404", description = "No fee components found for the specified structure",
                     content = @Content)
     })
-    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<FeeComponentDTO>>> getByFeeStructureId(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
             @PathVariable Long feeStructureId,
 
-            @RequestBody PaginationRequest paginationRequest
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
     ) {
         return service.getByFeeStructureId(feeStructureId, paginationRequest)
                 .map(ResponseEntity::ok)

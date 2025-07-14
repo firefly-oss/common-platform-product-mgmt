@@ -30,16 +30,19 @@ public class ProductRelationshipController {
             description = "Retrieve a paginated list of all product relationships associated with the specified product."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the product relationships"),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the product relationships",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))),
             @ApiResponse(responseCode = "404", description = "No relationships found for the specified product",
                     content = @Content)
     })
-    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductRelationshipDTO>>> getAllRelationships(
             @Parameter(description = "Unique identifier of the product", required = true)
             @PathVariable Long productId,
 
-            @RequestBody PaginationRequest paginationRequest
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
     ) {
         return service.getAllRelationships(productId, paginationRequest)
                 .map(ResponseEntity::ok)

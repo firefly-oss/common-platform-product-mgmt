@@ -30,16 +30,19 @@ public class ProductLifecycleController {
             description = "Retrieve a paginated list of all lifecycle entries associated with a given product."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved lifecycles"),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved lifecycles",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))),
             @ApiResponse(responseCode = "404", description = "No lifecycle entries found for the specified product",
                     content = @Content)
     })
-    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductLifecycleDTO>>> getProductLifecycles(
             @Parameter(description = "Unique identifier of the product", required = true)
             @PathVariable Long productId,
 
-            @RequestBody PaginationRequest paginationRequest
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
     ) {
         return service.getProductLifecycles(productId, paginationRequest)
                 .map(ResponseEntity::ok)

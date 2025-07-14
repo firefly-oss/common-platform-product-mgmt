@@ -31,16 +31,19 @@ public class ProductLimitController {
             description = "Retrieve a paginated list of all limits associated with the specified product."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the product limits"),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the product limits",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))),
             @ApiResponse(responseCode = "404", description = "No limits found for the specified product",
                     content = @Content)
     })
-    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductLimitDTO>>> getAllProductLimits(
             @Parameter(description = "Unique identifier of the product", required = true)
             @PathVariable Long productId,
 
-            @RequestBody PaginationRequest paginationRequest
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
     ) {
         return service.getAllProductLimits(productId, paginationRequest)
                 .map(ResponseEntity::ok)

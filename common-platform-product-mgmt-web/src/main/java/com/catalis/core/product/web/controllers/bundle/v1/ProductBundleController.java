@@ -57,13 +57,16 @@ public class ProductBundleController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Successfully retrieved the list of product bundles"
+                    description = "Successfully retrieved the list of product bundles",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))
             ),
             @ApiResponse(responseCode = "400", description = "Invalid pagination parameters", content = @Content)
     })
-    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductBundleDTO>>> getAll(
-            @RequestBody PaginationRequest paginationRequest
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
     ) {
         return service.getAll(paginationRequest)
                 .map(ResponseEntity::ok)

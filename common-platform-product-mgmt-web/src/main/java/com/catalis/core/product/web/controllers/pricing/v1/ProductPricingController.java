@@ -30,16 +30,19 @@ public class ProductPricingController{
             description = "Retrieve a paginated list of all pricing records associated with the specified product."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successfully retrieved the product pricings"),
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved the product pricings",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PaginationResponse.class))),
             @ApiResponse(responseCode = "404", description = "No pricing records found for the specified product",
                     content = @Content)
     })
-    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductPricingDTO>>> getAllPricings(
             @Parameter(description = "Unique identifier of the product", required = true)
             @PathVariable Long productId,
 
-            @RequestBody PaginationRequest paginationRequest
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
     ) {
         return service.getAllPricings(productId, paginationRequest)
                 .map(ResponseEntity::ok)

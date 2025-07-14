@@ -32,9 +32,10 @@ public class ProductController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of products"),
             @ApiResponse(responseCode = "404", description = "No products found", content = @Content)
     })
-    @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductDTO>>> getAllProducts(
-            @RequestBody PaginationRequest paginationRequest
+            @ParameterObject
+            @ModelAttribute PaginationRequest paginationRequest
     ) {
         return service.getAllProducts(paginationRequest)
                 .map(ResponseEntity::ok)
