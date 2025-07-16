@@ -1,4 +1,4 @@
-package com.catalis.core.product.core.mappers.documentantion.v1;
+package com.catalis.core.product.core.mappers.documentation.v1;
 
 import com.catalis.core.product.interfaces.dtos.documentation.v1.ProductDocumentationDTO;
 import com.catalis.core.product.models.entities.documentation.v1.ProductDocumentation;

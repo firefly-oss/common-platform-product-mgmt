@@ -1,4 +1,4 @@
-package com.catalis.core.product.core.services.documentantion.v1;
+package com.catalis.core.product.core.services.documentation.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;

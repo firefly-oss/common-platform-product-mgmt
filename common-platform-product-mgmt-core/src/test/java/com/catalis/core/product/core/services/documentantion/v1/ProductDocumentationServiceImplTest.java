@@ -1,8 +1,8 @@
 package com.catalis.core.product.core.services.documentantion.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
-import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.mappers.documentantion.v1.ProductDocumentationMapper;
+import com.catalis.core.product.core.mappers.documentation.v1.ProductDocumentationMapper;
+import com.catalis.core.product.core.services.documentation.v1.ProductDocumentationServiceImpl;
 import com.catalis.core.product.interfaces.dtos.documentation.v1.ProductDocumentationDTO;
 import com.catalis.core.product.interfaces.enums.documentation.v1.DocTypeEnum;
 import com.catalis.core.product.models.entities.documentation.v1.ProductDocumentation;
@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 

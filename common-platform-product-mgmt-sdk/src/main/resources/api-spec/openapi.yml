@@ -7,35 +7,27 @@ info:
     email: dev@catalis.com
   version: 1.0.0
 servers:
-  - url: 'http://core.catalis.vc/products'
+  - url: http://core.catalis.vc/products
     description: Development Environment
   - url: /
     description: Local Development Environment
 tags:
   - name: Product Lifecycle
-    description: >-
-      APIs for managing lifecycle stages or events associated with a specific
-      product
+    description: APIs for managing lifecycle stages or events associated with a specific product
   - name: Product Limit
-    description: >-
-      APIs for managing limits (restrictions, thresholds, etc.) associated with
-      a specific product
+    description: APIs for managing limits (restrictions, thresholds, etc.) associated with a specific product
   - name: Product Feature
     description: APIs for managing features associated with a specific product
+  - name: Product Documentation Requirements
+    description: APIs for managing documentation requirements for products during the contracting/opening phase
   - name: Product Documentation
-    description: >-
-      APIs for managing documentation (manuals, guides, etc.) associated with a
-      specific product
+    description: APIs for managing documentation (manuals, guides, etc.) associated with a specific product
   - name: Product Relationship
     description: APIs for managing relationships between products
   - name: Product Pricing Localization
-    description: >-
-      APIs for managing localized pricing data under a specific product pricing
-      record
+    description: APIs for managing localized pricing data under a specific product pricing record
   - name: Fee Application Rule
-    description: >-
-      APIs for managing fee application rules in a specific fee structure
-      component
+    description: APIs for managing fee application rules in a specific fee structure component
   - name: Product
     description: APIs for managing core product entities in the product management platform
   - name: Product Fee Component
@@ -48,23 +40,21 @@ tags:
     description: APIs for managing product bundles in the product management platform
   - name: Product Category
     description: APIs for managing product categories in the product management platform
+  - name: Product Wizard
+    description: APIs for creating products through a step-by-step wizard process
   - name: Product Localization
-    description: >-
-      APIs for managing localized data (translations, region-specific info) for
-      a product
+    description: APIs for managing localized data (translations, region-specific info) for a product
   - name: Fee Structure
     description: APIs for managing fee structures in the product platform
   - name: Product Pricing
     description: APIs for managing pricing records associated with a specific product
 paths:
-  '/api/v1/products/{productId}/versions/{versionId}':
+  /api/v1/products/{productId}/versions/{versionId}:
     get:
       tags:
         - Product Version
       summary: Get Product Version by ID
-      description: >-
-        Retrieve a specific product version using its unique identifier,
-        ensuring it belongs to the specified product.
+      description: Retrieve a specific product version using its unique identifier, ensuring it belongs to the specified product.
       operationId: getProductVersion
       parameters:
         - name: productId
@@ -113,9 +103,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -160,14 +148,12 @@ paths:
           description: Product version deleted successfully
         '404':
           description: Product version not found
-  '/api/v1/products/{productId}/relationships/{relationshipId}':
+  /api/v1/products/{productId}/relationships/{relationshipId}:
     get:
       tags:
         - Product Relationship
       summary: Get Product Relationship by ID
-      description: >-
-        Retrieve a specific relationship record by its unique identifier,
-        ensuring it matches the product.
+      description: Retrieve a specific relationship record by its unique identifier, ensuring it matches the product.
       operationId: getRelationship
       parameters:
         - name: productId
@@ -197,9 +183,7 @@ paths:
       tags:
         - Product Relationship
       summary: Update Product Relationship
-      description: >-
-        Update an existing product relationship record associated with the
-        specified product.
+      description: Update an existing product relationship record associated with the specified product.
       operationId: updateRelationship
       parameters:
         - name: productId
@@ -218,9 +202,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -265,7 +247,7 @@ paths:
           description: Product relationship deleted successfully
         '404':
           description: Product relationship not found
-  '/api/v1/products/{productId}/pricings/{pricingId}/localizations/{localizationId}':
+  /api/v1/products/{productId}/pricings/{pricingId}/localizations/{localizationId}:
     get:
       tags:
         - Product Pricing Localization
@@ -275,9 +257,7 @@ paths:
       parameters:
         - name: productId
           in: path
-          description: >-
-            Unique identifier of the product (unused in the service, but kept
-            for hierarchy)
+          description: Unique identifier of the product (unused in the service, but kept for hierarchy)
           required: true
           schema:
             type: integer
@@ -314,9 +294,7 @@ paths:
       parameters:
         - name: productId
           in: path
-          description: >-
-            Unique identifier of the product (unused in the service, but kept
-            for hierarchy)
+          description: Unique identifier of the product (unused in the service, but kept for hierarchy)
           required: true
           schema:
             type: integer
@@ -337,9 +315,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -367,9 +343,7 @@ paths:
       parameters:
         - name: productId
           in: path
-          description: >-
-            Unique identifier of the product (unused in the service, but kept
-            for hierarchy)
+          description: Unique identifier of the product (unused in the service, but kept for hierarchy)
           required: true
           schema:
             type: integer
@@ -393,14 +367,12 @@ paths:
           description: Localization record deleted successfully
         '404':
           description: Localization record not found
-  '/api/v1/products/{productId}/pricings/{pricingId}':
+  /api/v1/products/{productId}/pricings/{pricingId}:
     get:
       tags:
         - Product Pricing
       summary: Get Product Pricing by ID
-      description: >-
-        Retrieve a specific product pricing record using its unique identifier,
-        ensuring it matches the specified product.
+      description: Retrieve a specific product pricing record using its unique identifier, ensuring it matches the specified product.
       operationId: getPricing
       parameters:
         - name: productId
@@ -449,9 +421,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -474,9 +444,7 @@ paths:
       tags:
         - Product Pricing
       summary: Delete Product Pricing
-      description: >-
-        Remove an existing pricing record from a product by its unique
-        identifier.
+      description: Remove an existing pricing record from a product by its unique identifier.
       operationId: deletePricing
       parameters:
         - name: productId
@@ -498,7 +466,7 @@ paths:
           description: Product pricing deleted successfully
         '404':
           description: Product pricing not found
-  '/api/v1/products/{productId}/localizations/{localizationId}':
+  /api/v1/products/{productId}/localizations/{localizationId}:
     get:
       tags:
         - Product Localization
@@ -552,9 +520,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -599,7 +565,7 @@ paths:
           description: Product localization deleted successfully
         '404':
           description: Product localization not found
-  '/api/v1/products/{productId}/limits/{limitId}':
+  /api/v1/products/{productId}/limits/{limitId}:
     get:
       tags:
         - Product Limit
@@ -653,9 +619,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -700,14 +664,12 @@ paths:
           description: Product limit deleted successfully
         '404':
           description: Product limit not found
-  '/api/v1/products/{productId}/lifecycle/{lifecycleId}':
+  /api/v1/products/{productId}/lifecycle/{lifecycleId}:
     get:
       tags:
         - Product Lifecycle
       summary: Get Product Lifecycle by ID
-      description: >-
-        Retrieve a specific lifecycle entry using its unique identifier,
-        ensuring it belongs to the specified product.
+      description: Retrieve a specific lifecycle entry using its unique identifier, ensuring it belongs to the specified product.
       operationId: getProductLifecycle
       parameters:
         - name: productId
@@ -737,9 +699,7 @@ paths:
       tags:
         - Product Lifecycle
       summary: Update Product Lifecycle
-      description: >-
-        Update an existing lifecycle entry associated with the specified
-        product.
+      description: Update an existing lifecycle entry associated with the specified product.
       operationId: updateProductLifecycle
       parameters:
         - name: productId
@@ -758,9 +718,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -783,9 +741,7 @@ paths:
       tags:
         - Product Lifecycle
       summary: Delete Product Lifecycle
-      description: >-
-        Remove an existing lifecycle entry from a product by its unique
-        identifier.
+      description: Remove an existing lifecycle entry from a product by its unique identifier.
       operationId: deleteProductLifecycle
       parameters:
         - name: productId
@@ -807,14 +763,12 @@ paths:
           description: Lifecycle entry deleted successfully
         '404':
           description: Lifecycle entry not found
-  '/api/v1/products/{productId}/fee-structures/{productFeeStructId}':
+  /api/v1/products/{productId}/fee-structures/{productFeeStructId}:
     get:
       tags:
         - Product Fee Structure
       summary: Get Fee Structure by ID
-      description: >-
-        Retrieve a specific fee structure by its unique identifier, confirming
-        it belongs to the specified product.
+      description: Retrieve a specific fee structure by its unique identifier, confirming it belongs to the specified product.
       operationId: getFeeStructure
       parameters:
         - name: productId
@@ -863,9 +817,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -910,14 +862,12 @@ paths:
           description: Fee structure deleted successfully
         '404':
           description: Fee structure not found
-  '/api/v1/products/{productId}/features/{featureId}':
+  /api/v1/products/{productId}/features/{featureId}:
     get:
       tags:
         - Product Feature
       summary: Get Product Feature by ID
-      description: >-
-        Retrieve a specific product feature using its unique identifier,
-        ensuring it matches the product.
+      description: Retrieve a specific product feature using its unique identifier, ensuring it matches the product.
       operationId: getFeature
       parameters:
         - name: productId
@@ -966,9 +916,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1013,14 +961,12 @@ paths:
           description: Product feature deleted successfully
         '404':
           description: Product feature not found
-  '/api/v1/products/{productId}/documentation/{docId}':
+  /api/v1/products/{productId}/documentation/{docId}:
     get:
       tags:
         - Product Documentation
       summary: Get Product Documentation by ID
-      description: >-
-        Retrieve a specific documentation item by its unique identifier,
-        ensuring it belongs to the specified product.
+      description: Retrieve a specific documentation item by its unique identifier, ensuring it belongs to the specified product.
       operationId: getDocumentation
       parameters:
         - name: productId
@@ -1069,9 +1015,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1116,7 +1060,106 @@ paths:
           description: Product documentation deleted successfully
         '404':
           description: Product documentation not found
-  '/api/v1/products/{productId}':
+  /api/v1/products/{productId}/documentation-requirements/{requirementId}:
+    get:
+      tags:
+        - Product Documentation Requirements
+      summary: Get Product Documentation Requirement by ID
+      description: Retrieve a specific documentation requirement by its unique identifier, ensuring it belongs to the specified product.
+      operationId: getDocumentationRequirement
+      parameters:
+        - name: productId
+          in: path
+          description: Unique identifier of the product
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: requirementId
+          in: path
+          description: Unique identifier of the documentation requirement
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved the product documentation requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDocumentationRequirementDTO'
+        '404':
+          description: Product documentation requirement not found
+    put:
+      tags:
+        - Product Documentation Requirements
+      summary: Update Product Documentation Requirement
+      description: Update an existing documentation requirement for a specific product.
+      operationId: updateDocumentationRequirement
+      parameters:
+        - name: productId
+          in: path
+          description: Unique identifier of the product
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: requirementId
+          in: path
+          description: Unique identifier of the documentation requirement to be updated
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDocumentationRequirementDTO'
+        required: true
+      responses:
+        '200':
+          description: Product documentation requirement updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDocumentationRequirementDTO'
+        '404':
+          description: Product documentation requirement not found
+    delete:
+      tags:
+        - Product Documentation Requirements
+      summary: Delete Product Documentation Requirement
+      description: Remove an existing product documentation requirement by its unique identifier.
+      operationId: deleteDocumentationRequirement
+      parameters:
+        - name: productId
+          in: path
+          description: Unique identifier of the product
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: requirementId
+          in: path
+          description: Unique identifier of the documentation requirement to be deleted
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Product documentation requirement deleted successfully
+        '404':
+          description: Product documentation requirement not found
+  /api/v1/products/{productId}:
     get:
       tags:
         - Product
@@ -1156,9 +1199,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1196,7 +1237,7 @@ paths:
           description: Product deleted successfully
         '404':
           description: Product not found
-  '/api/v1/fee-structures/{feeStructureId}/components/{componentId}/rules/{ruleId}':
+  /api/v1/fee-structures/{feeStructureId}/components/{componentId}/rules/{ruleId}:
     get:
       tags:
         - Fee Application Rule
@@ -1264,9 +1305,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1318,7 +1357,7 @@ paths:
           description: Fee application rule deleted successfully
         '404':
           description: Fee application rule not found
-  '/api/v1/fee-structures/{feeStructureId}/components/{componentId}':
+  /api/v1/fee-structures/{feeStructureId}/components/{componentId}:
     get:
       tags:
         - Product Fee Component
@@ -1372,9 +1411,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1419,7 +1456,7 @@ paths:
           description: Fee component deleted successfully
         '404':
           description: Fee component not found
-  '/api/v1/fee-structures/{feeStructureId}':
+  /api/v1/fee-structures/{feeStructureId}:
     get:
       tags:
         - Fee Structure
@@ -1459,9 +1496,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1499,7 +1534,7 @@ paths:
           description: Fee structure deleted successfully
         '404':
           description: Fee structure not found
-  '/api/v1/categories/{categoryId}/subtypes/{subtypeId}':
+  /api/v1/categories/{categoryId}/subtypes/{subtypeId}:
     get:
       tags:
         - Product Category
@@ -1553,9 +1588,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1600,7 +1633,7 @@ paths:
           description: Product subtype deleted successfully
         '404':
           description: Product subtype not found
-  '/api/v1/categories/{categoryId}':
+  /api/v1/categories/{categoryId}:
     get:
       tags:
         - Product Category
@@ -1628,9 +1661,7 @@ paths:
       tags:
         - Product Category
       summary: Update Product Category
-      description: >-
-        Update the information of an existing product category by its unique
-        identifier.
+      description: Update the information of an existing product category by its unique identifier.
       operationId: updateCategory
       parameters:
         - name: categoryId
@@ -1642,9 +1673,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1682,14 +1711,12 @@ paths:
           description: Product category deleted successfully
         '404':
           description: Product category not found
-  '/api/v1/bundles/{bundleId}/items/{itemId}':
+  /api/v1/bundles/{bundleId}/items/{itemId}:
     get:
       tags:
         - Product Bundle
       summary: Get Product Bundle Item by ID
-      description: >-
-        Retrieve a specific item within a product bundle using its unique item
-        identifier.
+      description: Retrieve a specific item within a product bundle using its unique item identifier.
       operationId: getProductBundleItemById
       parameters:
         - name: bundleId
@@ -1738,9 +1765,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1785,7 +1810,7 @@ paths:
           description: Product bundle item deleted successfully
         '404':
           description: Item not found in the specified product bundle
-  '/api/v1/bundles/{bundleId}':
+  /api/v1/bundles/{bundleId}:
     get:
       tags:
         - Product Bundle
@@ -1815,9 +1840,7 @@ paths:
       tags:
         - Product Bundle
       summary: Update Product Bundle
-      description: >-
-        Update the information of an existing product bundle by its unique
-        identifier.
+      description: Update the information of an existing product bundle by its unique identifier.
       operationId: update
       parameters:
         - name: bundleId
@@ -1829,9 +1852,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1871,14 +1892,12 @@ paths:
           description: Product bundle deleted successfully
         '404':
           description: Product bundle not found
-  '/api/v1/products/{productId}/versions':
+  /api/v1/products/{productId}/versions:
     get:
       tags:
         - Product Version
       summary: List Product Versions
-      description: >-
-        Retrieve a paginated list of all versions associated with the specified
-        product.
+      description: Retrieve a paginated list of all versions associated with the specified product.
       operationId: getAllProductVersions
       parameters:
         - name: productId
@@ -1919,11 +1938,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -1952,9 +1971,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -1973,14 +1990,12 @@ paths:
                 $ref: '#/components/schemas/ProductVersionDTO'
         '400':
           description: Invalid product version data provided
-  '/api/v1/products/{productId}/relationships':
+  /api/v1/products/{productId}/relationships:
     get:
       tags:
         - Product Relationship
       summary: List Product Relationships
-      description: >-
-        Retrieve a paginated list of all product relationships associated with
-        the specified product.
+      description: Retrieve a paginated list of all product relationships associated with the specified product.
       operationId: getAllRelationships
       parameters:
         - name: productId
@@ -2021,11 +2036,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2054,9 +2069,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2075,21 +2088,17 @@ paths:
                 $ref: '#/components/schemas/ProductRelationshipDTO'
         '400':
           description: Invalid product relationship data provided
-  '/api/v1/products/{productId}/pricings/{pricingId}/localizations':
+  /api/v1/products/{productId}/pricings/{pricingId}/localizations:
     get:
       tags:
         - Product Pricing Localization
       summary: List Localizations for Product Pricing
-      description: >-
-        Retrieve a paginated list of all localization records associated with a
-        specific product pricing.
+      description: Retrieve a paginated list of all localization records associated with a specific product pricing.
       operationId: getAllLocalizations
       parameters:
         - name: productId
           in: path
-          description: >-
-            Unique identifier of the product (unused in the service, but kept
-            for hierarchy)
+          description: Unique identifier of the product (unused in the service, but kept for hierarchy)
           required: true
           schema:
             type: integer
@@ -2132,11 +2141,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2153,16 +2162,12 @@ paths:
       tags:
         - Product Pricing Localization
       summary: Create Localization for Product Pricing
-      description: >-
-        Create a new localization record and associate it with the specified
-        product pricing.
+      description: Create a new localization record and associate it with the specified product pricing.
       operationId: createLocalization
       parameters:
         - name: productId
           in: path
-          description: >-
-            Unique identifier of the product (unused in the service, but kept
-            for hierarchy)
+          description: Unique identifier of the product (unused in the service, but kept for hierarchy)
           required: true
           schema:
             type: integer
@@ -2176,9 +2181,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2197,14 +2200,12 @@ paths:
                 $ref: '#/components/schemas/ProductPricingLocalizationDTO'
         '400':
           description: Invalid localization data provided
-  '/api/v1/products/{productId}/pricings':
+  /api/v1/products/{productId}/pricings:
     get:
       tags:
         - Product Pricing
       summary: List Product Pricings
-      description: >-
-        Retrieve a paginated list of all pricing records associated with the
-        specified product.
+      description: Retrieve a paginated list of all pricing records associated with the specified product.
       operationId: getAllPricings
       parameters:
         - name: productId
@@ -2245,11 +2246,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2278,9 +2279,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2299,14 +2298,12 @@ paths:
                 $ref: '#/components/schemas/ProductPricingDTO'
         '400':
           description: Invalid product pricing data provided
-  '/api/v1/products/{productId}/localizations':
+  /api/v1/products/{productId}/localizations:
     get:
       tags:
         - Product Localization
       summary: List Product Localizations
-      description: >-
-        Retrieve a paginated list of all localizations associated with the
-        specified product.
+      description: Retrieve a paginated list of all localizations associated with the specified product.
       operationId: getAllLocalizations_1
       parameters:
         - name: productId
@@ -2347,11 +2344,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2380,9 +2377,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2401,14 +2396,12 @@ paths:
                 $ref: '#/components/schemas/ProductLocalizationDTO'
         '400':
           description: Invalid product localization data provided
-  '/api/v1/products/{productId}/limits':
+  /api/v1/products/{productId}/limits:
     get:
       tags:
         - Product Limit
       summary: List Product Limits
-      description: >-
-        Retrieve a paginated list of all limits associated with the specified
-        product.
+      description: Retrieve a paginated list of all limits associated with the specified product.
       operationId: getAllProductLimits
       parameters:
         - name: productId
@@ -2449,11 +2442,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2482,9 +2475,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2503,14 +2494,12 @@ paths:
                 $ref: '#/components/schemas/ProductLimitDTO'
         '400':
           description: Invalid product limit data provided
-  '/api/v1/products/{productId}/lifecycle':
+  /api/v1/products/{productId}/lifecycle:
     get:
       tags:
         - Product Lifecycle
       summary: List Product Lifecycles
-      description: >-
-        Retrieve a paginated list of all lifecycle entries associated with a
-        given product.
+      description: Retrieve a paginated list of all lifecycle entries associated with a given product.
       operationId: getProductLifecycles
       parameters:
         - name: productId
@@ -2551,11 +2540,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2584,9 +2573,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2605,14 +2592,12 @@ paths:
                 $ref: '#/components/schemas/ProductLifecycleDTO'
         '400':
           description: Invalid lifecycle data provided
-  '/api/v1/products/{productId}/fee-structures':
+  /api/v1/products/{productId}/fee-structures:
     get:
       tags:
         - Product Fee Structure
       summary: List Fee Structures by Product
-      description: >-
-        Retrieve a paginated list of fee structures associated with a given
-        product.
+      description: Retrieve a paginated list of fee structures associated with a given product.
       operationId: getAllFeeStructures
       parameters:
         - name: productId
@@ -2653,11 +2638,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2686,9 +2671,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2707,14 +2690,12 @@ paths:
                 $ref: '#/components/schemas/ProductFeeStructureDTO'
         '400':
           description: Invalid fee structure data provided
-  '/api/v1/products/{productId}/features':
+  /api/v1/products/{productId}/features:
     get:
       tags:
         - Product Feature
       summary: List Product Features
-      description: >-
-        Retrieve a paginated list of all features associated with the specified
-        product.
+      description: Retrieve a paginated list of all features associated with the specified product.
       operationId: getAllFeatures
       parameters:
         - name: productId
@@ -2755,11 +2736,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2788,9 +2769,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2809,14 +2788,110 @@ paths:
                 $ref: '#/components/schemas/ProductFeatureDTO'
         '400':
           description: Invalid feature data provided
-  '/api/v1/products/{productId}/documentation':
+  /api/v1/products/{productId}/documentation-requirements:
+    get:
+      tags:
+        - Product Documentation Requirements
+      summary: List Product Documentation Requirements
+      description: Retrieve a paginated list of all documentation requirements for a given product.
+      operationId: getAllDocumentationRequirements
+      parameters:
+        - name: productId
+          in: path
+          description: Unique identifier of the product
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: pageNumber
+          in: query
+          description: The zero-based page number to retrieve.
+          required: false
+          schema:
+            type: string
+            description: The zero-based page number to retrieve.
+            example: 0
+            default: '0'
+          example: 0
+        - name: pageSize
+          in: query
+          description: The number of items per page.
+          required: false
+          schema:
+            type: string
+            description: The number of items per page.
+            example: 10
+            default: '10'
+          example: 10
+        - name: sortBy
+          in: query
+          description: The field to sort the results by.
+          required: false
+          schema:
+            type: string
+            description: The field to sort the results by.
+            example: name
+          example: name
+        - name: sortDirection
+          in: query
+          description: The direction of sorting, either ASC or DESC.
+          required: false
+          schema:
+            type: string
+            description: The direction of sorting, either ASC or DESC.
+            example: DESC
+            default: DESC
+          example: DESC
+      responses:
+        '200':
+          description: Successfully retrieved product documentation requirements list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginationResponse'
+        '404':
+          description: No documentation requirements found for the specified product
+    post:
+      tags:
+        - Product Documentation Requirements
+      summary: Create Product Documentation Requirement
+      description: Create a new documentation requirement for a specific product.
+      operationId: createDocumentationRequirement
+      parameters:
+        - name: productId
+          in: path
+          description: Unique identifier of the product to associate this documentation requirement with
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDocumentationRequirementDTO'
+        required: true
+      responses:
+        '200':
+          description: Product documentation requirement created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDocumentationRequirementDTO'
+        '400':
+          description: Invalid product documentation requirement data provided
+  /api/v1/products/{productId}/documentation:
     get:
       tags:
         - Product Documentation
       summary: List Product Documentation
-      description: >-
-        Retrieve a paginated list of all documentation items linked to a given
-        product.
+      description: Retrieve a paginated list of all documentation items linked to a given product.
       operationId: getAllDocumentation
       parameters:
         - name: productId
@@ -2857,11 +2932,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2883,18 +2958,14 @@ paths:
       parameters:
         - name: productId
           in: path
-          description: >-
-            Unique identifier of the product to associate this documentation
-            with
+          description: Unique identifier of the product to associate this documentation with
           required: true
           schema:
             type: integer
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2952,11 +3023,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -2978,9 +3049,7 @@ paths:
       parameters:
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -2999,14 +3068,147 @@ paths:
                 $ref: '#/components/schemas/ProductDTO'
         '400':
           description: Invalid product data provided
-  '/api/v1/fee-structures/{feeStructureId}/components/{componentId}/rules':
+  /api/v1/product-wizard/save:
+    post:
+      tags:
+        - Product Wizard
+      summary: Save Wizard State
+      description: Save the current state of the wizard to resume later.
+      operationId: saveWizardState
+      parameters:
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductWizardDTO'
+        required: true
+      responses:
+        '200':
+          description: Wizard state saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductWizardDTO'
+  /api/v1/product-wizard/process-step:
+    post:
+      tags:
+        - Product Wizard
+      summary: Process Wizard Step
+      description: Process the current step of the wizard and advance to the next step.
+      operationId: processStep
+      parameters:
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductWizardDTO'
+        required: true
+      responses:
+        '200':
+          description: Step processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductWizardDTO'
+        '400':
+          description: Invalid step data or wizard state
+  /api/v1/product-wizard/initialize:
+    post:
+      tags:
+        - Product Wizard
+      summary: Initialize Wizard
+      description: Start a new product creation wizard with default settings.
+      operationId: initializeWizard
+      parameters:
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Wizard initialized successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductWizardDTO'
+  /api/v1/product-wizard/initialize/{templateName}:
+    post:
+      tags:
+        - Product Wizard
+      summary: Initialize Wizard with Template
+      description: Start a new product creation wizard using a predefined template.
+      operationId: initializeWizardWithTemplate
+      parameters:
+        - name: templateName
+          in: path
+          description: Name of the template to use
+          required: true
+          schema:
+            type: string
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Wizard initialized with template successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductWizardDTO'
+        '400':
+          description: Template not found
+  /api/v1/product-wizard/complete:
+    post:
+      tags:
+        - Product Wizard
+      summary: Complete Wizard
+      description: Complete the wizard process and create the product with all its related entities.
+      operationId: completeWizard
+      parameters:
+        - name: X-Idempotency-Key
+          in: header
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductWizardDTO'
+        required: true
+      responses:
+        '200':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDTO'
+        '400':
+          description: Wizard not completed or invalid data
+  /api/v1/fee-structures/{feeStructureId}/components/{componentId}/rules:
     get:
       tags:
         - Fee Application Rule
       summary: List Fee Application Rules
-      description: >-
-        Retrieve a paginated list of fee application rules associated with a
-        specific fee component.
+      description: Retrieve a paginated list of fee application rules associated with a specific fee component.
       operationId: getRulesByComponentId
       parameters:
         - name: feeStructureId
@@ -3054,11 +3256,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -3075,9 +3277,7 @@ paths:
       tags:
         - Fee Application Rule
       summary: Create Fee Application Rule
-      description: >-
-        Create a new fee application rule for the specified fee structure
-        component.
+      description: Create a new fee application rule for the specified fee structure component.
       operationId: createRule
       parameters:
         - name: feeStructureId
@@ -3096,9 +3296,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -3115,14 +3313,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeeApplicationRuleDTO'
-  '/api/v1/fee-structures/{feeStructureId}/components':
+  /api/v1/fee-structures/{feeStructureId}/components:
     get:
       tags:
         - Product Fee Component
       summary: List Fee Components by Fee Structure
-      description: >-
-        Retrieve a paginated list of fee components associated with a specific
-        fee structure.
+      description: Retrieve a paginated list of fee components associated with a specific fee structure.
       operationId: getByFeeStructureId
       parameters:
         - name: feeStructureId
@@ -3163,11 +3359,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -3184,7 +3380,7 @@ paths:
       tags:
         - Product Fee Component
       summary: Create Fee Component
-      description: 'Create a new fee component, which can be attached to a fee structure.'
+      description: Create a new fee component, which can be attached to a fee structure.
       operationId: createFeeComponent
       parameters:
         - name: feeStructureId
@@ -3196,9 +3392,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -3225,9 +3419,7 @@ paths:
       parameters:
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -3244,14 +3436,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeeStructureDTO'
-  '/api/v1/categories/{categoryId}/subtypes':
+  /api/v1/categories/{categoryId}/subtypes:
     get:
       tags:
         - Product Category
       summary: List Category Subtypes
-      description: >-
-        Retrieve a paginated list of product subtypes belonging to a specific
-        category.
+      description: Retrieve a paginated list of product subtypes belonging to a specific category.
       operationId: getAllSubtypes
       parameters:
         - name: categoryId
@@ -3292,11 +3482,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -3325,9 +3515,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -3354,9 +3542,7 @@ paths:
       parameters:
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -3373,7 +3559,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProductCategoryDTO'
-  '/api/v1/bundles/{bundleId}/items':
+  /api/v1/bundles/{bundleId}/items:
     post:
       tags:
         - Product Bundle
@@ -3390,9 +3576,7 @@ paths:
             format: int64
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -3448,11 +3632,11 @@ paths:
           example: name
         - name: sortDirection
           in: query
-          description: 'The direction of sorting, either ASC or DESC.'
+          description: The direction of sorting, either ASC or DESC.
           required: false
           schema:
             type: string
-            description: 'The direction of sorting, either ASC or DESC.'
+            description: The direction of sorting, either ASC or DESC.
             example: DESC
             default: DESC
           example: DESC
@@ -3474,9 +3658,7 @@ paths:
       parameters:
         - name: X-Idempotency-Key
           in: header
-          description: >-
-            Unique key for idempotent requests. If provided, ensures that
-            identical requests with the same key will only be processed once.
+          description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
           required: false
           schema:
             type: string
@@ -3495,6 +3677,99 @@ paths:
                 $ref: '#/components/schemas/ProductBundleDTO'
         '400':
           description: Invalid input data provided
+  /api/v1/products/{productId}/documentation-requirements/mandatory:
+    get:
+      tags:
+        - Product Documentation Requirements
+      summary: Get Mandatory Product Documentation Requirements
+      description: Retrieve all mandatory documentation requirements for a specific product.
+      operationId: getMandatoryDocumentationRequirements
+      parameters:
+        - name: productId
+          in: path
+          description: Unique identifier of the product
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Successfully retrieved the mandatory product documentation requirements
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDocumentationRequirementDTO'
+        '404':
+          description: No mandatory documentation requirements found for the specified product
+  /api/v1/products/{productId}/documentation-requirements/by-type/{docType}:
+    get:
+      tags:
+        - Product Documentation Requirements
+      summary: Get Product Documentation Requirement by Type
+      description: Retrieve a specific documentation requirement by its document type, ensuring it belongs to the specified product.
+      operationId: getDocumentationRequirementByType
+      parameters:
+        - name: productId
+          in: path
+          description: Unique identifier of the product
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: docType
+          in: path
+          description: Type of document
+          required: true
+          schema:
+            type: string
+            enum:
+              - IDENTIFICATION
+              - TAX_IDENTIFICATION
+              - PROOF_OF_ADDRESS
+              - INCOME_VERIFICATION
+              - BANK_STATEMENTS
+              - POWER_OF_ATTORNEY
+              - BUSINESS_REGISTRATION
+              - ARTICLES_OF_INCORPORATION
+              - COMPANY_BYLAWS
+              - SIGNED_CONTRACT
+              - REGULATORY_COMPLIANCE
+              - CREDIT_REPORT
+              - INSURANCE_POLICY
+              - OTHER
+      responses:
+        '200':
+          description: Successfully retrieved the product documentation requirement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDocumentationRequirementDTO'
+        '404':
+          description: Product documentation requirement not found for the specified type
+  /api/v1/product-wizard/{wizardId}:
+    get:
+      tags:
+        - Product Wizard
+      summary: Get Wizard by ID
+      description: Retrieve a wizard session by its ID to continue a previously started wizard.
+      operationId: getWizardById
+      parameters:
+        - name: wizardId
+          in: path
+          description: ID of the wizard to retrieve
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Wizard retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductWizardDTO'
+        '404':
+          description: Wizard not found
 components:
   schemas:
     ProductVersionDTO:
@@ -3794,6 +4069,45 @@ components:
         dateAdded:
           type: string
           format: date-time
+    ProductDocumentationRequirementDTO:
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+          readOnly: true
+        dateUpdated:
+          type: string
+          format: date-time
+          readOnly: true
+        productDocRequirementId:
+          type: integer
+          format: int64
+          readOnly: true
+        productId:
+          type: integer
+          format: int64
+        docType:
+          type: string
+          enum:
+            - IDENTIFICATION
+            - TAX_IDENTIFICATION
+            - PROOF_OF_ADDRESS
+            - INCOME_VERIFICATION
+            - BANK_STATEMENTS
+            - POWER_OF_ATTORNEY
+            - BUSINESS_REGISTRATION
+            - ARTICLES_OF_INCORPORATION
+            - COMPANY_BYLAWS
+            - SIGNED_CONTRACT
+            - REGULATORY_COMPLIANCE
+            - CREDIT_REPORT
+            - INSURANCE_POLICY
+            - OTHER
+        isMandatory:
+          type: boolean
+        description:
+          type: string
     ProductDTO:
       type: object
       properties:
@@ -3829,6 +4143,7 @@ components:
             - PROPOSED
             - ACTIVE
             - RETIRED
+            - DRAFT
         launchDate:
           type: string
           format: date
@@ -4015,6 +4330,87 @@ components:
             - ACTIVE
             - RETIRED
             - PROMO
+    ProductWizardDTO:
+      type: object
+      properties:
+        dateCreated:
+          type: string
+          format: date-time
+          readOnly: true
+        dateUpdated:
+          type: string
+          format: date-time
+          readOnly: true
+        id:
+          type: integer
+          format: int64
+        product:
+          $ref: '#/components/schemas/ProductDTO'
+        features:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductFeatureDTO'
+        feeStructures:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductFeeStructureDTO'
+        pricing:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductPricingDTO'
+        lifecycle:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductLifecycleDTO'
+        localizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductLocalizationDTO'
+        documentationRequirements:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductDocumentationRequirementDTO'
+        wizardTemplate:
+          type: string
+        currentStep:
+          type: integer
+          format: int32
+        totalSteps:
+          type: integer
+          format: int32
+        progressPercentage:
+          type: number
+          format: double
+        completed:
+          type: boolean
+        validationErrors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        isCurrentStepValid:
+          type: boolean
+        previewProduct:
+          $ref: '#/components/schemas/ProductDTO'
+        previewMode:
+          type: boolean
+        templateMetadata:
+          type: object
+          additionalProperties:
+            type: object
+        bulkProducts:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductDTO'
+        bulkMode:
+          type: boolean
+        lastUpdated:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
     PaginationResponse:
       type: object
       properties:
@@ -4034,11 +4430,9 @@ components:
           format: int32
         currentPage:
           type: integer
-          description: 'The current page number, typically zero-based.'
+          description: The current page number, typically zero-based.
           format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
+      description: Represents a paginated response containing a list of items and pagination metadata.
     PaginationResponseProductDTO:
       type: object
       properties:
@@ -4057,8 +4451,6 @@ components:
           format: int32
         currentPage:
           type: integer
-          description: 'The current page number, typically zero-based.'
+          description: The current page number, typically zero-based.
           format: int32
-      description: >-
-        Represents a paginated response containing a list of items and
-        pagination metadata.
+      description: Represents a paginated response containing a list of items and pagination metadata.

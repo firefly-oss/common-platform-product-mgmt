@@ -2,7 +2,7 @@ package com.catalis.core.product.web.controllers.core.v1;
 
 import com.catalis.common.core.queries.PaginationRequest;
 import com.catalis.common.core.queries.PaginationResponse;
-import com.catalis.core.product.core.services.documentantion.v1.ProductDocumentationServiceImpl;
+import com.catalis.core.product.core.services.documentation.v1.ProductDocumentationServiceImpl;
 import com.catalis.core.product.interfaces.dtos.documentation.v1.ProductDocumentationDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
