@@ -14,12 +14,12 @@
     <remote-repository>
       <option name="id" value="github-snapshots" />
       <option name="name" value="GitHub Packages Snapshots" />
-      <option name="url" value="https://maven.pkg.github.com/catalis-vc/maven-packages" />
+      <option name="url" value="https://maven.pkg.github.com/firefly-vc/maven-packages" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="github-releases" />
       <option name="name" value="GitHub Packages Releases" />
-      <option name="url" value="https://maven.pkg.github.com/catalis-vc/maven-packages" />
+      <option name="url" value="https://maven.pkg.github.com/firefly-vc/maven-packages" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
