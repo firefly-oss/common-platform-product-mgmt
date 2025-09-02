@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import java.util.UUID;
@@ -41,8 +40,8 @@ class ProductLocalizationServiceImplTest {
 
     private ProductLocalization localization;
     private ProductLocalizationDTO localizationDTO;
-    private final UUID PRODUCT_ID = 1L;
-    private final UUID LOCALIZATION_ID = 2L;
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID LOCALIZATION_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
 
     @BeforeEach
     void setUp() {
@@ -188,7 +187,7 @@ class ProductLocalizationServiceImplTest {
         // Arrange
         ProductLocalization localizationFromDifferentProduct = new ProductLocalization();
         localizationFromDifferentProduct.setProductLocalizationId(LOCALIZATION_ID);
-        localizationFromDifferentProduct.setProductId(999L); // Different product ID
+        localizationFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(LOCALIZATION_ID)).thenReturn(Mono.just(localizationFromDifferentProduct));
 
@@ -277,7 +276,7 @@ class ProductLocalizationServiceImplTest {
 
         ProductLocalization localizationFromDifferentProduct = new ProductLocalization();
         localizationFromDifferentProduct.setProductLocalizationId(LOCALIZATION_ID);
-        localizationFromDifferentProduct.setProductId(999L); // Different product ID
+        localizationFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(LOCALIZATION_ID)).thenReturn(Mono.just(localizationFromDifferentProduct));
 
@@ -331,7 +330,7 @@ class ProductLocalizationServiceImplTest {
         // Arrange
         ProductLocalization localizationFromDifferentProduct = new ProductLocalization();
         localizationFromDifferentProduct.setProductLocalizationId(LOCALIZATION_ID);
-        localizationFromDifferentProduct.setProductId(999L); // Different product ID
+        localizationFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(LOCALIZATION_ID)).thenReturn(Mono.just(localizationFromDifferentProduct));
 

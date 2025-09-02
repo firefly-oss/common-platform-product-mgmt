@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import java.util.UUID;
@@ -42,8 +41,8 @@ class ProductLifecycleServiceImplTest {
 
     private ProductLifecycle lifecycle;
     private ProductLifecycleDTO lifecycleDTO;
-    private final UUID PRODUCT_ID = 1L;
-    private final UUID LIFECYCLE_ID = 2L;
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID LIFECYCLE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
 
     @BeforeEach
     void setUp() {
@@ -193,7 +192,7 @@ class ProductLifecycleServiceImplTest {
         // Arrange
         ProductLifecycle lifecycleFromDifferentProduct = new ProductLifecycle();
         lifecycleFromDifferentProduct.setProductLifecycleId(LIFECYCLE_ID);
-        lifecycleFromDifferentProduct.setProductId(999L); // Different product ID
+        lifecycleFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(LIFECYCLE_ID)).thenReturn(Mono.just(lifecycleFromDifferentProduct));
 
@@ -280,7 +279,7 @@ class ProductLifecycleServiceImplTest {
 
         ProductLifecycle lifecycleFromDifferentProduct = new ProductLifecycle();
         lifecycleFromDifferentProduct.setProductLifecycleId(LIFECYCLE_ID);
-        lifecycleFromDifferentProduct.setProductId(999L); // Different product ID
+        lifecycleFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(LIFECYCLE_ID)).thenReturn(Mono.just(lifecycleFromDifferentProduct));
 
@@ -361,7 +360,7 @@ class ProductLifecycleServiceImplTest {
         // Arrange
         ProductLifecycle lifecycleFromDifferentProduct = new ProductLifecycle();
         lifecycleFromDifferentProduct.setProductLifecycleId(LIFECYCLE_ID);
-        lifecycleFromDifferentProduct.setProductId(999L); // Different product ID
+        lifecycleFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(LIFECYCLE_ID)).thenReturn(Mono.just(lifecycleFromDifferentProduct));
 

@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import java.util.UUID;
@@ -45,8 +44,8 @@ class ProductLimitServiceImplTest {
 
     private ProductLimit limit;
     private ProductLimitDTO limitDTO;
-    private final UUID PRODUCT_ID = 1L;
-    private final UUID LIMIT_ID = 2L;
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID LIMIT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
 
     @BeforeEach
     void setUp() {
@@ -208,7 +207,7 @@ class ProductLimitServiceImplTest {
         // Arrange
         ProductLimit limitFromDifferentProduct = new ProductLimit();
         limitFromDifferentProduct.setProductLimitId(LIMIT_ID);
-        limitFromDifferentProduct.setProductId(999L); // Different product ID
+        limitFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(LIMIT_ID)).thenReturn(Mono.just(limitFromDifferentProduct));
 
@@ -305,7 +304,7 @@ class ProductLimitServiceImplTest {
 
         ProductLimit limitFromDifferentProduct = new ProductLimit();
         limitFromDifferentProduct.setProductLimitId(LIMIT_ID);
-        limitFromDifferentProduct.setProductId(999L); // Different product ID
+        limitFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(LIMIT_ID)).thenReturn(Mono.just(limitFromDifferentProduct));
 
@@ -360,7 +359,7 @@ class ProductLimitServiceImplTest {
         // Arrange
         ProductLimit limitFromDifferentProduct = new ProductLimit();
         limitFromDifferentProduct.setProductLimitId(LIMIT_ID);
-        limitFromDifferentProduct.setProductId(999L); // Different product ID
+        limitFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(LIMIT_ID)).thenReturn(Mono.just(limitFromDifferentProduct));
 
