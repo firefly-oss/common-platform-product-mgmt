@@ -45,7 +45,7 @@ class ProductBundleServiceImplTest {
 
     private ProductBundle productBundle;
     private ProductBundleDTO productBundleDTO;
-    private final UUID BUNDLE_ID = 1L;
+    private final UUID BUNDLE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
 
     @BeforeEach
     void setUp() {

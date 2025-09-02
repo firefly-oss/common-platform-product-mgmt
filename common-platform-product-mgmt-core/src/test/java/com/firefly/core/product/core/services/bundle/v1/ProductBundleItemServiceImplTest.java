@@ -17,7 +17,6 @@ import reactor.test.StepVerifier;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import java.util.UUID;
 
@@ -39,9 +38,9 @@ class ProductBundleItemServiceImplTest {
     private ProductBundleItem productBundleItem;
     private ProductBundleItemDTO productBundleItemDTO;
     private ProductBundleDTO productBundleDTO;
-    private final UUID BUNDLE_ID = 1L;
-    private final UUID ITEM_ID = 2L;
-    private final UUID PRODUCT_ID = 3L;
+    private final UUID BUNDLE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID ITEM_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
 
     @BeforeEach
     void setUp() {
@@ -104,7 +103,7 @@ class ProductBundleItemServiceImplTest {
                 .verify();
 
         verify(bundleService).getById(BUNDLE_ID);
-        verify(repository, never()).findById(anyLong());
+        verify(repository, never()).findById(any(UUID.class));
         verify(mapper, never()).toDto(any());
     }
 
@@ -131,7 +130,7 @@ class ProductBundleItemServiceImplTest {
         // Arrange
         ProductBundleItem itemFromDifferentBundle = new ProductBundleItem();
         itemFromDifferentBundle.setProductBundleItemId(ITEM_ID);
-        itemFromDifferentBundle.setProductBundleId(999L); // Different bundle ID
+        itemFromDifferentBundle.setProductBundleId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different bundle ID
 
         when(bundleService.getById(BUNDLE_ID)).thenReturn(Mono.just(productBundleDTO));
         when(repository.findById(ITEM_ID)).thenReturn(Mono.just(itemFromDifferentBundle));
@@ -197,7 +196,7 @@ class ProductBundleItemServiceImplTest {
         ProductBundleItem existingItem = spy(new ProductBundleItem());
         existingItem.setProductBundleItemId(ITEM_ID);
         existingItem.setProductBundleId(BUNDLE_ID);
-        existingItem.setProductId(999L); // Different product ID
+        existingItem.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
         existingItem.setSpecialConditions("Old Special Conditions");
 
         when(bundleService.getById(BUNDLE_ID)).thenReturn(Mono.just(productBundleDTO));
@@ -233,7 +232,7 @@ class ProductBundleItemServiceImplTest {
                 .verify();
 
         verify(bundleService).getById(BUNDLE_ID);
-        verify(repository, never()).findById(anyLong());
+        verify(repository, never()).findById(any(UUID.class));
         verify(repository, never()).save(any());
         verify(mapper, never()).toDto(any());
     }
@@ -262,7 +261,7 @@ class ProductBundleItemServiceImplTest {
         // Arrange
         ProductBundleItem itemFromDifferentBundle = new ProductBundleItem();
         itemFromDifferentBundle.setProductBundleItemId(ITEM_ID);
-        itemFromDifferentBundle.setProductBundleId(999L); // Different bundle ID
+        itemFromDifferentBundle.setProductBundleId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different bundle ID
 
         when(bundleService.getById(BUNDLE_ID)).thenReturn(Mono.just(productBundleDTO));
         when(repository.findById(ITEM_ID)).thenReturn(Mono.just(itemFromDifferentBundle));
@@ -309,7 +308,7 @@ class ProductBundleItemServiceImplTest {
                 .verify();
 
         verify(bundleService).getById(BUNDLE_ID);
-        verify(repository, never()).findById(anyLong());
+        verify(repository, never()).findById(any(UUID.class));
         verify(repository, never()).delete(any());
     }
 
@@ -333,7 +332,7 @@ class ProductBundleItemServiceImplTest {
         // Arrange
         ProductBundleItem itemFromDifferentBundle = new ProductBundleItem();
         itemFromDifferentBundle.setProductBundleItemId(ITEM_ID);
-        itemFromDifferentBundle.setProductBundleId(999L); // Different bundle ID
+        itemFromDifferentBundle.setProductBundleId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different bundle ID
 
         when(bundleService.getById(BUNDLE_ID)).thenReturn(Mono.just(productBundleDTO));
         when(repository.findById(ITEM_ID)).thenReturn(Mono.just(itemFromDifferentBundle));

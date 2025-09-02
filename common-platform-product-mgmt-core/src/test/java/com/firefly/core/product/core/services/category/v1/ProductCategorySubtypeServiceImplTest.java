@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import java.util.UUID;
@@ -42,8 +41,8 @@ class ProductCategorySubtypeServiceImplTest {
 
     private ProductSubtype productSubtype;
     private ProductCategorySubtypeDTO productSubtypeDTO;
-    private final UUID CATEGORY_ID = 1L;
-    private final UUID SUBTYPE_ID = 2L;
+    private final UUID CATEGORY_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID SUBTYPE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
 
     @BeforeEach
     void setUp() {
@@ -182,7 +181,7 @@ class ProductCategorySubtypeServiceImplTest {
         // Arrange
         ProductSubtype subtypeFromDifferentCategory = new ProductSubtype();
         subtypeFromDifferentCategory.setProductSubtypeId(SUBTYPE_ID);
-        subtypeFromDifferentCategory.setProductCategoryId(999L); // Different category ID
+        subtypeFromDifferentCategory.setProductCategoryId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different category ID
 
         when(repository.findById(SUBTYPE_ID)).thenReturn(Mono.just(subtypeFromDifferentCategory));
 
@@ -249,7 +248,7 @@ class ProductCategorySubtypeServiceImplTest {
         // Arrange
         ProductSubtype subtypeFromDifferentCategory = new ProductSubtype();
         subtypeFromDifferentCategory.setProductSubtypeId(SUBTYPE_ID);
-        subtypeFromDifferentCategory.setProductCategoryId(999L); // Different category ID
+        subtypeFromDifferentCategory.setProductCategoryId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different category ID
 
         when(repository.findById(SUBTYPE_ID)).thenReturn(Mono.just(subtypeFromDifferentCategory));
 
@@ -303,7 +302,7 @@ class ProductCategorySubtypeServiceImplTest {
         // Arrange
         ProductSubtype subtypeFromDifferentCategory = new ProductSubtype();
         subtypeFromDifferentCategory.setProductSubtypeId(SUBTYPE_ID);
-        subtypeFromDifferentCategory.setProductCategoryId(999L); // Different category ID
+        subtypeFromDifferentCategory.setProductCategoryId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different category ID
 
         when(repository.findById(SUBTYPE_ID)).thenReturn(Mono.just(subtypeFromDifferentCategory));
 

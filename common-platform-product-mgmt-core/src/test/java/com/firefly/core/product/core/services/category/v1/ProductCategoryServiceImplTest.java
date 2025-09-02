@@ -16,7 +16,6 @@ import reactor.test.StepVerifier;
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import java.util.UUID;
 
@@ -34,8 +33,8 @@ class ProductCategoryServiceImplTest {
 
     private ProductCategory productCategory;
     private ProductCategoryDTO productCategoryDTO;
-    private final UUID CATEGORY_ID = 1L;
-    private final UUID PARENT_CATEGORY_ID = 2L;
+    private final UUID CATEGORY_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID PARENT_CATEGORY_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
 
     @BeforeEach
     void setUp() {
@@ -133,7 +132,7 @@ class ProductCategoryServiceImplTest {
         existingCategory.setProductCategoryId(CATEGORY_ID);
         existingCategory.setCategoryName("Old Name");
         existingCategory.setCategoryDescription("Old Description");
-        existingCategory.setParentCategoryId(999L); // Different parent ID
+        existingCategory.setParentCategoryId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different parent ID
 
         when(repository.findById(CATEGORY_ID)).thenReturn(Mono.just(existingCategory));
         when(repository.save(existingCategory)).thenReturn(Mono.just(existingCategory));
