@@ -43,8 +43,8 @@ class ProductServiceImplTest {
 
     private Product product;
     private ProductDTO productDTO;
-    private final UUID PRODUCT_ID = 1L;
-    private final UUID SUBTYPE_ID = 2L;
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID SUBTYPE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
 
     @BeforeEach
     void setUp() {
