@@ -24,7 +24,7 @@ replay_pid*
 *.iws
 # Target folder
 target/
-/.idea/
+.idea/*
 # Refactoring backup directories
 .refactor-backup-*/
 *.refactor-backup-*
@@ -35,3 +35,4 @@ target/
 **/target/generated-resources/
 .refactor-backup-*/
 .metadata-backup*
+/.idea/*
