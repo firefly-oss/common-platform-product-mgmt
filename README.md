@@ -142,8 +142,8 @@ erDiagram
     FEE_COMPONENT ||--o{ FEE_APPLICATION_RULE : has
 
     PRODUCT {
-        Long productId PK
-        Long productSubtypeId FK
+        UUID productId PK
+        UUID productSubtypeId FK
         ProductTypeEnum productType
         String productName
         String productCode
@@ -156,17 +156,17 @@ erDiagram
     }
 
     PRODUCT_CATEGORY {
-        Long productCategoryId PK
+        UUID productCategoryId PK
         String categoryName
         String categoryDescription
-        Long parentCategoryId FK
+        UUID parentCategoryId FK
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
 
     PRODUCT_SUBTYPE {
-        Long productSubtypeId PK
-        Long productCategoryId FK
+        UUID productSubtypeId PK
+        UUID productCategoryId FK
         String subtypeName
         String subtypeDescription
         LocalDateTime dateCreated
@@ -174,8 +174,8 @@ erDiagram
     }
 
     PRODUCT_FEATURE {
-        Long productFeatureId PK
-        Long productId FK
+        UUID productFeatureId PK
+        UUID productId FK
         FeatureTypeEnum featureType
         String featureName
         String featureDescription
@@ -185,8 +185,8 @@ erDiagram
     }
 
     PRODUCT_PRICING {
-        Long productPricingId PK
-        Long productId FK
+        UUID productPricingId PK
+        UUID productId FK
         PricingTypeEnum pricingType
         BigDecimal amountValue
         String amountUnit
@@ -198,8 +198,8 @@ erDiagram
     }
 
     PRODUCT_PRICING_LOCALIZATION {
-        Long productPricingLocalizationId PK
-        Long productPricingId FK
+        UUID productPricingLocalizationId PK
+        UUID productPricingId FK
         String currencyCode
         BigDecimal localizedAmountValue
         LocalDateTime dateCreated
@@ -207,8 +207,8 @@ erDiagram
     }
 
     PRODUCT_LIFECYCLE {
-        Long productLifecycleId PK
-        Long productId FK
+        UUID productLifecycleId PK
+        UUID productId FK
         LifecycleStatusEnum lifecycleStatus
         LocalDateTime statusStartDate
         LocalDateTime statusEndDate
@@ -218,8 +218,8 @@ erDiagram
     }
 
     PRODUCT_LIMIT {
-        Long productLimitId PK
-        Long productId FK
+        UUID productLimitId PK
+        UUID productId FK
         LimitTypeEnum limitType
         BigDecimal limitValue
         String limitUnit
@@ -231,8 +231,8 @@ erDiagram
     }
 
     PRODUCT_LOCALIZATION {
-        Long productLocalizationId PK
-        Long productId FK
+        UUID productLocalizationId PK
+        UUID productId FK
         String languageCode
         String localizedName
         String localizedDescription
@@ -241,9 +241,9 @@ erDiagram
     }
 
     PRODUCT_VERSION {
-        Long productVersionId PK
-        Long productId FK
-        Long versionNumber
+        UUID productVersionId PK
+        UUID productId FK
+        UUID versionNumber
         String versionDescription
         LocalDateTime effectiveDate
         LocalDateTime dateCreated
@@ -251,8 +251,8 @@ erDiagram
     }
 
     PRODUCT_DOCUMENTATION {
-        Long productDocumentationId PK
-        Long productId FK
+        UUID productDocumentationId PK
+        UUID productId FK
         DocTypeEnum docType
         Long documentManagerRef
         LocalDateTime dateAdded
@@ -261,8 +261,8 @@ erDiagram
     }
 
     PRODUCT_DOCUMENTATION_REQUIREMENT {
-        Long productDocRequirementId PK
-        Long productId FK
+        UUID productDocRequirementId PK
+        UUID productId FK
         ContractingDocTypeEnum docType
         Boolean isMandatory
         String description
@@ -271,9 +271,9 @@ erDiagram
     }
 
     PRODUCT_RELATIONSHIP {
-        Long productRelationshipId PK
-        Long productId FK
-        Long relatedProductId FK
+        UUID productRelationshipId PK
+        UUID productId FK
+        UUID relatedProductId FK
         RelationshipTypeEnum relationshipType
         String description
         LocalDateTime dateCreated
@@ -281,7 +281,7 @@ erDiagram
     }
 
     PRODUCT_BUNDLE {
-        Long productBundleId PK
+        UUID productBundleId PK
         String bundleName
         String bundleDescription
         BundleStatusEnum bundleStatus
@@ -290,16 +290,16 @@ erDiagram
     }
 
     PRODUCT_BUNDLE_ITEM {
-        Long productBundleItemId PK
-        Long productBundleId FK
-        Long productId FK
+        UUID productBundleItemId PK
+        UUID productBundleId FK
+        UUID productId FK
         String specialConditions
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
 
     FEE_STRUCTURE {
-        Long feeStructureId PK
+        UUID feeStructureId PK
         String feeStructureName
         String feeStructureDescription
         FeeStructureTypeEnum feeStructureType
@@ -308,8 +308,8 @@ erDiagram
     }
 
     FEE_COMPONENT {
-        Long feeComponentId PK
-        Long feeStructureId FK
+        UUID feeComponentId PK
+        UUID feeStructureId FK
         FeeTypeEnum feeType
         String feeDescription
         BigDecimal feeAmount
@@ -320,8 +320,8 @@ erDiagram
     }
 
     FEE_APPLICATION_RULE {
-        Long feeApplicationRuleId PK
-        Long feeComponentId FK
+        UUID feeApplicationRuleId PK
+        UUID feeComponentId FK
         String ruleDescription
         String ruleConditions
         LocalDateTime effectiveDate
@@ -331,9 +331,9 @@ erDiagram
     }
 
     PRODUCT_FEE_STRUCTURE {
-        Long productFeeStructureId PK
-        Long productId FK
-        Long feeStructureId FK
+        UUID productFeeStructureId PK
+        UUID productId FK
+        UUID feeStructureId FK
         LocalDate effectiveDate
         LocalDate expiryDate
         LocalDateTime dateCreated
