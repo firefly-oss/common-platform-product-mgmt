@@ -62,15 +62,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: versionId
           in: path
           description: Unique identifier of the product version
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product version record
@@ -92,15 +92,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: versionId
           in: path
           description: Unique identifier of the product version record to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -134,15 +134,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: versionId
           in: path
           description: Unique identifier of the product version to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product version deleted successfully
@@ -161,15 +161,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: relationshipId
           in: path
           description: Unique identifier of the product relationship record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product relationship record
@@ -191,15 +191,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: relationshipId
           in: path
           description: Unique identifier of the product relationship record to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -233,15 +233,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: relationshipId
           in: path
           description: Unique identifier of the product relationship record to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product relationship deleted successfully
@@ -260,22 +260,22 @@ paths:
           description: Unique identifier of the product (unused in the service, but kept for hierarchy)
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pricingId
           in: path
           description: Unique identifier of the product pricing record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: localizationId
           in: path
           description: Unique identifier of the localization record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the localization record
@@ -297,22 +297,22 @@ paths:
           description: Unique identifier of the product (unused in the service, but kept for hierarchy)
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pricingId
           in: path
           description: Unique identifier of the product pricing record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: localizationId
           in: path
           description: Unique identifier of the localization record to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -346,22 +346,22 @@ paths:
           description: Unique identifier of the product (unused in the service, but kept for hierarchy)
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pricingId
           in: path
           description: Unique identifier of the product pricing record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: localizationId
           in: path
           description: Unique identifier of the localization record to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Localization record deleted successfully
@@ -380,15 +380,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pricingId
           in: path
           description: Unique identifier of the product pricing record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product pricing record
@@ -410,15 +410,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pricingId
           in: path
           description: Unique identifier of the product pricing record to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -452,15 +452,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pricingId
           in: path
           description: Unique identifier of the product pricing record to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product pricing deleted successfully
@@ -479,15 +479,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: localizationId
           in: path
           description: Unique identifier of the localization record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product localization record
@@ -509,15 +509,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: localizationId
           in: path
           description: Unique identifier of the localization record to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -551,15 +551,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: localizationId
           in: path
           description: Unique identifier of the localization record to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product localization deleted successfully
@@ -578,15 +578,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: limitId
           in: path
           description: Unique identifier of the product limit
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product limit
@@ -608,15 +608,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: limitId
           in: path
           description: Unique identifier of the product limit to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -650,15 +650,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: limitId
           in: path
           description: Unique identifier of the product limit to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product limit deleted successfully
@@ -677,15 +677,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: lifecycleId
           in: path
           description: Unique identifier of the lifecycle entry
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product lifecycle entry
@@ -707,15 +707,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: lifecycleId
           in: path
           description: Unique identifier of the lifecycle entry to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -749,15 +749,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: lifecycleId
           in: path
           description: Unique identifier of the lifecycle entry to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Lifecycle entry deleted successfully
@@ -776,15 +776,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: productFeeStructId
           in: path
           description: Unique identifier of the product fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product fee structure
@@ -806,15 +806,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: productFeeStructId
           in: path
           description: Unique identifier of the product fee structure to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -848,15 +848,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: productFeeStructId
           in: path
           description: Unique identifier of the fee structure to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Fee structure deleted successfully
@@ -875,15 +875,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: featureId
           in: path
           description: Unique identifier of the feature
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product feature
@@ -905,15 +905,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: featureId
           in: path
           description: Unique identifier of the product feature to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -947,15 +947,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: featureId
           in: path
           description: Unique identifier of the product feature to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product feature deleted successfully
@@ -974,15 +974,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: docId
           in: path
           description: Unique identifier of the documentation item
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product documentation
@@ -1004,15 +1004,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: docId
           in: path
           description: Unique identifier of the documentation to be updated
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -1046,15 +1046,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: docId
           in: path
           description: Unique identifier of the documentation to be deleted
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product documentation deleted successfully
@@ -1073,15 +1073,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: requirementId
           in: path
           description: Unique identifier of the documentation requirement
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product documentation requirement
@@ -1103,15 +1103,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: requirementId
           in: path
           description: Unique identifier of the documentation requirement to be updated
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -1145,15 +1145,15 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: requirementId
           in: path
           description: Unique identifier of the documentation requirement to be deleted
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product documentation requirement deleted successfully
@@ -1172,8 +1172,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product
@@ -1195,8 +1195,8 @@ paths:
           description: Unique identifier of the product to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -1230,8 +1230,8 @@ paths:
           description: Unique identifier of the product to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product deleted successfully
@@ -1250,22 +1250,22 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: componentId
           in: path
           description: Unique identifier of the fee component
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: ruleId
           in: path
           description: Unique identifier of the fee application rule
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the fee application rule
@@ -1287,22 +1287,22 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: componentId
           in: path
           description: Unique identifier of the fee component
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: ruleId
           in: path
           description: Unique identifier of the fee application rule to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -1336,22 +1336,22 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: componentId
           in: path
           description: Unique identifier of the fee component
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: ruleId
           in: path
           description: Unique identifier of the fee application rule to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Fee application rule deleted successfully
@@ -1370,15 +1370,15 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: componentId
           in: path
           description: Unique identifier of the fee component
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the fee component
@@ -1400,15 +1400,15 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: componentId
           in: path
           description: Unique identifier of the fee component to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -1442,15 +1442,15 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: componentId
           in: path
           description: Unique identifier of the fee component to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Fee component deleted successfully
@@ -1469,8 +1469,8 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the fee structure
@@ -1492,8 +1492,8 @@ paths:
           description: Unique identifier of the fee structure to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -1527,8 +1527,8 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Fee structure deleted successfully
@@ -1547,15 +1547,15 @@ paths:
           description: Unique identifier of the product category
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: subtypeId
           in: path
           description: Unique identifier of the product subtype
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product subtype
@@ -1577,15 +1577,15 @@ paths:
           description: Unique identifier of the product category
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: subtypeId
           in: path
           description: Unique identifier of the product subtype
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -1619,15 +1619,15 @@ paths:
           description: Unique identifier of the product category
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: subtypeId
           in: path
           description: Unique identifier of the product subtype
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product subtype deleted successfully
@@ -1646,8 +1646,8 @@ paths:
           description: Unique identifier of the product category
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product category
@@ -1669,8 +1669,8 @@ paths:
           description: Unique identifier of the product category to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -1704,8 +1704,8 @@ paths:
           description: Unique identifier of the product category to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product category deleted successfully
@@ -1724,15 +1724,15 @@ paths:
           description: Unique identifier of the product bundle
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: itemId
           in: path
           description: Unique identifier of the item within the product bundle
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product bundle item
@@ -1754,15 +1754,15 @@ paths:
           description: Unique identifier of the product bundle
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: itemId
           in: path
           description: Unique identifier of the item to be updated
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -1796,15 +1796,15 @@ paths:
           description: Unique identifier of the product bundle
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: itemId
           in: path
           description: Unique identifier of the item to be deleted
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product bundle item deleted successfully
@@ -1823,8 +1823,8 @@ paths:
           description: The unique identifier of the product bundle
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the product bundle
@@ -1848,8 +1848,8 @@ paths:
           description: The unique identifier of the product bundle to update
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -1885,8 +1885,8 @@ paths:
           description: The unique identifier of the product bundle to delete
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '204':
           description: Product bundle deleted successfully
@@ -1905,8 +1905,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -1967,8 +1967,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -2003,8 +2003,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -2065,8 +2065,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -2101,15 +2101,15 @@ paths:
           description: Unique identifier of the product (unused in the service, but kept for hierarchy)
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pricingId
           in: path
           description: Unique identifier of the product pricing record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -2170,15 +2170,15 @@ paths:
           description: Unique identifier of the product (unused in the service, but kept for hierarchy)
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pricingId
           in: path
           description: Unique identifier of the product pricing record
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -2213,8 +2213,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -2275,8 +2275,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -2311,8 +2311,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -2373,8 +2373,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -2409,8 +2409,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -2471,8 +2471,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -2507,8 +2507,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -2569,8 +2569,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -2605,8 +2605,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -2667,8 +2667,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -2703,8 +2703,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -2765,8 +2765,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -2801,8 +2801,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -2863,8 +2863,8 @@ paths:
           description: Unique identifier of the product to associate this documentation requirement with
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -2899,8 +2899,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -2961,8 +2961,8 @@ paths:
           description: Unique identifier of the product to associate this documentation with
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -3216,15 +3216,15 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: componentId
           in: path
           description: Unique identifier of the fee component
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -3285,15 +3285,15 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: componentId
           in: path
           description: Unique identifier of the fee component
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -3326,8 +3326,8 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -3388,8 +3388,8 @@ paths:
           description: Unique identifier of the fee structure
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -3449,8 +3449,8 @@ paths:
           description: Unique identifier of the product category
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: pageNumber
           in: query
           description: The zero-based page number to retrieve.
@@ -3511,8 +3511,8 @@ paths:
           description: Unique identifier of the product category
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -3572,8 +3572,8 @@ paths:
           description: Unique identifier of the product bundle to add an item to
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: X-Idempotency-Key
           in: header
           description: Unique key for idempotent requests. If provided, ensures that identical requests with the same key will only be processed once.
@@ -3690,8 +3690,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Successfully retrieved the mandatory product documentation requirements
@@ -3714,8 +3714,8 @@ paths:
           description: Unique identifier of the product
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
         - name: docType
           in: path
           description: Type of document
@@ -3759,8 +3759,8 @@ paths:
           description: ID of the wizard to retrieve
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
+            format: uuid
       responses:
         '200':
           description: Wizard retrieved successfully
@@ -3784,15 +3784,15 @@ components:
           format: date-time
           readOnly: true
         productVersionId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         versionNumber:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         versionDescription:
           type: string
         effectiveDate:
@@ -3810,15 +3810,15 @@ components:
           format: date-time
           readOnly: true
         productRelationshipId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         relatedProductId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         relationshipType:
           type: string
           enum:
@@ -3840,12 +3840,12 @@ components:
           format: date-time
           readOnly: true
         productPricingLocalizationId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productPricingId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         currencyCode:
           type: string
         localizedAmountValue:
@@ -3862,12 +3862,12 @@ components:
           format: date-time
           readOnly: true
         productPricingId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         pricingType:
           type: string
           enum:
@@ -3899,12 +3899,12 @@ components:
           format: date-time
           readOnly: true
         productLocalizationId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         languageCode:
           type: string
         localizedName:
@@ -3923,12 +3923,12 @@ components:
           format: date-time
           readOnly: true
         productLimitId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         limitType:
           type: string
           enum:
@@ -3964,12 +3964,12 @@ components:
           format: date-time
           readOnly: true
         productLifecycleId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         lifecycleStatus:
           type: string
           enum:
@@ -3997,15 +3997,15 @@ components:
           format: date-time
           readOnly: true
         productFeeStructureId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         feeStructureId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         priority:
           type: integer
           format: int32
@@ -4021,12 +4021,12 @@ components:
           format: date-time
           readOnly: true
         productFeatureId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         featureName:
           type: string
         featureDescription:
@@ -4051,12 +4051,12 @@ components:
           format: date-time
           readOnly: true
         productDocumentationId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         docType:
           type: string
           enum:
@@ -4081,12 +4081,12 @@ components:
           format: date-time
           readOnly: true
         productDocRequirementId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         docType:
           type: string
           enum:
@@ -4120,12 +4120,12 @@ components:
           format: date-time
           readOnly: true
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productSubtypeId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         productType:
           type: string
           enum:
@@ -4162,12 +4162,12 @@ components:
           format: date-time
           readOnly: true
         feeApplicationRuleId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         feeComponentId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         ruleDescription:
           type: string
         ruleConditions:
@@ -4190,12 +4190,12 @@ components:
           format: date-time
           readOnly: true
         feeComponentId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         feeStructureId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         feeType:
           type: string
           enum:
@@ -4226,8 +4226,8 @@ components:
           format: date-time
           readOnly: true
         feeStructureId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         feeStructureName:
           type: string
@@ -4250,12 +4250,12 @@ components:
           format: date-time
           readOnly: true
         productSubtypeId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productCategoryId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         subtypeName:
           type: string
         subtypeDescription:
@@ -4272,16 +4272,16 @@ components:
           format: date-time
           readOnly: true
         productCategoryId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         categoryName:
           type: string
         categoryDescription:
           type: string
         parentCategoryId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
     ProductBundleItemDTO:
       type: object
       properties:
@@ -4294,15 +4294,15 @@ components:
           format: date-time
           readOnly: true
         productBundleItemId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         productBundleId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         productId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         specialConditions:
           type: string
     ProductBundleDTO:
@@ -4317,8 +4317,8 @@ components:
           format: date-time
           readOnly: true
         productBundleId:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
           readOnly: true
         bundleName:
           type: string
@@ -4342,8 +4342,8 @@ components:
           format: date-time
           readOnly: true
         id:
-          type: integer
-          format: int64
+          type: string
+          format: uuid
         product:
           $ref: '#/components/schemas/ProductDTO'
         features:
