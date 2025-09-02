@@ -40,8 +40,8 @@ public class ProductDocumentationRequirementServiceImplTest {
 
     private ProductDocumentationRequirement entity;
     private ProductDocumentationRequirementDTO dto;
-    private final UUID productId = 1L;
-    private final UUID requirementId = 1L;
+    private final UUID productId = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID requirementId = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
 
     @BeforeEach
     void setUp() {

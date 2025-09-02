@@ -41,8 +41,8 @@ class ProductDocumentationServiceImplTest {
 
     private ProductDocumentation documentation;
     private ProductDocumentationDTO documentationDTO;
-    private final UUID PRODUCT_ID = 1L;
-    private final UUID DOC_ID = 2L;
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID DOC_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
     private final Long DOC_MANAGER_REF = 100L;
 
     @BeforeEach
@@ -178,7 +178,7 @@ class ProductDocumentationServiceImplTest {
         // Arrange
         ProductDocumentation docFromDifferentProduct = new ProductDocumentation();
         docFromDifferentProduct.setProductDocumentationId(DOC_ID);
-        docFromDifferentProduct.setProductId(999L); // Different product ID
+        docFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(DOC_ID)).thenReturn(Mono.just(docFromDifferentProduct));
 
@@ -269,7 +269,7 @@ class ProductDocumentationServiceImplTest {
         // Arrange
         ProductDocumentation docFromDifferentProduct = new ProductDocumentation();
         docFromDifferentProduct.setProductDocumentationId(DOC_ID);
-        docFromDifferentProduct.setProductId(999L); // Different product ID
+        docFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(DOC_ID)).thenReturn(Mono.just(docFromDifferentProduct));
 
@@ -320,7 +320,7 @@ class ProductDocumentationServiceImplTest {
         // Arrange
         ProductDocumentation docFromDifferentProduct = new ProductDocumentation();
         docFromDifferentProduct.setProductDocumentationId(DOC_ID);
-        docFromDifferentProduct.setProductId(999L); // Different product ID
+        docFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(DOC_ID)).thenReturn(Mono.just(docFromDifferentProduct));
 

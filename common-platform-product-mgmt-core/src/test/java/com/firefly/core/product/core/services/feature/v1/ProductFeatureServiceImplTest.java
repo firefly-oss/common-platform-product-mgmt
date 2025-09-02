@@ -42,8 +42,8 @@ class ProductFeatureServiceImplTest {
 
     private ProductFeature feature;
     private ProductFeatureDTO featureDTO;
-    private final UUID PRODUCT_ID = 1L;
-    private final UUID FEATURE_ID = 2L;
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID FEATURE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
 
     @BeforeEach
     void setUp() {
@@ -181,7 +181,7 @@ class ProductFeatureServiceImplTest {
         // Arrange
         ProductFeature featureFromDifferentProduct = new ProductFeature();
         featureFromDifferentProduct.setProductFeatureId(FEATURE_ID);
-        featureFromDifferentProduct.setProductId(999L); // Different product ID
+        featureFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(FEATURE_ID)).thenReturn(Mono.just(featureFromDifferentProduct));
 
@@ -268,7 +268,7 @@ class ProductFeatureServiceImplTest {
         // Arrange
         ProductFeature featureFromDifferentProduct = new ProductFeature();
         featureFromDifferentProduct.setProductFeatureId(FEATURE_ID);
-        featureFromDifferentProduct.setProductId(999L); // Different product ID
+        featureFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(FEATURE_ID)).thenReturn(Mono.just(featureFromDifferentProduct));
 
@@ -317,7 +317,7 @@ class ProductFeatureServiceImplTest {
         // Arrange
         ProductFeature featureFromDifferentProduct = new ProductFeature();
         featureFromDifferentProduct.setProductFeatureId(FEATURE_ID);
-        featureFromDifferentProduct.setProductId(999L); // Different product ID
+        featureFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(FEATURE_ID)).thenReturn(Mono.just(featureFromDifferentProduct));
 

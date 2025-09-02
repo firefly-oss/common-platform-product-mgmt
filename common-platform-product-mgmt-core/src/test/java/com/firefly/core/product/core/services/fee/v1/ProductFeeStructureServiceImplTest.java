@@ -41,8 +41,8 @@ class ProductFeeStructureServiceImplTest {
 
     private ProductFeeStructure feeStructure;
     private ProductFeeStructureDTO feeStructureDTO;
-    private final UUID PRODUCT_ID = 1L;
-    private final UUID FEE_STRUCTURE_ID = 2L;
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID FEE_STRUCTURE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
     private final Integer PRIORITY = 1;
 
     @BeforeEach
@@ -183,7 +183,7 @@ class ProductFeeStructureServiceImplTest {
     void getFeeStructureById_WrongFeeStructureId() {
         // Arrange
         ProductFeeStructure differentFeeStructure = new ProductFeeStructure();
-        differentFeeStructure.setProductFeeStructureId(999L); // Different fee structure ID
+        differentFeeStructure.setProductFeeStructureId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different fee structure ID
         differentFeeStructure.setProductId(PRODUCT_ID);
 
         when(repository.findByProductId(PRODUCT_ID)).thenReturn(Flux.just(differentFeeStructure));
@@ -263,7 +263,7 @@ class ProductFeeStructureServiceImplTest {
                 .build();
 
         ProductFeeStructure differentFeeStructure = new ProductFeeStructure();
-        differentFeeStructure.setProductFeeStructureId(999L); // Different fee structure ID
+        differentFeeStructure.setProductFeeStructureId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different fee structure ID
         differentFeeStructure.setProductId(PRODUCT_ID);
 
         when(repository.findByProductId(PRODUCT_ID)).thenReturn(Flux.just(differentFeeStructure));
@@ -314,7 +314,7 @@ class ProductFeeStructureServiceImplTest {
     void deleteFeeStructure_WrongFeeStructureId() {
         // Arrange
         ProductFeeStructure differentFeeStructure = new ProductFeeStructure();
-        differentFeeStructure.setProductFeeStructureId(999L); // Different fee structure ID
+        differentFeeStructure.setProductFeeStructureId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different fee structure ID
         differentFeeStructure.setProductId(PRODUCT_ID);
 
         when(repository.findByProductId(PRODUCT_ID)).thenReturn(Flux.just(differentFeeStructure));
