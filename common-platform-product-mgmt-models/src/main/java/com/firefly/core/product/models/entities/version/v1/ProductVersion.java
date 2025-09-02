@@ -25,7 +25,7 @@ public class ProductVersion extends BaseEntity {
     private UUID productId;
 
     @Column("version_number")
-    private Long versionNumber;
+    private UUID versionNumber;
 
     @Column("version_description")
     private String versionDescription;

@@ -20,7 +20,7 @@ public class ProductVersionDTO extends BaseDTO {
     private UUID productVersionId;
 
     private UUID productId;
-    private Long versionNumber;
+    private UUID versionNumber;
     private String versionDescription;
     private LocalDateTime effectiveDate;
 
