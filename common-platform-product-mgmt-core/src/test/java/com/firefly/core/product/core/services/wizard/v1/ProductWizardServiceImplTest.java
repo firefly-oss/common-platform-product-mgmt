@@ -18,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -92,7 +93,7 @@ public class ProductWizardServiceImplTest {
     public void testProcessStep() {
         // Create a test wizard DTO
         ProductWizardDTO wizardDTO = new ProductWizardDTO();
-        wizardDTO.setId(1L);
+        wizardDTO.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440001"));
         wizardDTO.setCurrentStep(1);
         wizardDTO.setCompleted(false);
 
@@ -114,7 +115,7 @@ public class ProductWizardServiceImplTest {
     public void testCompleteWizard() {
         // Create a completed wizard DTO
         ProductWizardDTO wizardDTO = new ProductWizardDTO();
-        wizardDTO.setId(1L);
+        wizardDTO.setId(UUID.fromString("550e8400-e29b-41d4-a716-446655440001"));
         wizardDTO.setCurrentStep(6);
         wizardDTO.setCompleted(true);
 
@@ -126,7 +127,7 @@ public class ProductWizardServiceImplTest {
 
         // Mock the product service to return a created product
         ProductDTO createdProductDTO = new ProductDTO();
-        createdProductDTO.setProductId(1L);
+        createdProductDTO.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440001"));
         createdProductDTO.setProductName("Test Product");
         createdProductDTO.setProductType(ProductTypeEnum.FINANCIAL);
         createdProductDTO.setProductStatus(ProductStatusEnum.DRAFT);
@@ -135,8 +136,8 @@ public class ProductWizardServiceImplTest {
 
         // Test completing the wizard
         StepVerifier.create(wizardService.completeWizard(wizardDTO))
-                .expectNextMatches(product -> 
-                    product.getProductId() == 1L &&
+                .expectNextMatches(product ->
+                    UUID.fromString("550e8400-e29b-41d4-a716-446655440001").equals(product.getProductId()) &&
                     "Test Product".equals(product.getProductName()) &&
                     product.getProductType() == ProductTypeEnum.FINANCIAL &&
                     product.getProductStatus() == ProductStatusEnum.DRAFT
@@ -146,13 +147,14 @@ public class ProductWizardServiceImplTest {
 
     @Test
     public void testGetWizardById() {
-        // Initialize a wizard to create a session
-        wizardService.initializeWizard().block();
+        // Initialize a wizard to create a session and get the actual wizard ID
+        ProductWizardDTO initializedWizard = wizardService.initializeWizard().block();
+        UUID wizardId = initializedWizard.getId();
 
         // Test retrieving the wizard by ID
-        StepVerifier.create(wizardService.getWizardById(1L))
-                .expectNextMatches(wizard -> 
-                    wizard.getId() == 1L &&
+        StepVerifier.create(wizardService.getWizardById(wizardId))
+                .expectNextMatches(wizard ->
+                    wizardId.equals(wizard.getId()) &&
                     wizard.getCurrentStep() == 1 &&
                     !wizard.getCompleted()
                 )

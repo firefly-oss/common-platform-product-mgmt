@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import java.util.UUID;
@@ -42,8 +41,8 @@ class ProductPricingLocalizationServiceImplTest {
 
     private ProductPricingLocalization localization;
     private ProductPricingLocalizationDTO localizationDTO;
-    private final UUID PRICING_ID = 1L;
-    private final UUID LOCALIZATION_ID = 2L;
+    private final UUID PRICING_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID LOCALIZATION_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
 
     @BeforeEach
     void setUp() {
@@ -187,7 +186,7 @@ class ProductPricingLocalizationServiceImplTest {
         // Arrange
         ProductPricingLocalization localizationFromDifferentPricing = new ProductPricingLocalization();
         localizationFromDifferentPricing.setProductPricingLocalizationId(LOCALIZATION_ID);
-        localizationFromDifferentPricing.setProductPricingId(999L); // Different pricing ID
+        localizationFromDifferentPricing.setProductPricingId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different pricing ID
 
         when(repository.findById(LOCALIZATION_ID)).thenReturn(Mono.just(localizationFromDifferentPricing));
 
@@ -266,7 +265,7 @@ class ProductPricingLocalizationServiceImplTest {
 
         ProductPricingLocalization localizationFromDifferentPricing = new ProductPricingLocalization();
         localizationFromDifferentPricing.setProductPricingLocalizationId(LOCALIZATION_ID);
-        localizationFromDifferentPricing.setProductPricingId(999L); // Different pricing ID
+        localizationFromDifferentPricing.setProductPricingId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different pricing ID
 
         when(repository.findById(LOCALIZATION_ID)).thenReturn(Mono.just(localizationFromDifferentPricing));
 
@@ -323,7 +322,7 @@ class ProductPricingLocalizationServiceImplTest {
         // Arrange
         ProductPricingLocalization localizationFromDifferentPricing = new ProductPricingLocalization();
         localizationFromDifferentPricing.setProductPricingLocalizationId(LOCALIZATION_ID);
-        localizationFromDifferentPricing.setProductPricingId(999L); // Different pricing ID
+        localizationFromDifferentPricing.setProductPricingId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different pricing ID
 
         when(repository.findById(LOCALIZATION_ID)).thenReturn(Mono.just(localizationFromDifferentPricing));
 

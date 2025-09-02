@@ -44,8 +44,8 @@ class ProductPricingServiceImplTest {
 
     private ProductPricing pricing;
     private ProductPricingDTO pricingDTO;
-    private final UUID PRODUCT_ID = 1L;
-    private final UUID PRICING_ID = 2L;
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID PRICING_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
 
     @BeforeEach
     void setUp() {
@@ -207,7 +207,7 @@ class ProductPricingServiceImplTest {
         // Arrange
         ProductPricing pricingFromDifferentProduct = new ProductPricing();
         pricingFromDifferentProduct.setProductPricingId(PRICING_ID);
-        pricingFromDifferentProduct.setProductId(999L); // Different product ID
+        pricingFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(PRICING_ID)).thenReturn(Mono.just(pricingFromDifferentProduct));
 
@@ -302,7 +302,7 @@ class ProductPricingServiceImplTest {
 
         ProductPricing pricingFromDifferentProduct = new ProductPricing();
         pricingFromDifferentProduct.setProductPricingId(PRICING_ID);
-        pricingFromDifferentProduct.setProductId(999L); // Different product ID
+        pricingFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(PRICING_ID)).thenReturn(Mono.just(pricingFromDifferentProduct));
 
@@ -359,7 +359,7 @@ class ProductPricingServiceImplTest {
         // Arrange
         ProductPricing pricingFromDifferentProduct = new ProductPricing();
         pricingFromDifferentProduct.setProductPricingId(PRICING_ID);
-        pricingFromDifferentProduct.setProductId(999L); // Different product ID
+        pricingFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(PRICING_ID)).thenReturn(Mono.just(pricingFromDifferentProduct));
 

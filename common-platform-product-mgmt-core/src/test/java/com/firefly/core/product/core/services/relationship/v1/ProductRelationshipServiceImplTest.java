@@ -42,9 +42,9 @@ class ProductRelationshipServiceImplTest {
 
     private ProductRelationship relationship;
     private ProductRelationshipDTO relationshipDTO;
-    private final UUID PRODUCT_ID = 1L;
-    private final UUID RELATIONSHIP_ID = 2L;
-    private final UUID RELATED_PRODUCT_ID = 3L;
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID RELATIONSHIP_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+    private final UUID RELATED_PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
 
     @BeforeEach
     void setUp() {
@@ -192,7 +192,7 @@ class ProductRelationshipServiceImplTest {
         // Arrange
         ProductRelationship relationshipFromDifferentProduct = new ProductRelationship();
         relationshipFromDifferentProduct.setProductRelationshipId(RELATIONSHIP_ID);
-        relationshipFromDifferentProduct.setProductId(999L); // Different product ID
+        relationshipFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(RELATIONSHIP_ID)).thenReturn(Mono.just(relationshipFromDifferentProduct));
 
@@ -277,7 +277,7 @@ class ProductRelationshipServiceImplTest {
 
         ProductRelationship relationshipFromDifferentProduct = new ProductRelationship();
         relationshipFromDifferentProduct.setProductRelationshipId(RELATIONSHIP_ID);
-        relationshipFromDifferentProduct.setProductId(999L); // Different product ID
+        relationshipFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(RELATIONSHIP_ID)).thenReturn(Mono.just(relationshipFromDifferentProduct));
 
@@ -332,7 +332,7 @@ class ProductRelationshipServiceImplTest {
         // Arrange
         ProductRelationship relationshipFromDifferentProduct = new ProductRelationship();
         relationshipFromDifferentProduct.setProductRelationshipId(RELATIONSHIP_ID);
-        relationshipFromDifferentProduct.setProductId(999L); // Different product ID
+        relationshipFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(RELATIONSHIP_ID)).thenReturn(Mono.just(relationshipFromDifferentProduct));
 

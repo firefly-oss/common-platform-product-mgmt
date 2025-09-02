@@ -41,9 +41,9 @@ class ProductVersionServiceImplTest {
 
     private ProductVersion version;
     private ProductVersionDTO versionDTO;
-    private final UUID PRODUCT_ID = 1L;
-    private final UUID VERSION_ID = 2L;
-    private final Long VERSION_NUMBER = 1L;
+    private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
+    private final UUID VERSION_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+    private final UUID VERSION_NUMBER = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
 
     @BeforeEach
     void setUp() {
@@ -191,7 +191,7 @@ class ProductVersionServiceImplTest {
         // Arrange
         ProductVersion versionFromDifferentProduct = new ProductVersion();
         versionFromDifferentProduct.setProductVersionId(VERSION_ID);
-        versionFromDifferentProduct.setProductId(999L); // Different product ID
+        versionFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(VERSION_ID)).thenReturn(Mono.just(versionFromDifferentProduct));
 
@@ -211,7 +211,7 @@ class ProductVersionServiceImplTest {
     void updateProductVersion_Success() {
         // Arrange
         ProductVersionDTO updateRequest = ProductVersionDTO.builder()
-                .versionNumber(2L)
+                .versionNumber(UUID.fromString("550e8400-e29b-41d4-a716-446655440004"))
                 .versionDescription("Updated version")
                 .effectiveDate(LocalDateTime.now())
                 .build();
@@ -219,7 +219,7 @@ class ProductVersionServiceImplTest {
         ProductVersion updatedEntity = new ProductVersion();
         updatedEntity.setProductVersionId(VERSION_ID);
         updatedEntity.setProductId(PRODUCT_ID);
-        updatedEntity.setVersionNumber(2L);
+        updatedEntity.setVersionNumber(UUID.fromString("550e8400-e29b-41d4-a716-446655440004"));
         updatedEntity.setVersionDescription("Updated version");
         updatedEntity.setEffectiveDate(updateRequest.getEffectiveDate());
 
@@ -244,7 +244,7 @@ class ProductVersionServiceImplTest {
     void updateProductVersion_NotFound() {
         // Arrange
         ProductVersionDTO updateRequest = ProductVersionDTO.builder()
-                .versionNumber(2L)
+                .versionNumber(UUID.fromString("550e8400-e29b-41d4-a716-446655440004"))
                 .versionDescription("Updated version")
                 .effectiveDate(LocalDateTime.now())
                 .build();
@@ -269,14 +269,14 @@ class ProductVersionServiceImplTest {
     void updateProductVersion_WrongProduct() {
         // Arrange
         ProductVersionDTO updateRequest = ProductVersionDTO.builder()
-                .versionNumber(2L)
+                .versionNumber(UUID.fromString("550e8400-e29b-41d4-a716-446655440004"))
                 .versionDescription("Updated version")
                 .effectiveDate(LocalDateTime.now())
                 .build();
 
         ProductVersion versionFromDifferentProduct = new ProductVersion();
         versionFromDifferentProduct.setProductVersionId(VERSION_ID);
-        versionFromDifferentProduct.setProductId(999L); // Different product ID
+        versionFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(VERSION_ID)).thenReturn(Mono.just(versionFromDifferentProduct));
 
@@ -334,7 +334,7 @@ class ProductVersionServiceImplTest {
         // Arrange
         ProductVersion versionFromDifferentProduct = new ProductVersion();
         versionFromDifferentProduct.setProductVersionId(VERSION_ID);
-        versionFromDifferentProduct.setProductId(999L); // Different product ID
+        versionFromDifferentProduct.setProductId(UUID.fromString("550e8400-e29b-41d4-a716-446655440999")); // Different product ID
 
         when(repository.findById(VERSION_ID)).thenReturn(Mono.just(versionFromDifferentProduct));
 
