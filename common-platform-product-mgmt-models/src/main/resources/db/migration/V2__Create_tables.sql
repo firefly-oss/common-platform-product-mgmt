@@ -192,7 +192,7 @@ CREATE TABLE IF NOT EXISTS product_relationship (
 CREATE TABLE IF NOT EXISTS product_version (
                                                product_version_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                                                product_id             UUID NOT NULL,
-                                               version_number         uuid NOT NULL,
+                                               version_number         UUID NOT NULL,
                                                version_description    TEXT,
                                                effective_date         TIMESTAMP NOT NULL,
                                                date_created           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
