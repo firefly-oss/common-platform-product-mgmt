@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductCategorySubtypeServiceImplTest {
@@ -41,8 +42,8 @@ class ProductCategorySubtypeServiceImplTest {
 
     private ProductSubtype productSubtype;
     private ProductCategorySubtypeDTO productSubtypeDTO;
-    private final Long CATEGORY_ID = 1L;
-    private final Long SUBTYPE_ID = 2L;
+    private final UUID CATEGORY_ID = 1L;
+    private final UUID SUBTYPE_ID = 2L;
 
     @BeforeEach
     void setUp() {

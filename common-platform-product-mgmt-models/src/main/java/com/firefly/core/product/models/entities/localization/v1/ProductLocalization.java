@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import java.util.UUID;
 
 
 @Getter
@@ -19,10 +20,10 @@ public class ProductLocalization extends BaseEntity {
 
     @Id
     @Column("product_localization_id")
-    private Long productLocalizationId;
+    private UUID productLocalizationId;
 
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
 
     @Column("language_code")
     private String languageCode;

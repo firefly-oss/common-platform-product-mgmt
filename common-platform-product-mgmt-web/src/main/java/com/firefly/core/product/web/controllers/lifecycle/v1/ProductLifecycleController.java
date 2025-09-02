@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Lifecycle", description = "APIs for managing lifecycle stages or events associated with a specific product")
 @RestController
@@ -39,7 +40,7 @@ public class ProductLifecycleController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductLifecycleDTO>>> getProductLifecycles(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -63,7 +64,7 @@ public class ProductLifecycleController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductLifecycleDTO>> createProductLifecycle(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Data for the new lifecycle entry", required = true,
                     schema = @Schema(implementation = ProductLifecycleDTO.class))
@@ -88,10 +89,10 @@ public class ProductLifecycleController {
     @GetMapping(value = "/{lifecycleId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductLifecycleDTO>> getProductLifecycle(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the lifecycle entry", required = true)
-            @PathVariable Long lifecycleId
+            @PathVariable UUID lifecycleId
     ) {
         return service.getProductLifecycle(productId, lifecycleId)
                 .map(ResponseEntity::ok)
@@ -112,10 +113,10 @@ public class ProductLifecycleController {
     @PutMapping(value = "/{lifecycleId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductLifecycleDTO>> updateProductLifecycle(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the lifecycle entry to update", required = true)
-            @PathVariable Long lifecycleId,
+            @PathVariable UUID lifecycleId,
 
             @Parameter(description = "Updated product lifecycle data", required = true,
                     schema = @Schema(implementation = ProductLifecycleDTO.class))
@@ -139,10 +140,10 @@ public class ProductLifecycleController {
     @DeleteMapping(value = "/{lifecycleId}")
     public Mono<ResponseEntity<Void>> deleteProductLifecycle(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the lifecycle entry to delete", required = true)
-            @PathVariable Long lifecycleId
+            @PathVariable UUID lifecycleId
     ) {
         return service.deleteProductLifecycle(productId, lifecycleId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

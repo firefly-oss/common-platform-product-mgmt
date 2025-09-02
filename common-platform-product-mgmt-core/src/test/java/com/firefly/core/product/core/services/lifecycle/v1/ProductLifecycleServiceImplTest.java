@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductLifecycleServiceImplTest {
@@ -41,8 +42,8 @@ class ProductLifecycleServiceImplTest {
 
     private ProductLifecycle lifecycle;
     private ProductLifecycleDTO lifecycleDTO;
-    private final Long PRODUCT_ID = 1L;
-    private final Long LIFECYCLE_ID = 2L;
+    private final UUID PRODUCT_ID = 1L;
+    private final UUID LIFECYCLE_ID = 2L;
 
     @BeforeEach
     void setUp() {

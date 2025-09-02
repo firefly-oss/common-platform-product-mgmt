@@ -9,6 +9,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Table("product")
 @Getter
@@ -18,10 +19,10 @@ import java.time.LocalDate;
 public class Product extends BaseEntity {
     @Id
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
 
     @Column("product_subtype_id")
-    private Long productSubtypeId;
+    private UUID productSubtypeId;
 
     @Column("product_type")
     private ProductTypeEnum productType;

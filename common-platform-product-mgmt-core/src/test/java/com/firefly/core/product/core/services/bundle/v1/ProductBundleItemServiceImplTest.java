@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductBundleItemServiceImplTest {
@@ -38,9 +39,9 @@ class ProductBundleItemServiceImplTest {
     private ProductBundleItem productBundleItem;
     private ProductBundleItemDTO productBundleItemDTO;
     private ProductBundleDTO productBundleDTO;
-    private final Long BUNDLE_ID = 1L;
-    private final Long ITEM_ID = 2L;
-    private final Long PRODUCT_ID = 3L;
+    private final UUID BUNDLE_ID = 1L;
+    private final UUID ITEM_ID = 2L;
+    private final UUID PRODUCT_ID = 3L;
 
     @BeforeEach
     void setUp() {

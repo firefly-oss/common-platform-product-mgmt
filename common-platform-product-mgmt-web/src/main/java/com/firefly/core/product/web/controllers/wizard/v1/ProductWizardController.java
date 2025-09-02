@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * REST controller for the Product Wizard functionality.
@@ -136,7 +137,7 @@ public class ProductWizardController {
     @GetMapping("/{wizardId}")
     public Mono<ResponseEntity<ProductWizardDTO>> getWizardById(
         @Parameter(description = "ID of the wizard to retrieve", required = true)
-        @PathVariable Long wizardId
+        @PathVariable UUID wizardId
     ) {
         return service.getWizardById(wizardId)
             .map(ResponseEntity::ok)

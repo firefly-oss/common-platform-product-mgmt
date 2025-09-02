@@ -9,6 +9,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,10 +19,10 @@ import java.math.BigDecimal;
 public class FeeComponent extends BaseEntity {
     @Id
     @Column("fee_component_id")
-    private Long feeComponentId;
+    private UUID feeComponentId;
 
     @Column("fee_structure_id")
-    private Long feeStructureId;
+    private UUID feeStructureId;
 
     @Column("fee_type")
     private FeeTypeEnum feeType;

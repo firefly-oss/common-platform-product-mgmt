@@ -10,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -17,9 +18,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ProductPricingDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productPricingId;
+    private UUID productPricingId;
 
-    private Long productId;
+    private UUID productId;
     private PricingTypeEnum pricingType;
     private BigDecimal amountValue;
     private String amountUnit;

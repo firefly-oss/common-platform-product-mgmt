@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductLifecycleServiceImpl implements ProductLifecycleService {
     private ProductLifecycleMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductLifecycleDTO>> getProductLifecycles(Long productId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductLifecycleDTO>> getProductLifecycles(UUID productId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -33,7 +34,7 @@ public class ProductLifecycleServiceImpl implements ProductLifecycleService {
     }
 
     @Override
-    public Mono<ProductLifecycleDTO> createProductLifecycle(Long productId, ProductLifecycleDTO request) {
+    public Mono<ProductLifecycleDTO> createProductLifecycle(UUID productId, ProductLifecycleDTO request) {
         request.setProductId(productId);
         ProductLifecycle entity = mapper.toEntity(request);
         return repository.save(entity)
@@ -42,7 +43,7 @@ public class ProductLifecycleServiceImpl implements ProductLifecycleService {
     }
 
     @Override
-    public Mono<ProductLifecycleDTO> getProductLifecycle(Long productId, Long lifecycleId) {
+    public Mono<ProductLifecycleDTO> getProductLifecycle(UUID productId, UUID lifecycleId) {
         return repository.findById(lifecycleId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .map(mapper::toDto)
@@ -51,7 +52,7 @@ public class ProductLifecycleServiceImpl implements ProductLifecycleService {
     }
 
     @Override
-    public Mono<ProductLifecycleDTO> updateProductLifecycle(Long productId, Long lifecycleId, ProductLifecycleDTO request) {
+    public Mono<ProductLifecycleDTO> updateProductLifecycle(UUID productId, UUID lifecycleId, ProductLifecycleDTO request) {
         return repository.findById(lifecycleId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .flatMap(existingEntity -> {
@@ -69,7 +70,7 @@ public class ProductLifecycleServiceImpl implements ProductLifecycleService {
     }
 
     @Override
-    public Mono<Void> deleteProductLifecycle(Long productId, Long lifecycleId) {
+    public Mono<Void> deleteProductLifecycle(UUID productId, UUID lifecycleId) {
         return repository.findById(lifecycleId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Product lifecycle not found or not associated with the given product")))

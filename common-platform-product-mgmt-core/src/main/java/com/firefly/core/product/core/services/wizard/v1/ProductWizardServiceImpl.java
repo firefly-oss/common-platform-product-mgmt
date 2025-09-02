@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 /**
  * Implementation of the ProductWizardService interface.
@@ -38,8 +39,7 @@ public class ProductWizardServiceImpl implements ProductWizardService {
     private final ProductDocumentationRequirementService documentationRequirementService;
 
     // In-memory storage for wizard sessions (in a real application, this would be persisted to a database)
-    private final Map<Long, ProductWizardDTO> wizardSessions = new HashMap<>();
-    private Long nextWizardId = 1L;
+    private final Map<UUID, ProductWizardDTO> wizardSessions = new HashMap<>();
 
     // Predefined templates for common product configurations
     private final Map<String, ProductWizardDTO> templates = new HashMap<>();
@@ -208,7 +208,7 @@ public class ProductWizardServiceImpl implements ProductWizardService {
         // Create the product
         return productService.createProduct(wizardDTO.getProduct())
             .flatMap(createdProduct -> {
-                Long productId = createdProduct.getProductId();
+                UUID productId = createdProduct.getProductId();
 
                 // Create features if any
                 Mono<Void> featuresCreation = Mono.empty();
@@ -301,7 +301,7 @@ public class ProductWizardServiceImpl implements ProductWizardService {
     }
 
     @Override
-    public Mono<ProductWizardDTO> getWizardById(Long wizardId) {
+    public Mono<ProductWizardDTO> getWizardById(UUID wizardId) {
         if (!wizardSessions.containsKey(wizardId)) {
             return Mono.error(new IllegalArgumentException("Wizard session not found: " + wizardId));
         }
@@ -312,7 +312,7 @@ public class ProductWizardServiceImpl implements ProductWizardService {
     public Mono<ProductWizardDTO> saveWizardState(ProductWizardDTO wizardDTO) {
         // Assign an ID if this is a new wizard session
         if (wizardDTO.getId() == null) {
-            wizardDTO.setId(nextWizardId++);
+            wizardDTO.setId(UUID.randomUUID());
         }
 
         // Update last updated timestamp
@@ -527,7 +527,7 @@ public class ProductWizardServiceImpl implements ProductWizardService {
     }
 
     @Override
-    public Mono<ProductWizardDTO> resetWizard(Long wizardId) {
+    public Mono<ProductWizardDTO> resetWizard(UUID wizardId) {
         if (!wizardSessions.containsKey(wizardId)) {
             return Mono.error(new IllegalArgumentException("Wizard session not found: " + wizardId));
         }

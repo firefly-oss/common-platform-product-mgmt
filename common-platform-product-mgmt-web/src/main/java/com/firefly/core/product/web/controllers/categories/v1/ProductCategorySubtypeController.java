@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Category", description = "APIs for managing product categories in the product management platform")
 @RestController
@@ -41,7 +42,7 @@ public class ProductCategorySubtypeController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductCategorySubtypeDTO>>> getAllSubtypes(
             @Parameter(description = "Unique identifier of the product category", required = true)
-            @PathVariable Long categoryId,
+            @PathVariable UUID categoryId,
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
     ) {
@@ -62,7 +63,7 @@ public class ProductCategorySubtypeController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductCategorySubtypeDTO>> createSubtype(
             @Parameter(description = "Unique identifier of the product category", required = true)
-            @PathVariable Long categoryId,
+            @PathVariable UUID categoryId,
             @Parameter(description = "Data for the new product subtype", required = true,
                     schema = @Schema(implementation = ProductCategorySubtypeDTO.class))
             @RequestBody ProductCategorySubtypeDTO request
@@ -85,9 +86,9 @@ public class ProductCategorySubtypeController {
     @GetMapping(value = "/{subtypeId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductCategorySubtypeDTO>> getSubtype(
             @Parameter(description = "Unique identifier of the product category", required = true)
-            @PathVariable Long categoryId,
+            @PathVariable UUID categoryId,
             @Parameter(description = "Unique identifier of the product subtype", required = true)
-            @PathVariable Long subtypeId
+            @PathVariable UUID subtypeId
     ) {
         return service.getById(categoryId, subtypeId)
                 .map(ResponseEntity::ok)
@@ -108,9 +109,9 @@ public class ProductCategorySubtypeController {
     @PutMapping(value = "/{subtypeId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductCategorySubtypeDTO>> updateSubtype(
             @Parameter(description = "Unique identifier of the product category", required = true)
-            @PathVariable Long categoryId,
+            @PathVariable UUID categoryId,
             @Parameter(description = "Unique identifier of the product subtype", required = true)
-            @PathVariable Long subtypeId,
+            @PathVariable UUID subtypeId,
             @Parameter(description = "Updated data for the product subtype", required = true,
                     schema = @Schema(implementation = ProductCategorySubtypeDTO.class))
             @RequestBody ProductCategorySubtypeDTO request
@@ -131,9 +132,9 @@ public class ProductCategorySubtypeController {
     @DeleteMapping(value = "/{subtypeId}")
     public Mono<ResponseEntity<Void>> deleteSubtype(
             @Parameter(description = "Unique identifier of the product category", required = true)
-            @PathVariable Long categoryId,
+            @PathVariable UUID categoryId,
             @Parameter(description = "Unique identifier of the product subtype", required = true)
-            @PathVariable Long subtypeId
+            @PathVariable UUID subtypeId
     ) {
         return service.delete(categoryId, subtypeId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

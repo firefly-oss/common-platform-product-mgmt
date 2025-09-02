@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductFeeStructureServiceImpl implements ProductFeeStructureServic
     private ProductFeeStructureMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductFeeStructureDTO>> getAllFeeStructuresByProduct(Long productId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductFeeStructureDTO>> getAllFeeStructuresByProduct(UUID productId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -33,7 +34,7 @@ public class ProductFeeStructureServiceImpl implements ProductFeeStructureServic
     }
 
     @Override
-    public Mono<ProductFeeStructureDTO> createFeeStructure(Long productId, ProductFeeStructureDTO request) {
+    public Mono<ProductFeeStructureDTO> createFeeStructure(UUID productId, ProductFeeStructureDTO request) {
         request.setProductId(productId);
         ProductFeeStructure entity = mapper.toEntity(request);
         return repository.save(entity)
@@ -42,7 +43,7 @@ public class ProductFeeStructureServiceImpl implements ProductFeeStructureServic
     }
 
     @Override
-    public Mono<ProductFeeStructureDTO> getFeeStructureById(Long productId, Long feeStructureId) {
+    public Mono<ProductFeeStructureDTO> getFeeStructureById(UUID productId, UUID feeStructureId) {
         return repository.findByProductId(productId)
                 .filter(entity -> entity.getFeeStructureId().equals(feeStructureId))
                 .singleOrEmpty()
@@ -51,7 +52,7 @@ public class ProductFeeStructureServiceImpl implements ProductFeeStructureServic
     }
 
     @Override
-    public Mono<ProductFeeStructureDTO> updateFeeStructure(Long productId, Long feeStructureId, ProductFeeStructureDTO request) {
+    public Mono<ProductFeeStructureDTO> updateFeeStructure(UUID productId, UUID feeStructureId, ProductFeeStructureDTO request) {
         return repository.findByProductId(productId)
                 .filter(entity -> entity.getFeeStructureId().equals(feeStructureId))
                 .singleOrEmpty()
@@ -65,7 +66,7 @@ public class ProductFeeStructureServiceImpl implements ProductFeeStructureServic
     }
 
     @Override
-    public Mono<Void> deleteFeeStructure(Long productId, Long feeStructureId) {
+    public Mono<Void> deleteFeeStructure(UUID productId, UUID feeStructureId) {
         return repository.findByProductId(productId)
                 .filter(entity -> entity.getFeeStructureId().equals(feeStructureId))
                 .singleOrEmpty()

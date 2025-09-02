@@ -8,6 +8,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,10 +19,10 @@ public class ProductVersion extends BaseEntity {
 
     @Id
     @Column("product_version_id")
-    private Long productVersionId;
+    private UUID productVersionId;
 
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
 
     @Column("version_number")
     private Long versionNumber;

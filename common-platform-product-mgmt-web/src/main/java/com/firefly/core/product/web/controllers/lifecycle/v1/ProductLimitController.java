@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Limit", description = "APIs for managing limits (restrictions, thresholds, etc.) associated with a specific product")
 @RestController
@@ -40,7 +41,7 @@ public class ProductLimitController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductLimitDTO>>> getAllProductLimits(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -64,7 +65,7 @@ public class ProductLimitController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductLimitDTO>> createProductLimit(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Data for the new product limit", required = true,
                     schema = @Schema(implementation = ProductLimitDTO.class))
@@ -89,10 +90,10 @@ public class ProductLimitController {
     @GetMapping(value = "/{limitId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductLimitDTO>> getProductLimit(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product limit", required = true)
-            @PathVariable Long limitId
+            @PathVariable UUID limitId
     ) {
         return service.getProductLimit(productId, limitId)
                 .map(ResponseEntity::ok)
@@ -113,10 +114,10 @@ public class ProductLimitController {
     @PutMapping(value = "/{limitId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductLimitDTO>> updateProductLimit(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product limit to update", required = true)
-            @PathVariable Long limitId,
+            @PathVariable UUID limitId,
 
             @Parameter(description = "Updated data for the product limit", required = true,
                     schema = @Schema(implementation = ProductLimitDTO.class))
@@ -140,10 +141,10 @@ public class ProductLimitController {
     @DeleteMapping(value = "/{limitId}")
     public Mono<ResponseEntity<Void>> deleteProductLimit(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product limit to delete", required = true)
-            @PathVariable Long limitId
+            @PathVariable UUID limitId
     ) {
         return service.deleteProductLimit(productId, limitId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

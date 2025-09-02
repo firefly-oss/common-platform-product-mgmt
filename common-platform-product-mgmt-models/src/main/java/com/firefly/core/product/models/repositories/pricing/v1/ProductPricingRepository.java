@@ -9,14 +9,15 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Repository
-public interface ProductPricingRepository extends BaseRepository<ProductPricing, Long> {
-    Flux<ProductPricing> findByProductId(Long productId);
+public interface ProductPricingRepository extends BaseRepository<ProductPricing, UUID> {
+    Flux<ProductPricing> findByProductId(UUID productId);
     Flux<ProductPricing> findByPricingType(PricingTypeEnum type);
     Flux<ProductPricing> findByEffectiveDateLessThanEqualAndExpiryDateGreaterThanEqual(
             LocalDate effectiveDate, LocalDate expiryDate);
 
-    Flux<ProductPricing> findByProductId(Long productId, Pageable pageable);
-    Mono<Long> countByProductId(Long productId);
+    Flux<ProductPricing> findByProductId(UUID productId, Pageable pageable);
+    Mono<Long> countByProductId(UUID productId);
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductPricingLocalizationServiceImpl implements ProductPricingLoca
     private ProductPricingLocalizationMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductPricingLocalizationDTO>> getAllLocalizations(Long pricingId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductPricingLocalizationDTO>> getAllLocalizations(UUID pricingId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -33,7 +34,7 @@ public class ProductPricingLocalizationServiceImpl implements ProductPricingLoca
     }
 
     @Override
-    public Mono<ProductPricingLocalizationDTO> createLocalization(Long pricingId, ProductPricingLocalizationDTO request) {
+    public Mono<ProductPricingLocalizationDTO> createLocalization(UUID pricingId, ProductPricingLocalizationDTO request) {
         try {
             request.setProductPricingId(pricingId);
             ProductPricingLocalization entity = mapper.toEntity(request);
@@ -46,7 +47,7 @@ public class ProductPricingLocalizationServiceImpl implements ProductPricingLoca
     }
 
     @Override
-    public Mono<ProductPricingLocalizationDTO> getLocalization(Long pricingId, Long localizationId) {
+    public Mono<ProductPricingLocalizationDTO> getLocalization(UUID pricingId, UUID localizationId) {
         try {
             return repository.findById(localizationId)
                     .filter(localization -> localization.getProductPricingId().equals(pricingId))
@@ -59,7 +60,7 @@ public class ProductPricingLocalizationServiceImpl implements ProductPricingLoca
     }
 
     @Override
-    public Mono<ProductPricingLocalizationDTO> updateLocalization(Long pricingId, Long localizationId, ProductPricingLocalizationDTO request) {
+    public Mono<ProductPricingLocalizationDTO> updateLocalization(UUID pricingId, UUID localizationId, ProductPricingLocalizationDTO request) {
         try {
             return repository.findById(localizationId)
                     .filter(localization -> localization.getProductPricingId().equals(pricingId))
@@ -78,7 +79,7 @@ public class ProductPricingLocalizationServiceImpl implements ProductPricingLoca
     }
 
     @Override
-    public Mono<Void> deleteLocalization(Long pricingId, Long localizationId) {
+    public Mono<Void> deleteLocalization(UUID pricingId, UUID localizationId) {
         try {
             return repository.findById(localizationId)
                     .filter(localization -> localization.getProductPricingId().equals(pricingId))

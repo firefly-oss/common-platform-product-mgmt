@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Bundle", description = "APIs for managing product bundles in the product management platform")
 @RestController
@@ -43,7 +44,7 @@ public class ProductBundleController {
     @GetMapping(value = "/{bundleId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductBundleDTO>> getById(
             @Parameter(description = "The unique identifier of the product bundle", required = true)
-            @PathVariable Long bundleId
+            @PathVariable UUID bundleId
     ) {
         return service.getById(bundleId)
                 .map(ResponseEntity::ok)
@@ -114,7 +115,7 @@ public class ProductBundleController {
     @PutMapping(value = "/{bundleId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductBundleDTO>> update(
             @Parameter(description = "The unique identifier of the product bundle to update", required = true)
-            @PathVariable Long bundleId,
+            @PathVariable UUID bundleId,
 
             @Parameter(description = "Updated product bundle data", required = true,
                     schema = @Schema(implementation = ProductBundleDTO.class))
@@ -136,7 +137,7 @@ public class ProductBundleController {
     @DeleteMapping(value = "/{bundleId}")
     public Mono<ResponseEntity<Void>> delete(
             @Parameter(description = "The unique identifier of the product bundle to delete", required = true)
-            @PathVariable Long bundleId
+            @PathVariable UUID bundleId
     ) {
         return service.delete(bundleId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

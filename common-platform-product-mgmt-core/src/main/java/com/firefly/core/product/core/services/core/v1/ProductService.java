@@ -4,6 +4,7 @@ import com.firefly.common.core.queries.PaginationRequest;
 import com.firefly.common.core.queries.PaginationResponse;
 import com.firefly.core.product.interfaces.dtos.core.v1.ProductDTO;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 public interface ProductService {
 
@@ -20,15 +21,15 @@ public interface ProductService {
     /**
      * Retrieve a specific product by its unique identifier.
      */
-    Mono<ProductDTO> getProduct(Long productId);
+    Mono<ProductDTO> getProduct(UUID productId);
 
     /**
      * Update an existing product by its unique identifier.
      */
-    Mono<ProductDTO> updateProduct(Long productId, ProductDTO productDTO);
+    Mono<ProductDTO> updateProduct(UUID productId, ProductDTO productDTO);
 
     /**
      * Delete an existing product by its unique identifier.
      */
-    Mono<Void> deleteProduct(Long productId);
+    Mono<Void> deleteProduct(UUID productId);
 }

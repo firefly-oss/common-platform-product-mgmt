@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 /**
  * Controller for managing product documentation requirements during the contracting/opening phase.
@@ -45,7 +46,7 @@ public class ProductDocumentationRequirementController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductDocumentationRequirementDTO>>> getAllDocumentationRequirements(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -69,7 +70,7 @@ public class ProductDocumentationRequirementController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductDocumentationRequirementDTO>> createDocumentationRequirement(
             @Parameter(description = "Unique identifier of the product to associate this documentation requirement with", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Data for the new product documentation requirement", required = true,
                     schema = @Schema(implementation = ProductDocumentationRequirementDTO.class))
@@ -94,10 +95,10 @@ public class ProductDocumentationRequirementController {
     @GetMapping(value = "/{requirementId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductDocumentationRequirementDTO>> getDocumentationRequirement(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the documentation requirement", required = true)
-            @PathVariable Long requirementId
+            @PathVariable UUID requirementId
     ) {
         return service.getDocumentationRequirement(productId, requirementId)
                 .map(ResponseEntity::ok)
@@ -118,7 +119,7 @@ public class ProductDocumentationRequirementController {
     @GetMapping(value = "/by-type/{docType}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductDocumentationRequirementDTO>> getDocumentationRequirementByType(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Type of document", required = true)
             @PathVariable ContractingDocTypeEnum docType
@@ -142,7 +143,7 @@ public class ProductDocumentationRequirementController {
     @GetMapping(value = "/mandatory", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<Flux<ProductDocumentationRequirementDTO>>> getMandatoryDocumentationRequirements(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId
+            @PathVariable UUID productId
     ) {
         Flux<ProductDocumentationRequirementDTO> requirements = service.getMandatoryDocumentationRequirements(productId);
         return Mono.just(ResponseEntity.ok(requirements));
@@ -162,10 +163,10 @@ public class ProductDocumentationRequirementController {
     @PutMapping(value = "/{requirementId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductDocumentationRequirementDTO>> updateDocumentationRequirement(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the documentation requirement to be updated", required = true)
-            @PathVariable Long requirementId,
+            @PathVariable UUID requirementId,
 
             @Parameter(description = "Updated product documentation requirement data", required = true,
                     schema = @Schema(implementation = ProductDocumentationRequirementDTO.class))
@@ -189,10 +190,10 @@ public class ProductDocumentationRequirementController {
     @DeleteMapping(value = "/{requirementId}")
     public Mono<ResponseEntity<Void>> deleteDocumentationRequirement(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the documentation requirement to be deleted", required = true)
-            @PathVariable Long requirementId
+            @PathVariable UUID requirementId
     ) {
         return service.deleteDocumentationRequirement(productId, requirementId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

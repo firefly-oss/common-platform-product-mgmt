@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,13 +19,13 @@ import org.springframework.data.relational.core.mapping.Table;
 public class ProductRelationship extends BaseEntity {
     @Id
     @Column("product_relationship_id")
-    private Long productRelationshipId;
+    private UUID productRelationshipId;
 
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
 
     @Column("related_product_id")
-    private Long relatedProductId;
+    private UUID relatedProductId;
 
     @Column("relationship_type")
     private RelationshipTypeEnum relationshipType;

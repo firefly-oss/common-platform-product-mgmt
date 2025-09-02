@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductPricingLocalizationServiceImplTest {
@@ -41,8 +42,8 @@ class ProductPricingLocalizationServiceImplTest {
 
     private ProductPricingLocalization localization;
     private ProductPricingLocalizationDTO localizationDTO;
-    private final Long PRICING_ID = 1L;
-    private final Long LOCALIZATION_ID = 2L;
+    private final UUID PRICING_ID = 1L;
+    private final UUID LOCALIZATION_ID = 2L;
 
     @BeforeEach
     void setUp() {

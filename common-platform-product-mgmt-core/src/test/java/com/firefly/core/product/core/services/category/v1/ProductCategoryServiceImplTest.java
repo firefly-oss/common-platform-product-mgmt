@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductCategoryServiceImplTest {
@@ -33,8 +34,8 @@ class ProductCategoryServiceImplTest {
 
     private ProductCategory productCategory;
     private ProductCategoryDTO productCategoryDTO;
-    private final Long CATEGORY_ID = 1L;
-    private final Long PARENT_CATEGORY_ID = 2L;
+    private final UUID CATEGORY_ID = 1L;
+    private final UUID PARENT_CATEGORY_ID = 2L;
 
     @BeforeEach
     void setUp() {

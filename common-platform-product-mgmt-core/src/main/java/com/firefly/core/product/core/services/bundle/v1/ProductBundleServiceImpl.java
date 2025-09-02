@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductBundleServiceImpl implements ProductBundleService {
     private ProductBundleMapper mapper;
 
     @Override
-    public Mono<ProductBundleDTO> getById(Long bundleId) {
+    public Mono<ProductBundleDTO> getById(UUID bundleId) {
         return repository.findById(bundleId)
                 .map(mapper::toDto)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Product bundle not found")))
@@ -49,7 +50,7 @@ public class ProductBundleServiceImpl implements ProductBundleService {
     }
 
     @Override
-    public Mono<ProductBundleDTO> update(Long bundleId, ProductBundleDTO productBundleDTO) {
+    public Mono<ProductBundleDTO> update(UUID bundleId, ProductBundleDTO productBundleDTO) {
         return repository.findById(bundleId)
                 .flatMap(existing -> {
                     existing.setBundleName(productBundleDTO.getBundleName());
@@ -63,7 +64,7 @@ public class ProductBundleServiceImpl implements ProductBundleService {
     }
 
     @Override
-    public Mono<Void> delete(Long bundleId) {
+    public Mono<Void> delete(UUID bundleId) {
         return repository.findById(bundleId)
                 .flatMap(repository::delete)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Product bundle not found")))

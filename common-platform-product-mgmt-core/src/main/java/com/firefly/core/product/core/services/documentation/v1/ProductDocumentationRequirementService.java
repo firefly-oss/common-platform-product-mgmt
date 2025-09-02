@@ -6,6 +6,7 @@ import com.firefly.core.product.interfaces.dtos.documentation.v1.ProductDocument
 import com.firefly.core.product.interfaces.enums.documentation.v1.ContractingDocTypeEnum;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 /**
  * Service for managing product documentation requirements during the contracting/opening phase.
@@ -20,7 +21,7 @@ public interface ProductDocumentationRequirementService {
      * @return A paginated response of documentation requirements
      */
     Mono<PaginationResponse<ProductDocumentationRequirementDTO>> getAllDocumentationRequirements(
-            Long productId, PaginationRequest paginationRequest);
+            UUID productId, PaginationRequest paginationRequest);
 
     /**
      * Create a new documentation requirement for a specific product.
@@ -30,7 +31,7 @@ public interface ProductDocumentationRequirementService {
      * @return The created documentation requirement
      */
     Mono<ProductDocumentationRequirementDTO> createDocumentationRequirement(
-            Long productId, ProductDocumentationRequirementDTO requirementDTO);
+            UUID productId, ProductDocumentationRequirementDTO requirementDTO);
 
     /**
      * Retrieve a specific documentation requirement by its unique identifier within a product.
@@ -40,7 +41,7 @@ public interface ProductDocumentationRequirementService {
      * @return The documentation requirement
      */
     Mono<ProductDocumentationRequirementDTO> getDocumentationRequirement(
-            Long productId, Long requirementId);
+            UUID productId, UUID requirementId);
 
     /**
      * Retrieve a specific documentation requirement by its document type within a product.
@@ -50,7 +51,7 @@ public interface ProductDocumentationRequirementService {
      * @return The documentation requirement
      */
     Mono<ProductDocumentationRequirementDTO> getDocumentationRequirementByType(
-            Long productId, ContractingDocTypeEnum docType);
+            UUID productId, ContractingDocTypeEnum docType);
 
     /**
      * Update an existing documentation requirement for a specific product.
@@ -61,7 +62,7 @@ public interface ProductDocumentationRequirementService {
      * @return The updated documentation requirement
      */
     Mono<ProductDocumentationRequirementDTO> updateDocumentationRequirement(
-            Long productId, Long requirementId, ProductDocumentationRequirementDTO requirementDTO);
+            UUID productId, UUID requirementId, ProductDocumentationRequirementDTO requirementDTO);
 
     /**
      * Delete an existing documentation requirement by its unique identifier, within the context of a product.
@@ -70,7 +71,7 @@ public interface ProductDocumentationRequirementService {
      * @param requirementId The ID of the documentation requirement
      * @return A Mono that completes when the deletion is done
      */
-    Mono<Void> deleteDocumentationRequirement(Long productId, Long requirementId);
+    Mono<Void> deleteDocumentationRequirement(UUID productId, UUID requirementId);
 
     /**
      * Get all mandatory documentation requirements for a product.
@@ -78,5 +79,5 @@ public interface ProductDocumentationRequirementService {
      * @param productId The ID of the product
      * @return A flux of mandatory documentation requirements
      */
-    Flux<ProductDocumentationRequirementDTO> getMandatoryDocumentationRequirements(Long productId);
+    Flux<ProductDocumentationRequirementDTO> getMandatoryDocumentationRequirements(UUID productId);
 }

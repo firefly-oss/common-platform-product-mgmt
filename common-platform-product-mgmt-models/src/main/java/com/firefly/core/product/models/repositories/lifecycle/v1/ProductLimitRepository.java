@@ -10,15 +10,16 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Repository
-public interface ProductLimitRepository extends BaseRepository<ProductLimit, Long> {
-    Flux<ProductLimit> findByProductId(Long productId);
+public interface ProductLimitRepository extends BaseRepository<ProductLimit, UUID> {
+    Flux<ProductLimit> findByProductId(UUID productId);
     Flux<ProductLimit> findByLimitType(LimitTypeEnum type);
     Flux<ProductLimit> findByTimePeriod(TimePeriodEnum period);
     Flux<ProductLimit> findByEffectiveDateLessThanEqualAndExpiryDateGreaterThanEqual(
             LocalDate date, LocalDate date2);
 
-    Flux<ProductLimit> findByProductId(Long productId, Pageable pageable);
-    Mono<Long> countByProductId(Long productId);
+    Flux<ProductLimit> findByProductId(UUID productId, Pageable pageable);
+    Mono<Long> countByProductId(UUID productId);
 }

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import java.util.UUID;
 
 /**
  * DTO for product documentation requirements during the contracting/opening phase.
@@ -18,9 +19,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ProductDocumentationRequirementDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productDocRequirementId;
+    private UUID productDocRequirementId;
     
-    private Long productId;
+    private UUID productId;
     private ContractingDocTypeEnum docType;
     private Boolean isMandatory;
     private String description;

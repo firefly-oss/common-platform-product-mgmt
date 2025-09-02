@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class FeeComponentServiceImpl implements FeeComponentService {
     private FeeComponentMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<FeeComponentDTO>> getByFeeStructureId(Long feeStructureId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<FeeComponentDTO>> getByFeeStructureId(UUID feeStructureId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -33,7 +34,7 @@ public class FeeComponentServiceImpl implements FeeComponentService {
     }
 
     @Override
-    public Mono<FeeComponentDTO> createFeeComponent(Long feeStructureId, FeeComponentDTO feeComponentDTO) {
+    public Mono<FeeComponentDTO> createFeeComponent(UUID feeStructureId, FeeComponentDTO feeComponentDTO) {
         FeeComponent entity = mapper.toEntity(feeComponentDTO);
         entity.setFeeStructureId(feeStructureId);
         return repository.save(entity)
@@ -42,7 +43,7 @@ public class FeeComponentServiceImpl implements FeeComponentService {
     }
 
     @Override
-    public Mono<FeeComponentDTO> getFeeComponent(Long feeStructureId, Long componentId) {
+    public Mono<FeeComponentDTO> getFeeComponent(UUID feeStructureId, UUID componentId) {
         return repository.findById(componentId)
                 .filter(feeComponent -> feeStructureId.equals(feeComponent.getFeeStructureId()))
                 .map(mapper::toDto)
@@ -51,7 +52,7 @@ public class FeeComponentServiceImpl implements FeeComponentService {
     }
 
     @Override
-    public Mono<FeeComponentDTO> updateFeeComponent(Long feeStructureId, Long componentId, FeeComponentDTO feeComponentDTO) {
+    public Mono<FeeComponentDTO> updateFeeComponent(UUID feeStructureId, UUID componentId, FeeComponentDTO feeComponentDTO) {
         return repository.findById(componentId)
                 .filter(feeComponent -> feeStructureId.equals(feeComponent.getFeeStructureId()))
                 .switchIfEmpty(Mono.error(new RuntimeException("Fee component not found for component ID: " + componentId + " under fee structure ID: " + feeStructureId)))
@@ -66,7 +67,7 @@ public class FeeComponentServiceImpl implements FeeComponentService {
     }
 
     @Override
-    public Mono<Void> deleteFeeComponent(Long feeStructureId, Long componentId) {
+    public Mono<Void> deleteFeeComponent(UUID feeStructureId, UUID componentId) {
         return repository.findById(componentId)
                 .filter(feeComponent -> feeStructureId.equals(feeComponent.getFeeStructureId()))
                 .switchIfEmpty(Mono.error(new RuntimeException("Fee component not found for component ID: " + componentId + " under fee structure ID: " + feeStructureId)))

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -22,7 +23,7 @@ public class ProductDocumentationServiceImpl implements ProductDocumentationServ
     private ProductDocumentationMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductDocumentationDTO>> getAllDocumentations(Long productId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductDocumentationDTO>> getAllDocumentations(UUID productId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -32,7 +33,7 @@ public class ProductDocumentationServiceImpl implements ProductDocumentationServ
     }
 
     @Override
-    public Mono<ProductDocumentationDTO> createDocumentation(Long productId, ProductDocumentationDTO documentationDTO) {
+    public Mono<ProductDocumentationDTO> createDocumentation(UUID productId, ProductDocumentationDTO documentationDTO) {
         documentationDTO.setProductId(productId);
         return repository.save(mapper.toEntity(documentationDTO))
                 .map(mapper::toDto)
@@ -40,7 +41,7 @@ public class ProductDocumentationServiceImpl implements ProductDocumentationServ
     }
 
     @Override
-    public Mono<ProductDocumentationDTO> getDocumentation(Long productId, Long docId) {
+    public Mono<ProductDocumentationDTO> getDocumentation(UUID productId, UUID docId) {
         return repository.findById(docId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .map(mapper::toDto)
@@ -49,7 +50,7 @@ public class ProductDocumentationServiceImpl implements ProductDocumentationServ
     }
 
     @Override
-    public Mono<ProductDocumentationDTO> updateDocumentation(Long productId, Long docId, ProductDocumentationDTO documentationDTO) {
+    public Mono<ProductDocumentationDTO> updateDocumentation(UUID productId, UUID docId, ProductDocumentationDTO documentationDTO) {
         return repository.findById(docId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Documentation not found for update")))
@@ -64,7 +65,7 @@ public class ProductDocumentationServiceImpl implements ProductDocumentationServ
     }
 
     @Override
-    public Mono<Void> deleteDocumentation(Long productId, Long docId) {
+    public Mono<Void> deleteDocumentation(UUID productId, UUID docId) {
         return repository.findById(docId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Documentation not found for deletion")))

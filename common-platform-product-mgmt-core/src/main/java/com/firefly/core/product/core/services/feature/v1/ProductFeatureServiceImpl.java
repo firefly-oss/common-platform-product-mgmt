@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductFeatureServiceImpl implements ProductFeatureService {
     private ProductFeatureMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductFeatureDTO>> getAllFeatures(Long productId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductFeatureDTO>> getAllFeatures(UUID productId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -33,7 +34,7 @@ public class ProductFeatureServiceImpl implements ProductFeatureService {
     }
 
     @Override
-    public Mono<ProductFeatureDTO> createFeature(Long productId, ProductFeatureDTO featureDTO) {
+    public Mono<ProductFeatureDTO> createFeature(UUID productId, ProductFeatureDTO featureDTO) {
         ProductFeature entity = mapper.toEntity(featureDTO);
         entity.setProductId(productId);
         return repository.save(entity)
@@ -42,7 +43,7 @@ public class ProductFeatureServiceImpl implements ProductFeatureService {
     }
 
     @Override
-    public Mono<ProductFeatureDTO> getFeature(Long productId, Long featureId) {
+    public Mono<ProductFeatureDTO> getFeature(UUID productId, UUID featureId) {
         return repository.findById(featureId)
                 .filter(feature -> feature.getProductId().equals(productId))
                 .map(mapper::toDto)
@@ -51,7 +52,7 @@ public class ProductFeatureServiceImpl implements ProductFeatureService {
     }
 
     @Override
-    public Mono<ProductFeatureDTO> updateFeature(Long productId, Long featureId, ProductFeatureDTO featureDTO) {
+    public Mono<ProductFeatureDTO> updateFeature(UUID productId, UUID featureId, ProductFeatureDTO featureDTO) {
         return repository.findById(featureId)
                 .filter(feature -> feature.getProductId().equals(productId))
                 .flatMap(existingFeature -> {
@@ -66,7 +67,7 @@ public class ProductFeatureServiceImpl implements ProductFeatureService {
     }
 
     @Override
-    public Mono<Void> deleteFeature(Long productId, Long featureId) {
+    public Mono<Void> deleteFeature(UUID productId, UUID featureId) {
         return repository.findById(featureId)
                 .filter(feature -> feature.getProductId().equals(productId))
                 .flatMap(repository::delete)

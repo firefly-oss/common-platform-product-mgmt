@@ -8,14 +8,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Repository
-public interface FeeComponentRepository extends BaseRepository<FeeComponent, Long> {
-    Flux<FeeComponent> findByFeeStructureId(Long structureId);
+public interface FeeComponentRepository extends BaseRepository<FeeComponent, UUID> {
+    Flux<FeeComponent> findByFeeStructureId(UUID structureId);
 
     Flux<FeeComponent> findByFeeType(FeeTypeEnum type, Pageable pageable);
     Mono<Long> countByFeeType(FeeTypeEnum type);
 
-    Flux<FeeComponent> findByFeeStructureId(Long structureId, Pageable pageable);
-    Mono<Long> countByFeeStructureId(Long structureId);
+    Flux<FeeComponent> findByFeeStructureId(UUID structureId, Pageable pageable);
+    Mono<Long> countByFeeStructureId(UUID structureId);
 }

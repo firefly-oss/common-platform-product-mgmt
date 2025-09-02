@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -41,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Mono<ProductDTO> getProduct(Long productId) {
+    public Mono<ProductDTO> getProduct(UUID productId) {
         return repository.findById(productId)
                 .map(mapper::toDto)
                 .switchIfEmpty(Mono.error(new RuntimeException("Product not found")))
@@ -49,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Mono<ProductDTO> updateProduct(Long productId, ProductDTO productDTO) {
+    public Mono<ProductDTO> updateProduct(UUID productId, ProductDTO productDTO) {
         return repository.findById(productId)
                 .flatMap(existingProduct -> {
                     Product updatedProduct = mapper.toEntity(productDTO);
@@ -62,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Mono<Void> deleteProduct(Long productId) {
+    public Mono<Void> deleteProduct(UUID productId) {
         return repository.findById(productId)
                 .flatMap(existingProduct -> repository.delete(existingProduct))
                 .onErrorResume(e -> Mono.error(new RuntimeException("Failed to delete product", e)));

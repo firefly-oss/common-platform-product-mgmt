@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -20,7 +21,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     private ProductCategoryMapper mapper;
 
     @Override
-    public Mono<ProductCategoryDTO> getById(Long categoryId) {
+    public Mono<ProductCategoryDTO> getById(UUID categoryId) {
         return repository.findById(categoryId)
                 .map(mapper::toDto)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Product category not found for the given ID")));
@@ -35,7 +36,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    public Mono<ProductCategoryDTO> update(Long categoryId, ProductCategoryDTO categoryDTO) {
+    public Mono<ProductCategoryDTO> update(UUID categoryId, ProductCategoryDTO categoryDTO) {
         return repository.findById(categoryId)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Product category not found for the given ID")))
                 .flatMap(existingEntity -> {
@@ -49,7 +50,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    public Mono<Void> delete(Long categoryId) {
+    public Mono<Void> delete(UUID categoryId) {
         return repository.findById(categoryId)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Product category not found for the given ID")))
                 .flatMap(existingEntity -> repository.delete(existingEntity)

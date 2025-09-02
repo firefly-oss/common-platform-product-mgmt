@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -18,7 +19,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class FeeStructure extends BaseEntity {
     @Id
     @Column("fee_structure_id")
-    private Long feeStructureId;
+    private UUID feeStructureId;
 
     @Column("fee_structure_name")
     private String feeStructureName;

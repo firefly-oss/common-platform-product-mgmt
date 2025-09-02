@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -13,9 +14,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ProductCategorySubtypeDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productSubtypeId;
+    private UUID productSubtypeId;
 
-    private Long productCategoryId;
+    private UUID productCategoryId;
     private String subtypeName;
     private String subtypeDescription;
 }

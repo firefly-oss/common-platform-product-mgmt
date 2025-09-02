@@ -13,6 +13,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -22,10 +23,10 @@ import java.time.LocalDate;
 public class ProductLimit extends BaseEntity {
     @Id
     @Column("product_limit_id")
-    private Long productLimitId;
+    private UUID productLimitId;
 
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
 
     @Column("limit_type")
     private LimitTypeEnum limitType;

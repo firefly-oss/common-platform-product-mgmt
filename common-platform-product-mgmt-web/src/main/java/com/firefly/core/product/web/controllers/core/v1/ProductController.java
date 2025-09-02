@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product", description = "APIs for managing core product entities in the product management platform")
 @RestController
@@ -70,7 +71,7 @@ public class ProductController {
     @GetMapping(value = "/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductDTO>> getProduct(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId
+            @PathVariable UUID productId
     ) {
         return service.getProduct(productId)
                 .map(ResponseEntity::ok)
@@ -87,7 +88,7 @@ public class ProductController {
     @PutMapping(value = "/{productId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductDTO>> updateProduct(
             @Parameter(description = "Unique identifier of the product to update", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Updated product data", required = true,
                     schema = @Schema(implementation = ProductDTO.class))
@@ -106,7 +107,7 @@ public class ProductController {
     @DeleteMapping(value = "/{productId}")
     public Mono<ResponseEntity<Void>> deleteProduct(
             @Parameter(description = "Unique identifier of the product to delete", required = true)
-            @PathVariable Long productId
+            @PathVariable UUID productId
     ) {
         return service.deleteProduct(productId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

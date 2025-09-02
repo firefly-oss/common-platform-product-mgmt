@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Feature", description = "APIs for managing features associated with a specific product")
 @RestController
@@ -40,7 +41,7 @@ public class ProductFeatureController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductFeatureDTO>>> getAllFeatures(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -64,7 +65,7 @@ public class ProductFeatureController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductFeatureDTO>> createFeature(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Data for the new product feature", required = true,
                     schema = @Schema(implementation = ProductFeatureDTO.class))
@@ -89,10 +90,10 @@ public class ProductFeatureController {
     @GetMapping(value = "/{featureId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductFeatureDTO>> getFeature(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the feature", required = true)
-            @PathVariable Long featureId
+            @PathVariable UUID featureId
     ) {
         return service.getFeature(productId, featureId)
                 .map(ResponseEntity::ok)
@@ -113,10 +114,10 @@ public class ProductFeatureController {
     @PutMapping(value = "/{featureId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductFeatureDTO>> updateFeature(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product feature to update", required = true)
-            @PathVariable Long featureId,
+            @PathVariable UUID featureId,
 
             @Parameter(description = "Updated product feature data", required = true,
                     schema = @Schema(implementation = ProductFeatureDTO.class))
@@ -140,10 +141,10 @@ public class ProductFeatureController {
     @DeleteMapping(value = "/{featureId}")
     public Mono<ResponseEntity<Void>> deleteFeature(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product feature to delete", required = true)
-            @PathVariable Long featureId
+            @PathVariable UUID featureId
     ) {
         return service.deleteFeature(productId, featureId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

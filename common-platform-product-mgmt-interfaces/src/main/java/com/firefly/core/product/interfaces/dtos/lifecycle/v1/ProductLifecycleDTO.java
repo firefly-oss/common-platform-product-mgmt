@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -16,9 +17,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ProductLifecycleDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productLifecycleId;
+    private UUID productLifecycleId;
 
-    private Long productId;
+    private UUID productId;
     private LifecycleStatusEnum lifecycleStatus;
     private LocalDateTime statusStartDate;
     private LocalDateTime statusEndDate;

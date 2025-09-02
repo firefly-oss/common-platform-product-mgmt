@@ -29,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductLimitServiceImplTest {
@@ -44,8 +45,8 @@ class ProductLimitServiceImplTest {
 
     private ProductLimit limit;
     private ProductLimitDTO limitDTO;
-    private final Long PRODUCT_ID = 1L;
-    private final Long LIMIT_ID = 2L;
+    private final UUID PRODUCT_ID = 1L;
+    private final UUID LIMIT_ID = 2L;
 
     @BeforeEach
     void setUp() {

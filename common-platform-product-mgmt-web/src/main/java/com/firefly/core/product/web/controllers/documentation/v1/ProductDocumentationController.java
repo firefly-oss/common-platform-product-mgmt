@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Documentation", description = "APIs for managing documentation (manuals, guides, etc.) associated with a specific product")
 @RestController
@@ -40,7 +41,7 @@ public class ProductDocumentationController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductDocumentationDTO>>> getAllDocumentation(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -64,7 +65,7 @@ public class ProductDocumentationController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductDocumentationDTO>> createDocumentation(
             @Parameter(description = "Unique identifier of the product to associate this documentation with", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Data for the new product documentation", required = true,
                     schema = @Schema(implementation = ProductDocumentationDTO.class))
@@ -89,10 +90,10 @@ public class ProductDocumentationController {
     @GetMapping(value = "/{docId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductDocumentationDTO>> getDocumentation(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the documentation item", required = true)
-            @PathVariable Long docId
+            @PathVariable UUID docId
     ) {
         return service.getDocumentation(productId, docId)
                 .map(ResponseEntity::ok)
@@ -113,10 +114,10 @@ public class ProductDocumentationController {
     @PutMapping(value = "/{docId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductDocumentationDTO>> updateDocumentation(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the documentation to be updated", required = true)
-            @PathVariable Long docId,
+            @PathVariable UUID docId,
 
             @Parameter(description = "Updated product documentation data", required = true,
                     schema = @Schema(implementation = ProductDocumentationDTO.class))
@@ -140,10 +141,10 @@ public class ProductDocumentationController {
     @DeleteMapping(value = "/{docId}")
     public Mono<ResponseEntity<Void>> deleteDocumentation(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the documentation to be deleted", required = true)
-            @PathVariable Long docId
+            @PathVariable UUID docId
     ) {
         return service.deleteDocumentation(productId, docId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

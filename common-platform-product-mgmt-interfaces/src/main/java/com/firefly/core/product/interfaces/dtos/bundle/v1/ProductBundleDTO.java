@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -14,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ProductBundleDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productBundleId;
+    private UUID productBundleId;
 
     private String bundleName;
     private String bundleDescription;

@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Localization", description = "APIs for managing localized data (translations, region-specific info) for a product")
 @RestController
@@ -50,7 +51,7 @@ public class ProductLocalizationController {
                     description = "Unique identifier of the product",
                     required = true
             )
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -84,7 +85,7 @@ public class ProductLocalizationController {
                     description = "Unique identifier of the product",
                     required = true
             )
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(
                     description = "Data for the new product localization record",
@@ -122,14 +123,14 @@ public class ProductLocalizationController {
                     description = "Unique identifier of the product",
                     required = true
             )
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(
                     in = ParameterIn.PATH,
                     description = "Unique identifier of the localization record",
                     required = true
             )
-            @PathVariable Long localizationId
+            @PathVariable UUID localizationId
     ) {
         return service.getLocalizationById(productId, localizationId)
                 .map(ResponseEntity::ok)
@@ -160,14 +161,14 @@ public class ProductLocalizationController {
                     description = "Unique identifier of the product",
                     required = true
             )
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(
                     in = ParameterIn.PATH,
                     description = "Unique identifier of the localization record to update",
                     required = true
             )
-            @PathVariable Long localizationId,
+            @PathVariable UUID localizationId,
 
             @Parameter(
                     description = "Updated data for the product localization",
@@ -204,14 +205,14 @@ public class ProductLocalizationController {
                     description = "Unique identifier of the product",
                     required = true
             )
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(
                     in = ParameterIn.PATH,
                     description = "Unique identifier of the localization record to delete",
                     required = true
             )
-            @PathVariable Long localizationId
+            @PathVariable UUID localizationId
     ) {
         return service.deleteLocalization(productId, localizationId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

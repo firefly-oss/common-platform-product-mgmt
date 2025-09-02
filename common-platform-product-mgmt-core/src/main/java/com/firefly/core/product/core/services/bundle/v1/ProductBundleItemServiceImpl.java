@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductBundleItemServiceImpl implements ProductBundleItemService {
     private ProductBundleItemMapper mapper;
 
     @Override
-    public Mono<ProductBundleItemDTO> getItem(Long bundleId, Long itemId) {
+    public Mono<ProductBundleItemDTO> getItem(UUID bundleId, UUID itemId) {
         return bundleService.getById(bundleId)
                 .flatMap(bundle -> repository.findById(itemId))
                 .filter(item -> item.getProductBundleId().equals(bundleId))
@@ -32,7 +33,7 @@ public class ProductBundleItemServiceImpl implements ProductBundleItemService {
     }
 
     @Override
-    public Mono<ProductBundleItemDTO> createItem(Long bundleId, ProductBundleItemDTO request) {
+    public Mono<ProductBundleItemDTO> createItem(UUID bundleId, ProductBundleItemDTO request) {
         return bundleService.getById(bundleId)
                 .flatMap(bundle -> {
                     ProductBundleItem entity = mapper.toEntity(request);
@@ -43,7 +44,7 @@ public class ProductBundleItemServiceImpl implements ProductBundleItemService {
     }
 
     @Override
-    public Mono<ProductBundleItemDTO> updateItem(Long bundleId, Long itemId, ProductBundleItemDTO request) {
+    public Mono<ProductBundleItemDTO> updateItem(UUID bundleId, UUID itemId, ProductBundleItemDTO request) {
         return bundleService.getById(bundleId)
                 .flatMap(bundle -> repository.findById(itemId))
                 .filter(item -> item.getProductBundleId().equals(bundleId))
@@ -57,7 +58,7 @@ public class ProductBundleItemServiceImpl implements ProductBundleItemService {
     }
 
     @Override
-    public Mono<Void> deleteItem(Long bundleId, Long itemId) {
+    public Mono<Void> deleteItem(UUID bundleId, UUID itemId) {
         return bundleService.getById(bundleId)
                 .flatMap(bundle -> repository.findById(itemId))
                 .filter(item -> item.getProductBundleId().equals(bundleId))

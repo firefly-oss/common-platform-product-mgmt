@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Fee Structure", description = "APIs for managing fee structures associated with a specific product")
 @RestController
@@ -40,7 +41,7 @@ public class ProductFeeStructureController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductFeeStructureDTO>>> getAllFeeStructures(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -64,7 +65,7 @@ public class ProductFeeStructureController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductFeeStructureDTO>> createFeeStructure(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Data for the new product fee structure", required = true,
                     schema = @Schema(implementation = ProductFeeStructureDTO.class))
@@ -88,10 +89,10 @@ public class ProductFeeStructureController {
     @GetMapping(value = "/{productFeeStructId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductFeeStructureDTO>> getFeeStructure(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product fee structure", required = true)
-            @PathVariable Long productFeeStructId
+            @PathVariable UUID productFeeStructId
     ) {
         return service.getFeeStructureById(productId, productFeeStructId)
                 .map(ResponseEntity::ok)
@@ -112,10 +113,10 @@ public class ProductFeeStructureController {
     @PutMapping(value = "/{productFeeStructId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductFeeStructureDTO>> updateFeeStructure(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product fee structure to update", required = true)
-            @PathVariable Long productFeeStructId,
+            @PathVariable UUID productFeeStructId,
 
             @Parameter(description = "Updated product fee structure data", required = true,
                     schema = @Schema(implementation = ProductFeeStructureDTO.class))
@@ -139,10 +140,10 @@ public class ProductFeeStructureController {
     @DeleteMapping(value = "/{productFeeStructId}")
     public Mono<ResponseEntity<Void>> deleteFeeStructure(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the fee structure to delete", required = true)
-            @PathVariable Long productFeeStructId
+            @PathVariable UUID productFeeStructId
     ) {
         return service.deleteFeeStructure(productId, productFeeStructId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

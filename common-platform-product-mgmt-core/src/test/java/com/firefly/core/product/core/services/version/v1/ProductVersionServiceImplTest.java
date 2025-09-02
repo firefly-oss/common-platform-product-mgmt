@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductVersionServiceImplTest {
@@ -40,8 +41,8 @@ class ProductVersionServiceImplTest {
 
     private ProductVersion version;
     private ProductVersionDTO versionDTO;
-    private final Long PRODUCT_ID = 1L;
-    private final Long VERSION_ID = 2L;
+    private final UUID PRODUCT_ID = 1L;
+    private final UUID VERSION_ID = 2L;
     private final Long VERSION_NUMBER = 1L;
 
     @BeforeEach

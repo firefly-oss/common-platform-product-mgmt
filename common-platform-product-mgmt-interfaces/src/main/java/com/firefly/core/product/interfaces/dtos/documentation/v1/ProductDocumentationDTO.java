@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -16,9 +17,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ProductDocumentationDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productDocumentationId;
+    private UUID productDocumentationId;
 
-    private Long productId;
+    private UUID productId;
     private DocTypeEnum docType;
     private Long documentManagerRef;
     private LocalDateTime dateAdded;

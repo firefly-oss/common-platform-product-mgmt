@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class FeeApplicationRuleServiceImpl implements FeeApplicationRuleService 
     private FeeApplicationRuleMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<FeeApplicationRuleDTO>> getRulesByComponentId(Long feeStructureId, Long componentId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<FeeApplicationRuleDTO>> getRulesByComponentId(UUID feeStructureId, UUID componentId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -33,7 +34,7 @@ public class FeeApplicationRuleServiceImpl implements FeeApplicationRuleService 
     }
 
     @Override
-    public Mono<FeeApplicationRuleDTO> createRule(Long feeStructureId, Long componentId, FeeApplicationRuleDTO ruleDTO) {
+    public Mono<FeeApplicationRuleDTO> createRule(UUID feeStructureId, UUID componentId, FeeApplicationRuleDTO ruleDTO) {
         FeeApplicationRule entity = mapper.toEntity(ruleDTO);
         entity.setFeeComponentId(componentId);
         return repository.save(entity)
@@ -42,7 +43,7 @@ public class FeeApplicationRuleServiceImpl implements FeeApplicationRuleService 
     }
 
     @Override
-    public Mono<FeeApplicationRuleDTO> getRule(Long feeStructureId, Long componentId, Long ruleId) {
+    public Mono<FeeApplicationRuleDTO> getRule(UUID feeStructureId, UUID componentId, UUID ruleId) {
         return repository.findById(ruleId)
                 .filter(rule -> rule.getFeeComponentId().equals(componentId))
                 .map(mapper::toDto)
@@ -51,7 +52,7 @@ public class FeeApplicationRuleServiceImpl implements FeeApplicationRuleService 
     }
 
     @Override
-    public Mono<FeeApplicationRuleDTO> updateRule(Long feeStructureId, Long componentId, Long ruleId, FeeApplicationRuleDTO ruleDTO) {
+    public Mono<FeeApplicationRuleDTO> updateRule(UUID feeStructureId, UUID componentId, UUID ruleId, FeeApplicationRuleDTO ruleDTO) {
         return repository.findById(ruleId)
                 .filter(rule -> rule.getFeeComponentId().equals(componentId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Rule not found or does not belong to the component")))
@@ -66,7 +67,7 @@ public class FeeApplicationRuleServiceImpl implements FeeApplicationRuleService 
     }
 
     @Override
-    public Mono<Void> deleteRule(Long feeStructureId, Long componentId, Long ruleId) {
+    public Mono<Void> deleteRule(UUID feeStructureId, UUID componentId, UUID ruleId) {
         return repository.findById(ruleId)
                 .filter(rule -> rule.getFeeComponentId().equals(componentId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Rule not found or does not belong to the component")))

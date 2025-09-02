@@ -11,6 +11,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,10 +21,10 @@ import java.time.LocalDateTime;
 public class ProductLifecycle extends BaseEntity {
     @Id
     @Column("product_lifecycle_id")
-    private Long productLifecycleId;
+    private UUID productLifecycleId;
 
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
 
     @Column("lifecycle_status")
     private LifecycleStatusEnum lifecycleStatus;

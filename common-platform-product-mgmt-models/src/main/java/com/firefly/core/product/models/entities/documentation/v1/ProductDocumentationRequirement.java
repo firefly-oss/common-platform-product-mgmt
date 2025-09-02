@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import java.util.UUID;
 
 /**
  * Entity representing a documentation requirement for a product during the contracting/opening phase.
@@ -23,10 +24,10 @@ public class ProductDocumentationRequirement extends BaseEntity {
     
     @Id
     @Column("product_doc_requirement_id")
-    private Long productDocRequirementId;
+    private UUID productDocRequirementId;
     
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
     
     @Column("doc_type")
     private ContractingDocTypeEnum docType;

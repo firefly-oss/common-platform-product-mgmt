@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -15,9 +16,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class FeeApplicationRuleDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long feeApplicationRuleId;
+    private UUID feeApplicationRuleId;
 
-    private Long feeComponentId;
+    private UUID feeComponentId;
     private String ruleDescription;
     private String ruleConditions;
     private LocalDate effectiveDate;

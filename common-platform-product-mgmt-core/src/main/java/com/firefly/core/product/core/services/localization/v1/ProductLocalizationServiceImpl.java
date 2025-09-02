@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductLocalizationServiceImpl implements ProductLocalizationServic
     private ProductLocalizationMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductLocalizationDTO>> getAllLocalizations(Long productId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductLocalizationDTO>> getAllLocalizations(UUID productId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -35,7 +36,7 @@ public class ProductLocalizationServiceImpl implements ProductLocalizationServic
     }
 
     @Override
-    public Mono<ProductLocalizationDTO> createLocalization(Long productId, ProductLocalizationDTO localizationDTO) {
+    public Mono<ProductLocalizationDTO> createLocalization(UUID productId, ProductLocalizationDTO localizationDTO) {
         ProductLocalization entity = mapper.toEntity(localizationDTO);
         entity.setProductId(productId);
         return repository.save(entity)
@@ -44,7 +45,7 @@ public class ProductLocalizationServiceImpl implements ProductLocalizationServic
     }
 
     @Override
-    public Mono<ProductLocalizationDTO> getLocalizationById(Long productId, Long localizationId) {
+    public Mono<ProductLocalizationDTO> getLocalizationById(UUID productId, UUID localizationId) {
         return repository.findById(localizationId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .map(mapper::toDto)
@@ -53,7 +54,7 @@ public class ProductLocalizationServiceImpl implements ProductLocalizationServic
     }
 
     @Override
-    public Mono<ProductLocalizationDTO> updateLocalization(Long productId, Long localizationId, ProductLocalizationDTO localizationDTO) {
+    public Mono<ProductLocalizationDTO> updateLocalization(UUID productId, UUID localizationId, ProductLocalizationDTO localizationDTO) {
         return repository.findById(localizationId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Localization not found for update")))
@@ -68,7 +69,7 @@ public class ProductLocalizationServiceImpl implements ProductLocalizationServic
     }
 
     @Override
-    public Mono<Void> deleteLocalization(Long productId, Long localizationId) {
+    public Mono<Void> deleteLocalization(UUID productId, UUID localizationId) {
         return repository.findById(localizationId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Localization not found for deletion")))

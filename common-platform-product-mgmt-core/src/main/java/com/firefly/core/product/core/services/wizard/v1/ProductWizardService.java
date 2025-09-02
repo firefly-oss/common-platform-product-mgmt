@@ -6,6 +6,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Service interface for the Product Wizard functionality.
@@ -52,7 +53,7 @@ public interface ProductWizardService {
      * @param wizardId The ID of the wizard session to retrieve
      * @return A Mono emitting the ProductWizardDTO for the specified ID
      */
-    Mono<ProductWizardDTO> getWizardById(Long wizardId);
+    Mono<ProductWizardDTO> getWizardById(UUID wizardId);
 
     /**
      * Saves the current state of the wizard to resume later.
@@ -131,5 +132,5 @@ public interface ProductWizardService {
      * @param wizardId The ID of the wizard session to reset
      * @return A Mono emitting the reset ProductWizardDTO
      */
-    Mono<ProductWizardDTO> resetWizard(Long wizardId);
+    Mono<ProductWizardDTO> resetWizard(UUID wizardId);
 }

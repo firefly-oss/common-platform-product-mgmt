@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -17,9 +18,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class FeeComponentDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long feeComponentId;
+    private UUID feeComponentId;
 
-    private Long feeStructureId;
+    private UUID feeStructureId;
     private FeeTypeEnum feeType;
     private String feeDescription;
     private BigDecimal feeAmount;

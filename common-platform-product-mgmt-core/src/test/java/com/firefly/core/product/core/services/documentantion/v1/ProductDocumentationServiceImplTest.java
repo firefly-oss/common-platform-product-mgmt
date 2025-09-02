@@ -25,6 +25,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductDocumentationServiceImplTest {
@@ -40,8 +41,8 @@ class ProductDocumentationServiceImplTest {
 
     private ProductDocumentation documentation;
     private ProductDocumentationDTO documentationDTO;
-    private final Long PRODUCT_ID = 1L;
-    private final Long DOC_ID = 2L;
+    private final UUID PRODUCT_ID = 1L;
+    private final UUID DOC_ID = 2L;
     private final Long DOC_MANAGER_REF = 100L;
 
     @BeforeEach

@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Category", description = "APIs for managing product categories in the product management platform")
 @RestController
@@ -37,7 +38,7 @@ public class ProductCategoryController {
     @GetMapping(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductCategoryDTO>> getCategory(
             @Parameter(description = "Unique identifier of the product category", required = true)
-            @PathVariable Long categoryId
+            @PathVariable UUID categoryId
     ) {
         return service.getById(categoryId)
                 .map(ResponseEntity::ok)
@@ -77,7 +78,7 @@ public class ProductCategoryController {
     @PutMapping(value = "/{categoryId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductCategoryDTO>> updateCategory(
             @Parameter(description = "Unique identifier of the product category to update", required = true)
-            @PathVariable Long categoryId,
+            @PathVariable UUID categoryId,
             @Parameter(description = "Updated data for the product category", required = true,
                     schema = @Schema(implementation = ProductCategoryDTO.class))
             @RequestBody ProductCategoryDTO request
@@ -100,7 +101,7 @@ public class ProductCategoryController {
     @DeleteMapping(value = "/{categoryId}")
     public Mono<ResponseEntity<Void>> deleteCategory(
             @Parameter(description = "Unique identifier of the product category to delete", required = true)
-            @PathVariable Long categoryId
+            @PathVariable UUID categoryId
     ) {
         return service.delete(categoryId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

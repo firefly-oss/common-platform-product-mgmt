@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Version", description = "APIs for managing different versions of a product")
 @RestController
@@ -39,7 +40,7 @@ public class ProductVersionController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductVersionDTO>>> getAllProductVersions(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -63,7 +64,7 @@ public class ProductVersionController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductVersionDTO>> createProductVersion(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Data for the new product version", required = true,
                     schema = @Schema(implementation = ProductVersionDTO.class))
@@ -88,10 +89,10 @@ public class ProductVersionController {
     @GetMapping(value = "/{versionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductVersionDTO>> getProductVersion(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product version", required = true)
-            @PathVariable Long versionId
+            @PathVariable UUID versionId
     ) {
         return service.getProductVersion(productId, versionId)
                 .map(ResponseEntity::ok)
@@ -112,10 +113,10 @@ public class ProductVersionController {
     @PutMapping(value = "/{versionId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductVersionDTO>> updateProductVersion(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product version record to update", required = true)
-            @PathVariable Long versionId,
+            @PathVariable UUID versionId,
 
             @Parameter(description = "Updated product version data", required = true,
                     schema = @Schema(implementation = ProductVersionDTO.class))
@@ -139,10 +140,10 @@ public class ProductVersionController {
     @DeleteMapping(value = "/{versionId}")
     public Mono<ResponseEntity<Void>> deleteProductVersion(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product version to delete", required = true)
-            @PathVariable Long versionId
+            @PathVariable UUID versionId
     ) {
         return service.deleteProductVersion(productId, versionId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -16,9 +17,9 @@ import java.time.LocalDateTime;
 public class ProductVersionDTO extends BaseDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productVersionId;
+    private UUID productVersionId;
 
-    private Long productId;
+    private UUID productId;
     private Long versionNumber;
     private String versionDescription;
     private LocalDateTime effectiveDate;

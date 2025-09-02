@@ -4,6 +4,7 @@ import com.firefly.common.core.queries.PaginationRequest;
 import com.firefly.common.core.queries.PaginationResponse;
 import com.firefly.core.product.interfaces.dtos.fee.v1.ProductFeeStructureDTO;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 public interface ProductFeeStructureService {
 
@@ -11,27 +12,27 @@ public interface ProductFeeStructureService {
      * Retrieve a paginated list of fee structures associated with a given product.
      */
     Mono<PaginationResponse<ProductFeeStructureDTO>> getAllFeeStructuresByProduct(
-            Long productId,
+            UUID productId,
             PaginationRequest paginationRequest
     );
 
     /**
      * Create a new fee structure and associate it with a specific product.
      */
-    Mono<ProductFeeStructureDTO> createFeeStructure(Long productId, ProductFeeStructureDTO request);
+    Mono<ProductFeeStructureDTO> createFeeStructure(UUID productId, ProductFeeStructureDTO request);
 
     /**
      * Retrieve a specific fee structure by its unique identifier, checking it belongs to the specified product.
      */
-    Mono<ProductFeeStructureDTO> getFeeStructureById(Long productId, Long feeStructureId);
+    Mono<ProductFeeStructureDTO> getFeeStructureById(UUID productId, UUID feeStructureId);
 
     /**
      * Update an existing fee structure for a specific product.
      */
-    Mono<ProductFeeStructureDTO> updateFeeStructure(Long productId, Long feeStructureId, ProductFeeStructureDTO request);
+    Mono<ProductFeeStructureDTO> updateFeeStructure(UUID productId, UUID feeStructureId, ProductFeeStructureDTO request);
 
     /**
      * Delete an existing fee structure from a specific product.
      */
-    Mono<Void> deleteFeeStructure(Long productId, Long feeStructureId);
+    Mono<Void> deleteFeeStructure(UUID productId, UUID feeStructureId);
 }

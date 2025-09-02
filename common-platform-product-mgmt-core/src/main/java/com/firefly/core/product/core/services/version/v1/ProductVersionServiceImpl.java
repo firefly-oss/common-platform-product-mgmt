@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductVersionServiceImpl implements ProductVersionService {
     private ProductVersionMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductVersionDTO>> getAllProductVersions(Long productId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductVersionDTO>> getAllProductVersions(UUID productId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -33,7 +34,7 @@ public class ProductVersionServiceImpl implements ProductVersionService {
     }
 
     @Override
-    public Mono<ProductVersionDTO> createProductVersion(Long productId, ProductVersionDTO productVersionDTO) {
+    public Mono<ProductVersionDTO> createProductVersion(UUID productId, ProductVersionDTO productVersionDTO) {
         productVersionDTO.setProductId(productId);
         ProductVersion entity = mapper.toEntity(productVersionDTO);
         return repository.save(entity)
@@ -42,7 +43,7 @@ public class ProductVersionServiceImpl implements ProductVersionService {
     }
 
     @Override
-    public Mono<ProductVersionDTO> getProductVersion(Long productId, Long versionId) {
+    public Mono<ProductVersionDTO> getProductVersion(UUID productId, UUID versionId) {
         return repository.findById(versionId)
                 .filter(productVersion -> productVersion.getProductId().equals(productId))
                 .flatMap(productVersion -> Mono.just(mapper.toDto(productVersion)))
@@ -50,7 +51,7 @@ public class ProductVersionServiceImpl implements ProductVersionService {
     }
 
     @Override
-    public Mono<ProductVersionDTO> updateProductVersion(Long productId, Long versionId, ProductVersionDTO productVersionDTO) {
+    public Mono<ProductVersionDTO> updateProductVersion(UUID productId, UUID versionId, ProductVersionDTO productVersionDTO) {
         return repository.findById(versionId)
                 .filter(productVersion -> productVersion.getProductId().equals(productId))
                 .flatMap(existingVersion -> {
@@ -64,7 +65,7 @@ public class ProductVersionServiceImpl implements ProductVersionService {
     }
 
     @Override
-    public Mono<Void> deleteProductVersion(Long productId, Long versionId) {
+    public Mono<Void> deleteProductVersion(UUID productId, UUID versionId) {
         return repository.findById(versionId)
                 .filter(productVersion -> productVersion.getProductId().equals(productId))
                 .flatMap(repository::delete)

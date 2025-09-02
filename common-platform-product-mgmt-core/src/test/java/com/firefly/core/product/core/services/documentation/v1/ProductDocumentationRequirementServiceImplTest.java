@@ -24,6 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductDocumentationRequirementServiceImplTest {
@@ -39,8 +40,8 @@ public class ProductDocumentationRequirementServiceImplTest {
 
     private ProductDocumentationRequirement entity;
     private ProductDocumentationRequirementDTO dto;
-    private final Long productId = 1L;
-    private final Long requirementId = 1L;
+    private final UUID productId = 1L;
+    private final UUID requirementId = 1L;
 
     @BeforeEach
     void setUp() {

@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,10 +20,10 @@ import java.math.BigDecimal;
 public class ProductPricingLocalization extends BaseEntity {
     @Id
     @Column("product_pricing_localization_id")
-    private Long productPricingLocalizationId;
+    private UUID productPricingLocalizationId;
 
     @Column("product_pricing_id")
-    private Long productPricingId;
+    private UUID productPricingId;
 
     @Column("currency_code")
     private String currencyCode;

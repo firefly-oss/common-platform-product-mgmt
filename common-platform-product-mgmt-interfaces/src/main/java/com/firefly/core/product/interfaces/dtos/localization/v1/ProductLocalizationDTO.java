@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -14,9 +15,9 @@ import lombok.NoArgsConstructor;
 public class ProductLocalizationDTO extends BaseDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productLocalizationId;
+    private UUID productLocalizationId;
 
-    private Long productId;
+    private UUID productId;
     private String languageCode;
     private String localizedName;
     private String localizedDescription;

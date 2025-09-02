@@ -7,12 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 /**
  * Repository for managing ProductDocumentationRequirement entities.
  */
 @Repository
-public interface ProductDocumentationRequirementRepository extends BaseRepository<ProductDocumentationRequirement, Long> {
+public interface ProductDocumentationRequirementRepository extends BaseRepository<ProductDocumentationRequirement, UUID> {
     
     /**
      * Find all documentation requirements for a specific product.
@@ -20,7 +21,7 @@ public interface ProductDocumentationRequirementRepository extends BaseRepositor
      * @param productId The ID of the product
      * @return A Flux of ProductDocumentationRequirement entities
      */
-    Flux<ProductDocumentationRequirement> findByProductId(Long productId);
+    Flux<ProductDocumentationRequirement> findByProductId(UUID productId);
     
     /**
      * Find all documentation requirements for a specific product with pagination.
@@ -29,7 +30,7 @@ public interface ProductDocumentationRequirementRepository extends BaseRepositor
      * @param pageable Pagination information
      * @return A Flux of ProductDocumentationRequirement entities
      */
-    Flux<ProductDocumentationRequirement> findByProductId(Long productId, Pageable pageable);
+    Flux<ProductDocumentationRequirement> findByProductId(UUID productId, Pageable pageable);
     
     /**
      * Count the number of documentation requirements for a specific product.
@@ -37,7 +38,7 @@ public interface ProductDocumentationRequirementRepository extends BaseRepositor
      * @param productId The ID of the product
      * @return A Mono with the count
      */
-    Mono<Long> countByProductId(Long productId);
+    Mono<Long> countByProductId(UUID productId);
     
     /**
      * Find all mandatory documentation requirements for a specific product.
@@ -46,7 +47,7 @@ public interface ProductDocumentationRequirementRepository extends BaseRepositor
      * @param isMandatory Whether the requirement is mandatory
      * @return A Flux of ProductDocumentationRequirement entities
      */
-    Flux<ProductDocumentationRequirement> findByProductIdAndIsMandatory(Long productId, Boolean isMandatory);
+    Flux<ProductDocumentationRequirement> findByProductIdAndIsMandatory(UUID productId, Boolean isMandatory);
     
     /**
      * Find a specific documentation requirement for a product by document type.
@@ -55,7 +56,7 @@ public interface ProductDocumentationRequirementRepository extends BaseRepositor
      * @param docType The type of document
      * @return A Mono with the ProductDocumentationRequirement entity
      */
-    Mono<ProductDocumentationRequirement> findByProductIdAndDocType(Long productId, ContractingDocTypeEnum docType);
+    Mono<ProductDocumentationRequirement> findByProductIdAndDocType(UUID productId, ContractingDocTypeEnum docType);
     
     /**
      * Delete all documentation requirements for a specific product.
@@ -63,5 +64,5 @@ public interface ProductDocumentationRequirementRepository extends BaseRepositor
      * @param productId The ID of the product
      * @return A Mono with the number of deleted entities
      */
-    Mono<Long> deleteByProductId(Long productId);
+    Mono<UUID> deleteByProductId(Long productId);
 }

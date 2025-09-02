@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Pricing", description = "APIs for managing pricing records associated with a specific product")
 @RestController
@@ -39,7 +40,7 @@ public class ProductPricingController{
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductPricingDTO>>> getAllPricings(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -63,7 +64,7 @@ public class ProductPricingController{
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductPricingDTO>> createPricing(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Data for the new product pricing", required = true,
                     schema = @Schema(implementation = ProductPricingDTO.class))
@@ -88,10 +89,10 @@ public class ProductPricingController{
     @GetMapping(value = "/{pricingId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductPricingDTO>> getPricing(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product pricing record", required = true)
-            @PathVariable Long pricingId
+            @PathVariable UUID pricingId
     ) {
         return service.getPricing(productId, pricingId)
                 .map(ResponseEntity::ok)
@@ -112,10 +113,10 @@ public class ProductPricingController{
     @PutMapping(value = "/{pricingId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductPricingDTO>> updatePricing(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product pricing record to update", required = true)
-            @PathVariable Long pricingId,
+            @PathVariable UUID pricingId,
 
             @Parameter(description = "Updated product pricing data", required = true,
                     schema = @Schema(implementation = ProductPricingDTO.class))
@@ -139,10 +140,10 @@ public class ProductPricingController{
     @DeleteMapping(value = "/{pricingId}")
     public Mono<ResponseEntity<Void>> deletePricing(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product pricing record to delete", required = true)
-            @PathVariable Long pricingId
+            @PathVariable UUID pricingId
     ) {
         return service.deletePricing(productId, pricingId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

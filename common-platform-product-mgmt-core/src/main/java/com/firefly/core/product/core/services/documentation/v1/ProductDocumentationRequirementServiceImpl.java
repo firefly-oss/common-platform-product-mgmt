@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 /**
  * Implementation of the ProductDocumentationRequirementService interface.
@@ -29,7 +30,7 @@ public class ProductDocumentationRequirementServiceImpl implements ProductDocume
 
     @Override
     public Mono<PaginationResponse<ProductDocumentationRequirementDTO>> getAllDocumentationRequirements(
-            Long productId, PaginationRequest paginationRequest) {
+            UUID productId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -40,7 +41,7 @@ public class ProductDocumentationRequirementServiceImpl implements ProductDocume
 
     @Override
     public Mono<ProductDocumentationRequirementDTO> createDocumentationRequirement(
-            Long productId, ProductDocumentationRequirementDTO requirementDTO) {
+            UUID productId, ProductDocumentationRequirementDTO requirementDTO) {
         requirementDTO.setProductId(productId);
         return repository.save(mapper.toEntity(requirementDTO))
                 .map(mapper::toDto)
@@ -49,7 +50,7 @@ public class ProductDocumentationRequirementServiceImpl implements ProductDocume
 
     @Override
     public Mono<ProductDocumentationRequirementDTO> getDocumentationRequirement(
-            Long productId, Long requirementId) {
+            UUID productId, UUID requirementId) {
         return repository.findById(requirementId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .map(mapper::toDto)
@@ -59,7 +60,7 @@ public class ProductDocumentationRequirementServiceImpl implements ProductDocume
 
     @Override
     public Mono<ProductDocumentationRequirementDTO> getDocumentationRequirementByType(
-            Long productId, ContractingDocTypeEnum docType) {
+            UUID productId, ContractingDocTypeEnum docType) {
         return repository.findByProductIdAndDocType(productId, docType)
                 .map(mapper::toDto)
                 .switchIfEmpty(Mono.error(new RuntimeException("Documentation requirement not found for the specified type")))
@@ -68,7 +69,7 @@ public class ProductDocumentationRequirementServiceImpl implements ProductDocume
 
     @Override
     public Mono<ProductDocumentationRequirementDTO> updateDocumentationRequirement(
-            Long productId, Long requirementId, ProductDocumentationRequirementDTO requirementDTO) {
+            UUID productId, UUID requirementId, ProductDocumentationRequirementDTO requirementDTO) {
         return repository.findById(requirementId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Documentation requirement not found for update")))
@@ -83,7 +84,7 @@ public class ProductDocumentationRequirementServiceImpl implements ProductDocume
     }
 
     @Override
-    public Mono<Void> deleteDocumentationRequirement(Long productId, Long requirementId) {
+    public Mono<Void> deleteDocumentationRequirement(UUID productId, UUID requirementId) {
         return repository.findById(requirementId)
                 .filter(entity -> entity.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Documentation requirement not found for deletion")))
@@ -92,7 +93,7 @@ public class ProductDocumentationRequirementServiceImpl implements ProductDocume
     }
 
     @Override
-    public Flux<ProductDocumentationRequirementDTO> getMandatoryDocumentationRequirements(Long productId) {
+    public Flux<ProductDocumentationRequirementDTO> getMandatoryDocumentationRequirements(UUID productId) {
         return repository.findByProductIdAndIsMandatory(productId, true)
                 .map(mapper::toDto)
                 .onErrorResume(e -> Mono.error(new RuntimeException("Failed to retrieve mandatory documentation requirements", e)));

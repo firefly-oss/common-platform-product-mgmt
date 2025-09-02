@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductRelationshipServiceImpl implements ProductRelationshipServic
     private ProductRelationshipMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductRelationshipDTO>> getAllRelationships(Long productId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductRelationshipDTO>> getAllRelationships(UUID productId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -33,7 +34,7 @@ public class ProductRelationshipServiceImpl implements ProductRelationshipServic
     }
 
     @Override
-    public Mono<ProductRelationshipDTO> createRelationship(Long productId, ProductRelationshipDTO dto) {
+    public Mono<ProductRelationshipDTO> createRelationship(UUID productId, ProductRelationshipDTO dto) {
         try {
             ProductRelationship relationship = mapper.toEntity(dto);
             relationship.setProductId(productId);
@@ -46,7 +47,7 @@ public class ProductRelationshipServiceImpl implements ProductRelationshipServic
     }
 
     @Override
-    public Mono<ProductRelationshipDTO> getRelationship(Long productId, Long relationshipId) {
+    public Mono<ProductRelationshipDTO> getRelationship(UUID productId, UUID relationshipId) {
         return repository.findById(relationshipId)
                 .filter(r -> r.getProductId().equals(productId))
                 .map(mapper::toDto)
@@ -55,7 +56,7 @@ public class ProductRelationshipServiceImpl implements ProductRelationshipServic
     }
 
     @Override
-    public Mono<ProductRelationshipDTO> updateRelationship(Long productId, Long relationshipId, ProductRelationshipDTO dto) {
+    public Mono<ProductRelationshipDTO> updateRelationship(UUID productId, UUID relationshipId, ProductRelationshipDTO dto) {
         return repository.findById(relationshipId)
                 .filter(r -> r.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Relationship not found for product ID and relationship ID")))
@@ -75,7 +76,7 @@ public class ProductRelationshipServiceImpl implements ProductRelationshipServic
     }
 
     @Override
-    public Mono<Void> deleteRelationship(Long productId, Long relationshipId) {
+    public Mono<Void> deleteRelationship(UUID productId, UUID relationshipId) {
         return repository.findById(relationshipId)
                 .filter(r -> r.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Relationship not found for product ID and relationship ID")))

@@ -5,8 +5,9 @@ import com.firefly.core.product.models.repositories.BaseRepository;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
-public interface ProductLocalizationRepository extends BaseRepository<ProductLocalization, Long> {
-    Flux<ProductLocalization> findAllByProductId(Long productId, Pageable pageable);
-    Mono<Long> countByProductId(Long productId);
+public interface ProductLocalizationRepository extends BaseRepository<ProductLocalization, UUID> {
+    Flux<ProductLocalization> findAllByProductId(UUID productId, Pageable pageable);
+    Mono<Long> countByProductId(UUID productId);
 }

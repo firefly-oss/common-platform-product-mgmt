@@ -7,6 +7,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,10 +17,10 @@ import java.time.LocalDate;
 public class FeeApplicationRule extends BaseEntity {
     @Id
     @Column("fee_application_rule_id")
-    private Long feeApplicationRuleId;
+    private UUID feeApplicationRuleId;
 
     @Column("fee_component_id")
-    private Long feeComponentId;
+    private UUID feeComponentId;
 
     @Column("rule_description")
     private String ruleDescription;

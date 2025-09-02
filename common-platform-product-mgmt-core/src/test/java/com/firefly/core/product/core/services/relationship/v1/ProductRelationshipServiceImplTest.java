@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductRelationshipServiceImplTest {
@@ -41,9 +42,9 @@ class ProductRelationshipServiceImplTest {
 
     private ProductRelationship relationship;
     private ProductRelationshipDTO relationshipDTO;
-    private final Long PRODUCT_ID = 1L;
-    private final Long RELATIONSHIP_ID = 2L;
-    private final Long RELATED_PRODUCT_ID = 3L;
+    private final UUID PRODUCT_ID = 1L;
+    private final UUID RELATIONSHIP_ID = 2L;
+    private final UUID RELATED_PRODUCT_ID = 3L;
 
     @BeforeEach
     void setUp() {

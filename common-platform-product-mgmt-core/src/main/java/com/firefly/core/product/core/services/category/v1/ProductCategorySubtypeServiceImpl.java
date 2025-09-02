@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -22,7 +23,7 @@ public class ProductCategorySubtypeServiceImpl implements ProductCategorySubtype
     private ProductSubtypeMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductCategorySubtypeDTO>> getAllByCategoryId(Long categoryId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductCategorySubtypeDTO>> getAllByCategoryId(UUID categoryId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -34,7 +35,7 @@ public class ProductCategorySubtypeServiceImpl implements ProductCategorySubtype
     }
 
     @Override
-    public Mono<ProductCategorySubtypeDTO> create(Long categoryId, ProductCategorySubtypeDTO subtypeRequest) {
+    public Mono<ProductCategorySubtypeDTO> create(UUID categoryId, ProductCategorySubtypeDTO subtypeRequest) {
         subtypeRequest.setProductCategoryId(categoryId);
         return repository.findBySubtypeName(subtypeRequest.getSubtypeName())
                 .hasElement()
@@ -50,7 +51,7 @@ public class ProductCategorySubtypeServiceImpl implements ProductCategorySubtype
     }
 
     @Override
-    public Mono<ProductCategorySubtypeDTO> getById(Long categoryId, Long subtypeId) {
+    public Mono<ProductCategorySubtypeDTO> getById(UUID categoryId, UUID subtypeId) {
         return repository.findById(subtypeId)
                 .filter(subtype -> categoryId.equals(subtype.getProductCategoryId()))
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Subtype not found for the given category ID")))
@@ -59,7 +60,7 @@ public class ProductCategorySubtypeServiceImpl implements ProductCategorySubtype
     }
 
     @Override
-    public Mono<ProductCategorySubtypeDTO> update(Long categoryId, Long subtypeId, ProductCategorySubtypeDTO subtypeRequest) {
+    public Mono<ProductCategorySubtypeDTO> update(UUID categoryId, UUID subtypeId, ProductCategorySubtypeDTO subtypeRequest) {
         return repository.findById(subtypeId)
                 .filter(existingSubtype -> categoryId.equals(existingSubtype.getProductCategoryId()))
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Subtype not found for the given category ID")))
@@ -74,7 +75,7 @@ public class ProductCategorySubtypeServiceImpl implements ProductCategorySubtype
     }
 
     @Override
-    public Mono<Void> delete(Long categoryId, Long subtypeId) {
+    public Mono<Void> delete(UUID categoryId, UUID subtypeId) {
         return repository.findById(subtypeId)
                 .filter(existingSubtype -> categoryId.equals(existingSubtype.getProductCategoryId()))
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Subtype not found for the given category ID")))

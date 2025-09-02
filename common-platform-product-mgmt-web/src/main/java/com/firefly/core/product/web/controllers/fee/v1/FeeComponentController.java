@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Fee Component", description = "APIs for managing components under a specific fee structure")
 @RestController
@@ -40,7 +41,7 @@ public class FeeComponentController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<FeeComponentDTO>>> getByFeeStructureId(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -62,7 +63,7 @@ public class FeeComponentController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<FeeComponentDTO>> createFeeComponent(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @Parameter(description = "Data for the new fee component", required = true,
                     schema = @Schema(implementation = FeeComponentDTO.class))
@@ -86,10 +87,10 @@ public class FeeComponentController {
     @GetMapping(value = "/{componentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<FeeComponentDTO>> getFeeComponent(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @Parameter(description = "Unique identifier of the fee component", required = true)
-            @PathVariable Long componentId
+            @PathVariable UUID componentId
     ) {
         return service.getFeeComponent(feeStructureId, componentId)
                 .map(ResponseEntity::ok)
@@ -110,10 +111,10 @@ public class FeeComponentController {
     @PutMapping(value = "/{componentId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<FeeComponentDTO>> updateFeeComponent(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @Parameter(description = "Unique identifier of the fee component to update", required = true)
-            @PathVariable Long componentId,
+            @PathVariable UUID componentId,
 
             @Parameter(description = "Updated data for the fee component", required = true,
                     schema = @Schema(implementation = FeeComponentDTO.class))
@@ -137,10 +138,10 @@ public class FeeComponentController {
     @DeleteMapping(value = "/{componentId}")
     public Mono<ResponseEntity<Void>> deleteFeeComponent(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @Parameter(description = "Unique identifier of the fee component to delete", required = true)
-            @PathVariable Long componentId
+            @PathVariable UUID componentId
     ) {
         return service.deleteFeeComponent(feeStructureId, componentId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

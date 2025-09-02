@@ -20,8 +20,8 @@ CREATE TYPE contracting_doc_type AS ENUM (
 
 -- Create table for product documentation requirements
 CREATE TABLE IF NOT EXISTS product_documentation_requirement (
-    product_doc_requirement_id BIGSERIAL PRIMARY KEY,
-    product_id BIGINT NOT NULL,
+    product_doc_requirement_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    product_id UUID NOT NULL,
     doc_type contracting_doc_type NOT NULL,
     is_mandatory BOOLEAN NOT NULL DEFAULT TRUE,
     description TEXT,

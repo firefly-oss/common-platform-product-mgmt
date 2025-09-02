@@ -3,10 +3,10 @@
 -- PRODUCT_CATEGORY
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_category (
-                                                product_category_id    BIGSERIAL PRIMARY KEY,
+                                                product_category_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                                                 category_name          VARCHAR(255) NOT NULL,
     category_description   TEXT,
-    parent_category_id     BIGINT,
+    parent_category_id     UUID,
     date_created           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     date_updated           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     -- Optional self-reference constraint:
@@ -18,8 +18,8 @@ CREATE TABLE IF NOT EXISTS product_category (
 -- PRODUCT_SUBTYPE
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_subtype (
-                                               product_subtype_id     BIGSERIAL PRIMARY KEY,
-                                               product_category_id    BIGINT NOT NULL,
+                                               product_subtype_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                               product_category_id    UUID NOT NULL,
                                                subtype_name           VARCHAR(255) NOT NULL,
     subtype_description    TEXT,
     date_created           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -33,8 +33,8 @@ CREATE TABLE IF NOT EXISTS product_subtype (
 -- PRODUCT
 -- =========================================
 CREATE TABLE IF NOT EXISTS product (
-                                       product_id             BIGSERIAL PRIMARY KEY,
-                                       product_subtype_id     BIGINT NOT NULL,
+                                       product_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                       product_subtype_id     UUID NOT NULL,
                                        product_type           product_type NOT NULL,
                                        product_name           VARCHAR(255) NOT NULL,
     product_code           VARCHAR(100),
@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS product (
 -- PRODUCT_FEATURE
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_feature (
-                                               product_feature_id     BIGSERIAL PRIMARY KEY,
-                                               product_id             BIGINT NOT NULL,
+                                               product_feature_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                               product_id             UUID NOT NULL,
                                                feature_name           VARCHAR(255) NOT NULL,
     feature_description    TEXT,
     feature_type           feature_type NOT NULL,
@@ -70,8 +70,8 @@ CREATE TABLE IF NOT EXISTS product_feature (
 -- PRODUCT_PRICING
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_pricing (
-                                               product_pricing_id     BIGSERIAL PRIMARY KEY,
-                                               product_id             BIGINT NOT NULL,
+                                               product_pricing_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                               product_id             UUID NOT NULL,
                                                pricing_type           pricing_type NOT NULL,
                                                amount_value           DECIMAL(18, 4) NOT NULL,
     amount_unit            VARCHAR(50) NOT NULL,  -- e.g. 'PERCENT', 'EUR', 'MONTHLY'
@@ -89,8 +89,8 @@ CREATE TABLE IF NOT EXISTS product_pricing (
 -- PRODUCT_DOCUMENTATION
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_documentation (
-                                                     product_documentation_id BIGSERIAL PRIMARY KEY,
-                                                     product_id               BIGINT NOT NULL,
+                                                     product_documentation_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                                     product_id               UUID NOT NULL,
                                                      doc_type                 doc_type NOT NULL,
                                                      document_manager_ref     BIGINT,
                                                      date_added               TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -105,8 +105,8 @@ CREATE TABLE IF NOT EXISTS product_documentation (
 -- PRODUCT_LIFECYCLE
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_lifecycle (
-                                                 product_lifecycle_id   BIGSERIAL PRIMARY KEY,
-                                                 product_id             BIGINT NOT NULL,
+                                                 product_lifecycle_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                                 product_id             UUID NOT NULL,
                                                  lifecycle_status       lifecycle_status NOT NULL,
                                                  status_start_date      TIMESTAMP NOT NULL,
                                                  status_end_date        TIMESTAMP,
@@ -122,8 +122,8 @@ CREATE TABLE IF NOT EXISTS product_lifecycle (
 -- PRODUCT_LIMIT
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_limit (
-                                             product_limit_id       BIGSERIAL PRIMARY KEY,
-                                             product_id             BIGINT NOT NULL,
+                                             product_limit_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                             product_id             UUID NOT NULL,
                                              limit_type             limit_type NOT NULL,
                                              limit_value            DECIMAL(18, 4) NOT NULL,
     limit_unit             VARCHAR(50),  -- e.g. 'EUR', 'USD', 'TXN_COUNT'
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS product_limit (
 -- PRODUCT_BUNDLE
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_bundle (
-                                              product_bundle_id      BIGSERIAL PRIMARY KEY,
+                                              product_bundle_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                                               bundle_name            VARCHAR(255) NOT NULL,
     bundle_description     TEXT,
     bundle_status          bundle_status NOT NULL,
@@ -153,9 +153,9 @@ CREATE TABLE IF NOT EXISTS product_bundle (
 -- PRODUCT_BUNDLE_ITEM
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_bundle_item (
-                                                   product_bundle_item_id BIGSERIAL PRIMARY KEY,
-                                                   product_bundle_id      BIGINT NOT NULL,
-                                                   product_id             BIGINT NOT NULL,
+                                                   product_bundle_item_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                                   product_bundle_id      UUID NOT NULL,
+                                                   product_id             UUID NOT NULL,
                                                    special_conditions     TEXT,
                                                    date_created           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                                    date_updated           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -171,9 +171,9 @@ CREATE TABLE IF NOT EXISTS product_bundle_item (
 -- PRODUCT_RELATIONSHIP
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_relationship (
-                                                    product_relationship_id BIGSERIAL PRIMARY KEY,
-                                                    product_id              BIGINT NOT NULL,
-                                                    related_product_id      BIGINT NOT NULL,
+                                                    product_relationship_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                                    product_id              UUID NOT NULL,
+                                                    related_product_id      UUID NOT NULL,
                                                     relationship_type       relationship_type NOT NULL,
                                                     description             TEXT,
                                                     date_created            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -190,9 +190,9 @@ CREATE TABLE IF NOT EXISTS product_relationship (
 -- PRODUCT_VERSION
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_version (
-                                               product_version_id     BIGSERIAL PRIMARY KEY,
-                                               product_id             BIGINT NOT NULL,
-                                               version_number         BIGINT NOT NULL,
+                                               product_version_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                               product_id             UUID NOT NULL,
+                                               version_number         uuid NOT NULL,
                                                version_description    TEXT,
                                                effective_date         TIMESTAMP NOT NULL,
                                                date_created           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -206,8 +206,8 @@ CREATE TABLE IF NOT EXISTS product_version (
 -- PRODUCT_LOCALIZATION
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_localization (
-                                                    product_localization_id  BIGSERIAL PRIMARY KEY,
-                                                    product_id               BIGINT NOT NULL,
+                                                    product_localization_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                                    product_id               UUID NOT NULL,
                                                     language_code            VARCHAR(10) NOT NULL,  -- e.g., 'en', 'de'
     localized_name           VARCHAR(255),
     localized_description    TEXT,
@@ -222,8 +222,8 @@ CREATE TABLE IF NOT EXISTS product_localization (
 -- PRODUCT_PRICING_LOCALIZATION
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_pricing_localization (
-                                                            product_pricing_localization_id BIGSERIAL PRIMARY KEY,
-                                                            product_pricing_id              BIGINT NOT NULL,
+                                                            product_pricing_localization_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                                            product_pricing_id              UUID NOT NULL,
                                                             currency_code                   VARCHAR(10) NOT NULL,  -- e.g., 'EUR', 'USD'
     localized_amount_value          DECIMAL(18, 4),
     date_created                    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS product_pricing_localization (
 -- FEE_STRUCTURE
 -- =========================================
 CREATE TABLE IF NOT EXISTS fee_structure (
-                                             fee_structure_id        BIGSERIAL PRIMARY KEY,
+                                             fee_structure_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                                              fee_structure_name      VARCHAR(255) NOT NULL,
     fee_structure_description TEXT,
     fee_structure_type      fee_structure_type NOT NULL,
@@ -249,8 +249,8 @@ CREATE TABLE IF NOT EXISTS fee_structure (
 -- FEE_COMPONENT
 -- =========================================
 CREATE TABLE IF NOT EXISTS fee_component (
-                                             fee_component_id        BIGSERIAL PRIMARY KEY,
-                                             fee_structure_id        BIGINT NOT NULL,
+                                             fee_component_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                             fee_structure_id        UUID NOT NULL,
                                              fee_type                fee_type NOT NULL,
                                              fee_description         TEXT,
                                              fee_amount              DECIMAL(18, 4) NOT NULL,
@@ -267,9 +267,9 @@ CREATE TABLE IF NOT EXISTS fee_component (
 -- PRODUCT_FEE_STRUCTURE
 -- =========================================
 CREATE TABLE IF NOT EXISTS product_fee_structure (
-                                                     product_fee_structure_id BIGSERIAL PRIMARY KEY,
-                                                     product_id               BIGINT NOT NULL,
-                                                     fee_structure_id         BIGINT NOT NULL,
+                                                     product_fee_structure_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                                     product_id               UUID NOT NULL,
+                                                     fee_structure_id         UUID NOT NULL,
                                                      priority                 INT,
                                                      date_created             TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                                      date_updated             TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -285,8 +285,8 @@ CREATE TABLE IF NOT EXISTS product_fee_structure (
 -- FEE_APPLICATION_RULE
 -- =========================================
 CREATE TABLE IF NOT EXISTS fee_application_rule (
-                                                    fee_application_rule_id BIGSERIAL PRIMARY KEY,
-                                                    fee_component_id        BIGINT NOT NULL,
+                                                    fee_application_rule_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                                                    fee_component_id        UUID NOT NULL,
                                                     rule_description        TEXT,
                                                     rule_conditions         TEXT,    -- could store JSON
                                                     effective_date          TIMESTAMP NOT NULL,

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -14,9 +15,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class ProductFeatureDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productFeatureId;
+    private UUID productFeatureId;
 
-    private Long productId;
+    private UUID productId;
     private String featureName;
     private String featureDescription;
     private FeatureTypeEnum featureType;

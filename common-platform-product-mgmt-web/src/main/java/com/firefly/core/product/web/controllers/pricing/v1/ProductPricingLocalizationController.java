@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Pricing Localization", description = "APIs for managing localized pricing data under a specific product pricing record")
 @RestController
@@ -39,10 +40,10 @@ public class ProductPricingLocalizationController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductPricingLocalizationDTO>>> getAllLocalizations(
             @Parameter(description = "Unique identifier of the product (unused in the service, but kept for hierarchy)", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product pricing record", required = true)
-            @PathVariable Long pricingId,
+            @PathVariable UUID pricingId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -66,10 +67,10 @@ public class ProductPricingLocalizationController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductPricingLocalizationDTO>> createLocalization(
             @Parameter(description = "Unique identifier of the product (unused in the service, but kept for hierarchy)", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product pricing record", required = true)
-            @PathVariable Long pricingId,
+            @PathVariable UUID pricingId,
 
             @Parameter(description = "Data for the new localization record", required = true,
                     schema = @Schema(implementation = ProductPricingLocalizationDTO.class))
@@ -94,13 +95,13 @@ public class ProductPricingLocalizationController {
     @GetMapping(value = "/{localizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductPricingLocalizationDTO>> getLocalization(
             @Parameter(description = "Unique identifier of the product (unused in the service, but kept for hierarchy)", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product pricing record", required = true)
-            @PathVariable Long pricingId,
+            @PathVariable UUID pricingId,
 
             @Parameter(description = "Unique identifier of the localization record", required = true)
-            @PathVariable Long localizationId
+            @PathVariable UUID localizationId
     ) {
         return service.getLocalization(pricingId, localizationId)
                 .map(ResponseEntity::ok)
@@ -121,13 +122,13 @@ public class ProductPricingLocalizationController {
     @PutMapping(value = "/{localizationId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductPricingLocalizationDTO>> updateLocalization(
             @Parameter(description = "Unique identifier of the product (unused in the service, but kept for hierarchy)", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product pricing record", required = true)
-            @PathVariable Long pricingId,
+            @PathVariable UUID pricingId,
 
             @Parameter(description = "Unique identifier of the localization record to update", required = true)
-            @PathVariable Long localizationId,
+            @PathVariable UUID localizationId,
 
             @Parameter(description = "Updated data for the localization record", required = true,
                     schema = @Schema(implementation = ProductPricingLocalizationDTO.class))
@@ -151,13 +152,13 @@ public class ProductPricingLocalizationController {
     @DeleteMapping(value = "/{localizationId}")
     public Mono<ResponseEntity<Void>> deleteLocalization(
             @Parameter(description = "Unique identifier of the product (unused in the service, but kept for hierarchy)", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product pricing record", required = true)
-            @PathVariable Long pricingId,
+            @PathVariable UUID pricingId,
 
             @Parameter(description = "Unique identifier of the localization record to delete", required = true)
-            @PathVariable Long localizationId
+            @PathVariable UUID localizationId
     ) {
         return service.deleteLocalization(pricingId, localizationId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

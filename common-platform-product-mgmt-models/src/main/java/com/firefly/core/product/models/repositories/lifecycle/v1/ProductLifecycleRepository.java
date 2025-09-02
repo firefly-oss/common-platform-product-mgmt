@@ -9,15 +9,16 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Repository
-public interface ProductLifecycleRepository extends BaseRepository<ProductLifecycle, Long> {
-    Flux<ProductLifecycle> findByProductId(Long productId);
+public interface ProductLifecycleRepository extends BaseRepository<ProductLifecycle, UUID> {
+    Flux<ProductLifecycle> findByProductId(UUID productId);
     Flux<ProductLifecycle> findByLifecycleStatus(LifecycleStatusEnum status);
     Flux<ProductLifecycle> findByStatusStartDateBetween(LocalDateTime start, LocalDateTime end);
 
-    Flux<ProductLifecycle> findByProductId(Long productId, Pageable pageable);
-    Mono<Long> countByProductId(Long productId);
+    Flux<ProductLifecycle> findByProductId(UUID productId, Pageable pageable);
+    Mono<Long> countByProductId(UUID productId);
 
-    Mono<ProductLifecycle> findFirstByProductIdOrderByStatusStartDateDesc(Long productId);
+    Mono<ProductLifecycle> findFirstByProductIdOrderByStatusStartDateDesc(UUID productId);
 }

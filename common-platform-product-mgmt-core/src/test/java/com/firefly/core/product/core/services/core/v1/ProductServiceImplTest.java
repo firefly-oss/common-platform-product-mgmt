@@ -27,6 +27,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -42,8 +43,8 @@ class ProductServiceImplTest {
 
     private Product product;
     private ProductDTO productDTO;
-    private final Long PRODUCT_ID = 1L;
-    private final Long SUBTYPE_ID = 2L;
+    private final UUID PRODUCT_ID = 1L;
+    private final UUID SUBTYPE_ID = 2L;
 
     @BeforeEach
     void setUp() {

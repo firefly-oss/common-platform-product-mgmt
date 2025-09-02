@@ -4,13 +4,14 @@ import com.firefly.common.core.queries.PaginationRequest;
 import com.firefly.common.core.queries.PaginationResponse;
 import com.firefly.core.product.interfaces.dtos.bundle.v1.ProductBundleDTO;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 public interface ProductBundleService {
 
     /**
      * Retrieve a specific product bundle by its unique identifier.
      */
-    Mono<ProductBundleDTO> getById(Long bundleId);
+    Mono<ProductBundleDTO> getById(UUID bundleId);
 
     /**
      * Retrieve a paginated list of all product bundles.
@@ -25,10 +26,10 @@ public interface ProductBundleService {
     /**
      * Update an existing product bundle by its unique identifier.
      */
-    Mono<ProductBundleDTO> update(Long bundleId, ProductBundleDTO productBundleDTO);
+    Mono<ProductBundleDTO> update(UUID bundleId, ProductBundleDTO productBundleDTO);
 
     /**
      * Delete a product bundle by its unique identifier.
      */
-    Mono<Void> delete(Long bundleId);
+    Mono<Void> delete(UUID bundleId);
 }

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductLimitServiceImpl implements ProductLimitService {
     private ProductLimitMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductLimitDTO>> getAllProductLimits(Long productId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductLimitDTO>> getAllProductLimits(UUID productId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -33,7 +34,7 @@ public class ProductLimitServiceImpl implements ProductLimitService {
     }
 
     @Override
-    public Mono<ProductLimitDTO> createProductLimit(Long productId, ProductLimitDTO productLimitDTO) {
+    public Mono<ProductLimitDTO> createProductLimit(UUID productId, ProductLimitDTO productLimitDTO) {
         ProductLimit entity = mapper.toEntity(productLimitDTO);
         entity.setProductId(productId);
         return repository.save(entity)
@@ -42,7 +43,7 @@ public class ProductLimitServiceImpl implements ProductLimitService {
     }
 
     @Override
-    public Mono<ProductLimitDTO> getProductLimit(Long productId, Long limitId) {
+    public Mono<ProductLimitDTO> getProductLimit(UUID productId, UUID limitId) {
         return repository.findById(limitId)
                 .filter(limit -> limit.getProductId().equals(productId))
                 .map(mapper::toDto)
@@ -51,7 +52,7 @@ public class ProductLimitServiceImpl implements ProductLimitService {
     }
 
     @Override
-    public Mono<ProductLimitDTO> updateProductLimit(Long productId, Long limitId, ProductLimitDTO productLimitDTO) {
+    public Mono<ProductLimitDTO> updateProductLimit(UUID productId, UUID limitId, ProductLimitDTO productLimitDTO) {
         return repository.findById(limitId)
                 .filter(limit -> limit.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Product limit not found or does not belong to the product")))
@@ -66,7 +67,7 @@ public class ProductLimitServiceImpl implements ProductLimitService {
     }
 
     @Override
-    public Mono<Void> deleteProductLimit(Long productId, Long limitId) {
+    public Mono<Void> deleteProductLimit(UUID productId, UUID limitId) {
         return repository.findById(limitId)
                 .filter(limit -> limit.getProductId().equals(productId))
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Product limit not found or does not belong to the product")))

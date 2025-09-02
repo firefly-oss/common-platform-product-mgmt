@@ -2,13 +2,14 @@ package com.firefly.core.product.core.services.category.v1;
 
 import com.firefly.core.product.interfaces.dtos.category.v1.ProductCategoryDTO;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 public interface ProductCategoryService {
 
     /**
      * Retrieve a product category by its unique identifier.
      */
-    Mono<ProductCategoryDTO> getById(Long categoryId);
+    Mono<ProductCategoryDTO> getById(UUID categoryId);
 
     /**
      * Create a new product category.
@@ -18,11 +19,11 @@ public interface ProductCategoryService {
     /**
      * Update an existing product category by its unique identifier.
      */
-    Mono<ProductCategoryDTO> update(Long categoryId, ProductCategoryDTO categoryDTO);
+    Mono<ProductCategoryDTO> update(UUID categoryId, ProductCategoryDTO categoryDTO);
 
     /**
      * Delete a product category by its unique identifier.
      */
-    Mono<Void> delete(Long categoryId);
+    Mono<Void> delete(UUID categoryId);
 }
 

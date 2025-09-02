@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -23,7 +24,7 @@ public class ProductPricingServiceImpl implements ProductPricingService {
     private ProductPricingMapper mapper;
 
     @Override
-    public Mono<PaginationResponse<ProductPricingDTO>> getAllPricings(Long productId, PaginationRequest paginationRequest) {
+    public Mono<PaginationResponse<ProductPricingDTO>> getAllPricings(UUID productId, PaginationRequest paginationRequest) {
         return PaginationUtils.paginateQuery(
                 paginationRequest,
                 mapper::toDto,
@@ -33,7 +34,7 @@ public class ProductPricingServiceImpl implements ProductPricingService {
     }
 
     @Override
-    public Mono<ProductPricingDTO> createPricing(Long productId, ProductPricingDTO productPricingDTO) {
+    public Mono<ProductPricingDTO> createPricing(UUID productId, ProductPricingDTO productPricingDTO) {
         try {
             productPricingDTO.setProductId(productId);
             ProductPricing entity = mapper.toEntity(productPricingDTO);
@@ -46,7 +47,7 @@ public class ProductPricingServiceImpl implements ProductPricingService {
     }
 
     @Override
-    public Mono<ProductPricingDTO> getPricing(Long productId, Long pricingId) {
+    public Mono<ProductPricingDTO> getPricing(UUID productId, UUID pricingId) {
         try {
             return repository.findById(pricingId)
                     .filter(productPricing -> productPricing.getProductId().equals(productId))
@@ -59,7 +60,7 @@ public class ProductPricingServiceImpl implements ProductPricingService {
     }
 
     @Override
-    public Mono<ProductPricingDTO> updatePricing(Long productId, Long pricingId, ProductPricingDTO productPricingDTO) {
+    public Mono<ProductPricingDTO> updatePricing(UUID productId, UUID pricingId, ProductPricingDTO productPricingDTO) {
         try {
             return repository.findById(pricingId)
                     .filter(productPricing -> productPricing.getProductId().equals(productId))
@@ -78,7 +79,7 @@ public class ProductPricingServiceImpl implements ProductPricingService {
     }
 
     @Override
-    public Mono<Void> deletePricing(Long productId, Long pricingId) {
+    public Mono<Void> deletePricing(UUID productId, UUID pricingId) {
         try {
             return repository.findById(pricingId)
                     .filter(productPricing -> productPricing.getProductId().equals(productId))

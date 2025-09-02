@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.doReturn;
+import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductBundleServiceImplTest {
@@ -44,7 +45,7 @@ class ProductBundleServiceImplTest {
 
     private ProductBundle productBundle;
     private ProductBundleDTO productBundleDTO;
-    private final Long BUNDLE_ID = 1L;
+    private final UUID BUNDLE_ID = 1L;
 
     @BeforeEach
     void setUp() {

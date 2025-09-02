@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Fee Application Rule", description = "APIs for managing fee application rules in a specific fee structure component")
 @RestController
@@ -41,10 +42,10 @@ public class FeeApplicationRuleController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<FeeApplicationRuleDTO>>> getRulesByComponentId(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @Parameter(description = "Unique identifier of the fee component", required = true)
-            @PathVariable Long componentId,
+            @PathVariable UUID componentId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -67,10 +68,10 @@ public class FeeApplicationRuleController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<FeeApplicationRuleDTO>> createRule(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @Parameter(description = "Unique identifier of the fee component", required = true)
-            @PathVariable Long componentId,
+            @PathVariable UUID componentId,
 
             @Parameter(description = "Data for the new fee application rule", required = true,
                     schema = @Schema(implementation = FeeApplicationRuleDTO.class))
@@ -95,13 +96,13 @@ public class FeeApplicationRuleController {
     @GetMapping(value = "/{ruleId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<FeeApplicationRuleDTO>> getRule(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @Parameter(description = "Unique identifier of the fee component", required = true)
-            @PathVariable Long componentId,
+            @PathVariable UUID componentId,
 
             @Parameter(description = "Unique identifier of the fee application rule", required = true)
-            @PathVariable Long ruleId
+            @PathVariable UUID ruleId
     ) {
         return service
                 .getRule(feeStructureId, componentId, ruleId)
@@ -123,13 +124,13 @@ public class FeeApplicationRuleController {
     @PutMapping(value = "/{ruleId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<FeeApplicationRuleDTO>> updateRule(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @Parameter(description = "Unique identifier of the fee component", required = true)
-            @PathVariable Long componentId,
+            @PathVariable UUID componentId,
 
             @Parameter(description = "Unique identifier of the fee application rule to update", required = true)
-            @PathVariable Long ruleId,
+            @PathVariable UUID ruleId,
 
             @Parameter(description = "Updated data for the fee application rule", required = true,
                     schema = @Schema(implementation = FeeApplicationRuleDTO.class))
@@ -154,13 +155,13 @@ public class FeeApplicationRuleController {
     @DeleteMapping(value = "/{ruleId}")
     public Mono<ResponseEntity<Void>> deleteRule(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @Parameter(description = "Unique identifier of the fee component", required = true)
-            @PathVariable Long componentId,
+            @PathVariable UUID componentId,
 
             @Parameter(description = "Unique identifier of the fee application rule to delete", required = true)
-            @PathVariable Long ruleId
+            @PathVariable UUID ruleId
     ) {
         return service
                 .deleteRule(feeStructureId, componentId, ruleId)

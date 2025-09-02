@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Data Transfer Object for the Product Wizard functionality.
@@ -25,7 +26,7 @@ import java.util.Map;
 public class ProductWizardDTO extends BaseDTO {
 
     // Wizard ID
-    private Long id;
+    private UUID id;
 
     // Core product information
     private ProductDTO product;
@@ -79,11 +80,11 @@ public class ProductWizardDTO extends BaseDTO {
     }
 
     // Getters and Setters
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

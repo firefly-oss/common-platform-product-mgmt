@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -20,7 +21,7 @@ public class FeeStructureServiceImpl implements FeeStructureService {
     private FeeStructureMapper mapper;
 
     @Override
-    public Mono<FeeStructureDTO> getFeeStructure(Long feeStructureId) {
+    public Mono<FeeStructureDTO> getFeeStructure(UUID feeStructureId) {
         return repository.findById(feeStructureId)
                 .map(mapper::toDto)
                 .switchIfEmpty(Mono.error(new RuntimeException("Fee structure not found for ID: " + feeStructureId)))
@@ -36,7 +37,7 @@ public class FeeStructureServiceImpl implements FeeStructureService {
     }
 
     @Override
-    public Mono<FeeStructureDTO> updateFeeStructure(Long feeStructureId, FeeStructureDTO feeStructureDTO) {
+    public Mono<FeeStructureDTO> updateFeeStructure(UUID feeStructureId, FeeStructureDTO feeStructureDTO) {
         return repository.findById(feeStructureId)
                 .switchIfEmpty(Mono.error(new RuntimeException("Fee structure not found for ID: " + feeStructureId)))
                 .flatMap(existingEntity -> {
@@ -49,7 +50,7 @@ public class FeeStructureServiceImpl implements FeeStructureService {
     }
 
     @Override
-    public Mono<Void> deleteFeeStructure(Long feeStructureId) {
+    public Mono<Void> deleteFeeStructure(UUID feeStructureId) {
         return repository.findById(feeStructureId)
                 .switchIfEmpty(Mono.error(new RuntimeException("Fee structure not found for ID: " + feeStructureId)))
                 .flatMap(repository::delete)

@@ -12,6 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -21,10 +22,10 @@ import java.time.LocalDate;
 public class ProductPricing extends BaseEntity {
     @Id
     @Column("product_pricing_id")
-    private Long productPricingId;
+    private UUID productPricingId;
 
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
 
     @Column("pricing_type")
     private PricingTypeEnum pricingType;

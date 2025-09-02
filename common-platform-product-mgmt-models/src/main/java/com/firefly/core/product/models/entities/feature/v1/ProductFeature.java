@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -18,10 +19,10 @@ import org.springframework.data.relational.core.mapping.Table;
 public class ProductFeature extends BaseEntity {
     @Id
     @Column("product_feature_id")
-    private Long productFeatureId;
+    private UUID productFeatureId;
 
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
 
     @Column("feature_name")
     private String featureName;

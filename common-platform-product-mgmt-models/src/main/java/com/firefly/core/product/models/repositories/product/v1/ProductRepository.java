@@ -10,7 +10,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends BaseRepository<Product, Long> {
+public interface ProductRepository extends BaseRepository<Product, UUID> {
 }

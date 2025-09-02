@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -15,9 +16,9 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ProductPricingLocalizationDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long productPricingLocalizationId;
+    private UUID productPricingLocalizationId;
 
-    private Long productPricingId;
+    private UUID productPricingId;
     private String currencyCode;
     private BigDecimal localizedAmountValue;
 }

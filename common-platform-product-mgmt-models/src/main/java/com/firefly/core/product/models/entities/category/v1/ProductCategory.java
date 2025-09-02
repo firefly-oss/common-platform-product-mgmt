@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import java.util.UUID;
 
 
 @Table("product_category")
@@ -18,7 +19,7 @@ import org.springframework.data.relational.core.mapping.Table;
 public class ProductCategory extends BaseEntity {
     @Id
     @Column("product_category_id")
-    private Long productCategoryId;
+    private UUID productCategoryId;
 
     @Column("category_name")
     private String categoryName;
@@ -27,5 +28,5 @@ public class ProductCategory extends BaseEntity {
     private String categoryDescription;
 
     @Column("parent_category_id")
-    private Long parentCategoryId;
+    private UUID parentCategoryId;
 }

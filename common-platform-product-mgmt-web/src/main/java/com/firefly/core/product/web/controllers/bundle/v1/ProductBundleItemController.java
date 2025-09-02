@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Bundle", description = "APIs for managing product bundles in the product management platform")
 @RestController
@@ -38,10 +39,10 @@ public class ProductBundleItemController {
     @GetMapping(value = "/{itemId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductBundleItemDTO>> getProductBundleItemById(
             @Parameter(description = "Unique identifier of the product bundle", required = true)
-            @PathVariable Long bundleId,
+            @PathVariable UUID bundleId,
 
             @Parameter(description = "Unique identifier of the item within the product bundle", required = true)
-            @PathVariable Long itemId
+            @PathVariable UUID itemId
     ) {
         return service.getItem(bundleId, itemId)
                 .map(ResponseEntity::ok)
@@ -60,7 +61,7 @@ public class ProductBundleItemController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductBundleItemDTO>> createProductBundleItem(
             @Parameter(description = "Unique identifier of the product bundle to add an item to", required = true)
-            @PathVariable Long bundleId,
+            @PathVariable UUID bundleId,
 
             @Parameter(description = "Data for the new item within the product bundle", required = true,
                     schema = @Schema(implementation = ProductBundleItemDTO.class))
@@ -84,10 +85,10 @@ public class ProductBundleItemController {
     @PutMapping(value = "/{itemId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductBundleItemDTO>> updateProductBundleItem(
             @Parameter(description = "Unique identifier of the product bundle", required = true)
-            @PathVariable Long bundleId,
+            @PathVariable UUID bundleId,
 
             @Parameter(description = "Unique identifier of the item to be updated", required = true)
-            @PathVariable Long itemId,
+            @PathVariable UUID itemId,
 
             @Parameter(description = "Updated data for the item within the product bundle", required = true,
                     schema = @Schema(implementation = ProductBundleItemDTO.class))
@@ -111,10 +112,10 @@ public class ProductBundleItemController {
     @DeleteMapping(value = "/{itemId}")
     public Mono<ResponseEntity<Void>> deleteProductBundleItem(
             @Parameter(description = "Unique identifier of the product bundle", required = true)
-            @PathVariable Long bundleId,
+            @PathVariable UUID bundleId,
 
             @Parameter(description = "Unique identifier of the item to be deleted", required = true)
-            @PathVariable Long itemId
+            @PathVariable UUID itemId
     ) {
         return service.deleteItem(bundleId, itemId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

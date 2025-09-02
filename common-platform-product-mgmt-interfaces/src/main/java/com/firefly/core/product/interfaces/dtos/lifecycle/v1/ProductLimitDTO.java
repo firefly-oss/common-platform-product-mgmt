@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @SuperBuilder
@@ -19,8 +20,8 @@ import java.time.LocalDate;
 public class ProductLimitDTO extends BaseDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
 
-    private Long productLimitId;
-    private Long productId;
+    private UUID productLimitId;
+    private UUID productId;
     private LimitTypeEnum limitType;
     private BigDecimal limitValue;
     private String limitUnit;

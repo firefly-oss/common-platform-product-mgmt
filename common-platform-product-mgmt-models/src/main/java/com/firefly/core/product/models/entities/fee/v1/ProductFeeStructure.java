@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -14,13 +15,13 @@ import org.springframework.data.relational.core.mapping.Table;
 public class ProductFeeStructure extends BaseEntity {
     @Id
     @Column("product_fee_structure_id")
-    private Long productFeeStructureId;
+    private UUID productFeeStructureId;
 
     @Column("product_id")
-    private Long productId;
+    private UUID productId;
 
     @Column("fee_structure_id")
-    private Long feeStructureId;
+    private UUID feeStructureId;
 
     @Column("priority")
     private Integer priority;

@@ -8,13 +8,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Repository
-public interface FeeApplicationRuleRepository extends BaseRepository<FeeApplicationRule, Long> {
-    Flux<FeeApplicationRule> findByFeeComponentId(Long componentId);
+public interface FeeApplicationRuleRepository extends BaseRepository<FeeApplicationRule, UUID> {
+    Flux<FeeApplicationRule> findByFeeComponentId(UUID componentId);
     Flux<FeeApplicationRule> findByEffectiveDateLessThanEqualAndExpiryDateGreaterThanEqual(
             LocalDate effectiveDate, LocalDate expiryDate);
 
-    Flux<FeeApplicationRule> findByFeeComponentId(Long componentId, Pageable pageable);
-    Mono<Long> countByFeeComponentId(Long componentId);
+    Flux<FeeApplicationRule> findByFeeComponentId(UUID componentId, Pageable pageable);
+    Mono<Long> countByFeeComponentId(UUID componentId);
 }

@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Product Relationship", description = "APIs for managing relationships between products")
 @RestController
@@ -39,7 +40,7 @@ public class ProductRelationshipController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<PaginationResponse<ProductRelationshipDTO>>> getAllRelationships(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @ParameterObject
             @ModelAttribute PaginationRequest paginationRequest
@@ -63,7 +64,7 @@ public class ProductRelationshipController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductRelationshipDTO>> createRelationship(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Data for the new product relationship record", required = true,
                     schema = @Schema(implementation = ProductRelationshipDTO.class))
@@ -88,10 +89,10 @@ public class ProductRelationshipController {
     @GetMapping(value = "/{relationshipId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductRelationshipDTO>> getRelationship(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product relationship record", required = true)
-            @PathVariable Long relationshipId
+            @PathVariable UUID relationshipId
     ) {
         return service.getRelationship(productId, relationshipId)
                 .map(ResponseEntity::ok)
@@ -112,10 +113,10 @@ public class ProductRelationshipController {
     @PutMapping(value = "/{relationshipId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<ProductRelationshipDTO>> updateRelationship(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product relationship record to update", required = true)
-            @PathVariable Long relationshipId,
+            @PathVariable UUID relationshipId,
 
             @Parameter(description = "Updated product relationship data", required = true,
                     schema = @Schema(implementation = ProductRelationshipDTO.class))
@@ -139,10 +140,10 @@ public class ProductRelationshipController {
     @DeleteMapping(value = "/{relationshipId}")
     public Mono<ResponseEntity<Void>> deleteRelationship(
             @Parameter(description = "Unique identifier of the product", required = true)
-            @PathVariable Long productId,
+            @PathVariable UUID productId,
 
             @Parameter(description = "Unique identifier of the product relationship record to delete", required = true)
-            @PathVariable Long relationshipId
+            @PathVariable UUID relationshipId
     ) {
         return service.deleteRelationship(productId, relationshipId)
                 .then(Mono.just(ResponseEntity.noContent().build()));

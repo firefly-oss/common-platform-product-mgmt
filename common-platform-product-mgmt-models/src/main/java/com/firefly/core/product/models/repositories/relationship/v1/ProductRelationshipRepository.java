@@ -7,19 +7,20 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Repository
-public interface ProductRelationshipRepository extends BaseRepository<ProductRelationship, Long> {
-    Flux<ProductRelationship> findByProductId(Long productId);
-    Flux<ProductRelationship> findByRelatedProductId(Long relatedProductId);
+public interface ProductRelationshipRepository extends BaseRepository<ProductRelationship, UUID> {
+    Flux<ProductRelationship> findByProductId(UUID productId);
+    Flux<ProductRelationship> findByRelatedProductId(UUID relatedProductId);
     Flux<ProductRelationship> findByRelationshipType(RelationshipTypeEnum type);
 
     // Bidirectional relationship search
-    Flux<ProductRelationship> findByProductIdOrRelatedProductId(Long productId, Long relatedProductId);
+    Flux<ProductRelationship> findByProductIdOrRelatedProductId(UUID productId, UUID relatedProductId);
 
     // Pageable queries
-    Flux<ProductRelationship> findByProductId(Long productId, Pageable pageable);
-    Mono<Long> countByProductId(Long productId);
+    Flux<ProductRelationship> findByProductId(UUID productId, Pageable pageable);
+    Mono<Long> countByProductId(UUID productId);
 
     Flux<ProductRelationship> findByRelationshipType(RelationshipTypeEnum type, Pageable pageable);
     Mono<Long> countByRelationshipType(RelationshipTypeEnum type);

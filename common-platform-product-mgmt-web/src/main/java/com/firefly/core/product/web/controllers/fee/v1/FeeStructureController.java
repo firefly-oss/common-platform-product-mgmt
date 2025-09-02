@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
+import java.util.UUID;
 
 @Tag(name = "Fee Structure", description = "APIs for managing fee structures in the product platform")
 @RestController
@@ -36,7 +37,7 @@ public class FeeStructureController {
     @GetMapping(value = "/{feeStructureId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<FeeStructureDTO>> getFeeStructure(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId
+            @PathVariable UUID feeStructureId
     ) {
         return service.getFeeStructure(feeStructureId)
                 .map(ResponseEntity::ok)
@@ -75,7 +76,7 @@ public class FeeStructureController {
     @PutMapping(value = "/{feeStructureId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Mono<ResponseEntity<FeeStructureDTO>> updateFeeStructure(
             @Parameter(description = "Unique identifier of the fee structure to update", required = true)
-            @PathVariable Long feeStructureId,
+            @PathVariable UUID feeStructureId,
 
             @Parameter(description = "Updated data for the fee structure", required = true,
                     schema = @Schema(implementation = FeeStructureDTO.class))
@@ -97,7 +98,7 @@ public class FeeStructureController {
     @DeleteMapping(value = "/{feeStructureId}")
     public Mono<ResponseEntity<Void>> deleteFeeStructure(
             @Parameter(description = "Unique identifier of the fee structure", required = true)
-            @PathVariable Long feeStructureId
+            @PathVariable UUID feeStructureId
     ) {
         return service.deleteFeeStructure(feeStructureId)
                 .then(Mono.just(ResponseEntity.noContent().build()));
