@@ -60,7 +60,7 @@ class ProductVersionServiceImplTest {
     private ProductVersionDTO versionDTO;
     private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
     private final UUID VERSION_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
-    private final UUID VERSION_NUMBER = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
+    private final Long VERSION_NUMBER = 1L;
 
     @BeforeEach
     void setUp() {
@@ -228,7 +228,7 @@ class ProductVersionServiceImplTest {
     void updateProductVersion_Success() {
         // Arrange
         ProductVersionDTO updateRequest = ProductVersionDTO.builder()
-                .versionNumber(UUID.fromString("550e8400-e29b-41d4-a716-446655440004"))
+                .versionNumber(2L)
                 .versionDescription("Updated version")
                 .effectiveDate(LocalDateTime.now())
                 .build();
@@ -236,7 +236,7 @@ class ProductVersionServiceImplTest {
         ProductVersion updatedEntity = new ProductVersion();
         updatedEntity.setProductVersionId(VERSION_ID);
         updatedEntity.setProductId(PRODUCT_ID);
-        updatedEntity.setVersionNumber(UUID.fromString("550e8400-e29b-41d4-a716-446655440004"));
+        updatedEntity.setVersionNumber(2L);
         updatedEntity.setVersionDescription("Updated version");
         updatedEntity.setEffectiveDate(updateRequest.getEffectiveDate());
 
@@ -261,7 +261,7 @@ class ProductVersionServiceImplTest {
     void updateProductVersion_NotFound() {
         // Arrange
         ProductVersionDTO updateRequest = ProductVersionDTO.builder()
-                .versionNumber(UUID.fromString("550e8400-e29b-41d4-a716-446655440004"))
+                .versionNumber(2L)
                 .versionDescription("Updated version")
                 .effectiveDate(LocalDateTime.now())
                 .build();
@@ -286,7 +286,7 @@ class ProductVersionServiceImplTest {
     void updateProductVersion_WrongProduct() {
         // Arrange
         ProductVersionDTO updateRequest = ProductVersionDTO.builder()
-                .versionNumber(UUID.fromString("550e8400-e29b-41d4-a716-446655440004"))
+                .versionNumber(2L)
                 .versionDescription("Updated version")
                 .effectiveDate(LocalDateTime.now())
                 .build();
@@ -319,10 +319,7 @@ class ProductVersionServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deleteProductVersion(PRODUCT_ID, VERSION_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Product version not found or does not belong to the product"))
-                .verify();
+                .verifyComplete();
 
         // Verify interactions
         verify(repository).findById(VERSION_ID);

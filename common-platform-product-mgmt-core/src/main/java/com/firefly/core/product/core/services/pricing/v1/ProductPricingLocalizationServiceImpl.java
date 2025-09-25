@@ -100,8 +100,8 @@ public class ProductPricingLocalizationServiceImpl implements ProductPricingLoca
         try {
             return repository.findById(localizationId)
                     .filter(localization -> localization.getProductPricingId().equals(pricingId))
-                    .flatMap(repository::delete)
                     .switchIfEmpty(Mono.error(new RuntimeException("Localization not found for the provided pricingId and localizationId.")))
+                    .flatMap(repository::delete)
                     .onErrorResume(e -> Mono.error(new RuntimeException("Failed to delete localization", e)));
         } catch (Exception e) {
             return Mono.error(new RuntimeException("Unexpected error occurred while deleting localization", e));

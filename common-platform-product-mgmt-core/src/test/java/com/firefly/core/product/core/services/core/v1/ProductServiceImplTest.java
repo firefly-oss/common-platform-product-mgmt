@@ -208,13 +208,10 @@ class ProductServiceImplTest {
         LocalDateTime createdDate = LocalDateTime.now().minusDays(1);
         existingProduct.setDateCreated(createdDate);
 
-        // Create a spy of the product that will be returned by mapper.toEntity
-        Product spyProduct = spy(new Product());
-
         when(repository.findById(PRODUCT_ID)).thenReturn(Mono.just(existingProduct));
-        when(mapper.toEntity(productDTO)).thenReturn(spyProduct);
-        when(repository.save(spyProduct)).thenReturn(Mono.just(spyProduct));
-        when(mapper.toDto(spyProduct)).thenReturn(productDTO);
+        doNothing().when(mapper).updateEntityFromDto(productDTO, existingProduct);
+        when(repository.save(existingProduct)).thenReturn(Mono.just(existingProduct));
+        when(mapper.toDto(existingProduct)).thenReturn(productDTO);
 
         // Act & Assert
         StepVerifier.create(service.updateProduct(PRODUCT_ID, productDTO))
@@ -222,13 +219,9 @@ class ProductServiceImplTest {
                 .verifyComplete();
 
         verify(repository).findById(PRODUCT_ID);
-        verify(mapper).toEntity(productDTO);
-        verify(repository).save(spyProduct);
-        verify(mapper).toDto(spyProduct);
-
-        // Verify that the ID and dateCreated were preserved
-        verify(spyProduct).setProductId(PRODUCT_ID);
-        verify(spyProduct).setDateCreated(createdDate);
+        verify(mapper).updateEntityFromDto(productDTO, existingProduct);
+        verify(repository).save(existingProduct);
+        verify(mapper).toDto(existingProduct);
     }
 
     @Test

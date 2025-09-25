@@ -28,7 +28,7 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.util.UUID;
 
 
-@Table("product_category")
+@Table("product_subtype")
 @Getter
 @Setter
 @AllArgsConstructor

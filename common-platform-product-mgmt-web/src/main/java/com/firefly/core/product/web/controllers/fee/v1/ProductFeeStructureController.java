@@ -155,7 +155,7 @@ public class ProductFeeStructureController {
                     content = @Content)
     })
     @DeleteMapping(value = "/{productFeeStructId}")
-    public Mono<ResponseEntity<Void>> deleteFeeStructure(
+    public Mono<ResponseEntity<Void>> deleteProductFeeStructure(
             @Parameter(description = "Unique identifier of the product", required = true)
             @PathVariable UUID productId,
 

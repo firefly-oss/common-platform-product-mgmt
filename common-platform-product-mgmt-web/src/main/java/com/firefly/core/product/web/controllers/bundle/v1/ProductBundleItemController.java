@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import java.util.UUID;
 
-@Tag(name = "Product Bundle", description = "APIs for managing product bundles in the product management platform")
+@Tag(name = "Product Bundle Item", description = "APIs for managing product bundles items in the product management platform")
 @RestController
 @RequestMapping("/api/v1/bundles/{bundleId}/items")
 public class ProductBundleItemController {

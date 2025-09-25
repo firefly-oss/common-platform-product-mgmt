@@ -223,10 +223,7 @@ class ProductBundleServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.delete(BUNDLE_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("An error occurred while deleting the product bundle"))
-                .verify();
+                .verifyComplete();
 
         verify(repository).findById(BUNDLE_ID);
         verify(repository).delete(productBundle);

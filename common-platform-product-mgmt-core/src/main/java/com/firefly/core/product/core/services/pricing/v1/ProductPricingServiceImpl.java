@@ -100,8 +100,8 @@ public class ProductPricingServiceImpl implements ProductPricingService {
         try {
             return repository.findById(pricingId)
                     .filter(productPricing -> productPricing.getProductId().equals(productId))
-                    .flatMap(repository::delete)
                     .switchIfEmpty(Mono.error(new RuntimeException("Pricing not found for the provided productId and pricingId.")))
+                    .flatMap(repository::delete)
                     .onErrorResume(e -> Mono.error(new RuntimeException("Failed to delete pricing", e)));
         } catch (Exception e) {
             return Mono.error(new RuntimeException("Unexpected error occurred while deleting pricing", e));

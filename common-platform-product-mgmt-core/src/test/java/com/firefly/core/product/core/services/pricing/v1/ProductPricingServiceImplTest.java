@@ -344,10 +344,7 @@ class ProductPricingServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deletePricing(PRODUCT_ID, PRICING_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to delete pricing"))
-                .verify();
+                .verifyComplete();
 
         // Verify interactions
         verify(repository).findById(PRICING_ID);

@@ -46,7 +46,8 @@ public class ProductLocalizationController {
 
     @Operation(
             summary = "List Product Localizations",
-            description = "Retrieve a paginated list of all localizations associated with the specified product."
+            description = "Retrieve a paginated list of all localizations associated with the specified product.",
+            operationId = "getAllProductLocalizations"
     )
     @ApiResponses({
             @ApiResponse(
@@ -62,7 +63,7 @@ public class ProductLocalizationController {
             )
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<PaginationResponse<ProductLocalizationDTO>>> getAllLocalizations(
+    public Mono<ResponseEntity<PaginationResponse<ProductLocalizationDTO>>> getAllProductLocalizations(
             @Parameter(
                     in = ParameterIn.PATH,
                     description = "Unique identifier of the product",
@@ -80,7 +81,8 @@ public class ProductLocalizationController {
 
     @Operation(
             summary = "Create Product Localization",
-            description = "Create a new localization record associated with a specific product."
+            description = "Create a new localization record associated with a specific product.",
+            operationId = "createProductLocalization"
     )
     @ApiResponses({
             @ApiResponse(
@@ -96,7 +98,7 @@ public class ProductLocalizationController {
             )
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<ProductLocalizationDTO>> createLocalization(
+    public Mono<ResponseEntity<ProductLocalizationDTO>> createProductLocalization(
             @Parameter(
                     in = ParameterIn.PATH,
                     description = "Unique identifier of the product",
@@ -118,7 +120,8 @@ public class ProductLocalizationController {
 
     @Operation(
             summary = "Get Product Localization by ID",
-            description = "Retrieve a specific localization record for the given product."
+            description = "Retrieve a specific localization record for the given product.",
+            operationId = "getProductLocalizationById"
     )
     @ApiResponses({
             @ApiResponse(
@@ -134,7 +137,7 @@ public class ProductLocalizationController {
             )
     })
     @GetMapping(value = "/{localizationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<ProductLocalizationDTO>> getLocalizationById(
+    public Mono<ResponseEntity<ProductLocalizationDTO>> getProductLocalizationById(
             @Parameter(
                     in = ParameterIn.PATH,
                     description = "Unique identifier of the product",
@@ -156,7 +159,8 @@ public class ProductLocalizationController {
 
     @Operation(
             summary = "Update Product Localization",
-            description = "Update an existing product localization record."
+            description = "Update an existing product localization record.",
+            operationId = "updateProductLocalization"
     )
     @ApiResponses({
             @ApiResponse(
@@ -172,7 +176,7 @@ public class ProductLocalizationController {
             )
     })
     @PutMapping(value = "/{localizationId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Mono<ResponseEntity<ProductLocalizationDTO>> updateLocalization(
+    public Mono<ResponseEntity<ProductLocalizationDTO>> updateProductLocalization(
             @Parameter(
                     in = ParameterIn.PATH,
                     description = "Unique identifier of the product",
@@ -201,7 +205,8 @@ public class ProductLocalizationController {
 
     @Operation(
             summary = "Delete Product Localization",
-            description = "Remove an existing localization record from the product."
+            description = "Remove an existing localization record from the product.",
+            operationId = "deleteProductLocalization"
     )
     @ApiResponses({
             @ApiResponse(
@@ -216,7 +221,7 @@ public class ProductLocalizationController {
             )
     })
     @DeleteMapping(value = "/{localizationId}")
-    public Mono<ResponseEntity<Void>> deleteLocalization(
+    public Mono<ResponseEntity<Void>> deleteProductLocalization(
             @Parameter(
                     in = ParameterIn.PATH,
                     description = "Unique identifier of the product",

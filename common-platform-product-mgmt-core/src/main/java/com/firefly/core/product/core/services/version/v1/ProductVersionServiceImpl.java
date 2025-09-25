@@ -85,7 +85,7 @@ public class ProductVersionServiceImpl implements ProductVersionService {
     public Mono<Void> deleteProductVersion(UUID productId, UUID versionId) {
         return repository.findById(versionId)
                 .filter(productVersion -> productVersion.getProductId().equals(productId))
-                .flatMap(repository::delete)
-                .switchIfEmpty(Mono.error(new RuntimeException("Product version not found or does not belong to the product")));
+                .switchIfEmpty(Mono.error(new RuntimeException("Product version not found or does not belong to the product")))
+                .flatMap(repository::delete);
     }
 }

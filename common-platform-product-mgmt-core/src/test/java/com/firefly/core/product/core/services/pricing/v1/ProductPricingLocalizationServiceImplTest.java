@@ -307,10 +307,7 @@ class ProductPricingLocalizationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deleteLocalization(PRICING_ID, LOCALIZATION_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to delete localization"))
-                .verify();
+                .verifyComplete();
 
         // Verify interactions
         verify(repository).findById(LOCALIZATION_ID);

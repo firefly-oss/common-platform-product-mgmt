@@ -70,13 +70,12 @@ public class ProductServiceImpl implements ProductService {
     public Mono<ProductDTO> updateProduct(UUID productId, ProductDTO productDTO) {
         return repository.findById(productId)
                 .flatMap(existingProduct -> {
-                    Product updatedProduct = mapper.toEntity(productDTO);
-                    updatedProduct.setProductId(existingProduct.getProductId());
-                    updatedProduct.setDateCreated(existingProduct.getDateCreated());
-                    return repository.save(updatedProduct).map(mapper::toDto);
+                    mapper.updateEntityFromDto(productDTO, existingProduct);
+                    return repository.save(existingProduct);
                 })
                 .switchIfEmpty(Mono.error(new RuntimeException("Product not found")))
-                .onErrorResume(e -> Mono.error(new RuntimeException("Failed to update product", e)));
+                .onErrorResume(e -> Mono.error(new RuntimeException("Failed to update product", e)))
+                .map(mapper::toDto);
     }
 
     @Override

@@ -83,9 +83,9 @@ public class ProductFeeStructureServiceImpl implements ProductFeeStructureServic
     }
 
     @Override
-    public Mono<Void> deleteFeeStructure(UUID productId, UUID feeStructureId) {
+    public Mono<Void> deleteFeeStructure(UUID productId, UUID productFeeStructureId) {
         return repository.findByProductId(productId)
-                .filter(entity -> entity.getFeeStructureId().equals(feeStructureId))
+                .filter(entity -> entity.getProductFeeStructureId().equals(productFeeStructureId))
                 .singleOrEmpty()
                 .flatMap(repository::delete)
                 .onErrorMap(e -> new RuntimeException("Error deleting fee structure", e));

@@ -83,8 +83,8 @@ public class ProductBundleServiceImpl implements ProductBundleService {
     @Override
     public Mono<Void> delete(UUID bundleId) {
         return repository.findById(bundleId)
-                .flatMap(repository::delete)
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Product bundle not found")))
+                .flatMap(repository::delete)
                 .onErrorMap(e -> new RuntimeException("An error occurred while deleting the product bundle", e));
     }
 }

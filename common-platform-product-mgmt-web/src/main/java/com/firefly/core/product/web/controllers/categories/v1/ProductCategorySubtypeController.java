@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import java.util.UUID;
 
-@Tag(name = "Product Category", description = "APIs for managing product categories in the product management platform")
+@Tag(name = "Product Subtype", description = "APIs for managing product categories in the product management platform")
 @RestController
 @RequestMapping("/api/v1/categories/{categoryId}/subtypes")
 public class ProductCategorySubtypeController {
