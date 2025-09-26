@@ -263,9 +263,9 @@ class ProductPricingServiceImplTest {
         updatedEntity.setExpiryDate(updateRequest.getExpiryDate());
 
         when(repository.findById(PRICING_ID)).thenReturn(Mono.just(pricing));
-        when(mapper.toEntity(any(ProductPricingDTO.class))).thenReturn(updatedEntity);
-        when(repository.save(any(ProductPricing.class))).thenReturn(Mono.just(updatedEntity));
-        when(mapper.toDto(updatedEntity)).thenReturn(updateRequest);
+        doNothing().when(mapper).updateEntityFromDto(updateRequest, pricing);
+        when(repository.save(pricing)).thenReturn(Mono.just(pricing));
+        when(mapper.toDto(pricing)).thenReturn(updateRequest);
 
         // Act & Assert
         StepVerifier.create(service.updatePricing(PRODUCT_ID, PRICING_ID, updateRequest))
@@ -274,8 +274,9 @@ class ProductPricingServiceImplTest {
 
         // Verify interactions
         verify(repository).findById(PRICING_ID);
-        verify(repository).save(any(ProductPricing.class));
-        verify(mapper).toDto(any(ProductPricing.class));
+        verify(mapper).updateEntityFromDto(updateRequest, pricing);
+        verify(repository).save(pricing);
+        verify(mapper).toDto(pricing);
     }
 
     @Test

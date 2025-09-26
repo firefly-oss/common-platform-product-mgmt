@@ -82,10 +82,8 @@ public class ProductPricingServiceImpl implements ProductPricingService {
             return repository.findById(pricingId)
                     .filter(productPricing -> productPricing.getProductId().equals(productId))
                     .flatMap(existingPricing -> {
-                        productPricingDTO.setProductPricingId(pricingId);
-                        productPricingDTO.setProductId(productId);
-                        ProductPricing updatedEntity = mapper.toEntity(productPricingDTO);
-                        return repository.save(updatedEntity);
+                        mapper.updateEntityFromDto(productPricingDTO, existingPricing);
+                        return repository.save(existingPricing);
                     })
                     .map(mapper::toDto)
                     .switchIfEmpty(Mono.error(new RuntimeException("Pricing not found for the provided productId and pricingId.")))

@@ -18,11 +18,18 @@
 package com.firefly.core.product.core.mappers.fee.v1;
 
 import com.firefly.core.product.interfaces.dtos.fee.v1.FeeApplicationRuleDTO;
+import com.firefly.core.product.interfaces.dtos.pricing.v1.ProductPricingDTO;
 import com.firefly.core.product.models.entities.fee.v1.FeeApplicationRule;
-import org.mapstruct.Mapper;
+import com.firefly.core.product.models.entities.pricing.v1.ProductPricing;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface FeeApplicationRuleMapper {
     FeeApplicationRuleDTO toDto(FeeApplicationRule entity);
     FeeApplicationRule toEntity(FeeApplicationRuleDTO dto);
+
+    @Mapping(target = "dateCreated", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateEntityFromDto(FeeApplicationRuleDTO dto, @MappingTarget FeeApplicationRule entity);
+
 }

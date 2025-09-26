@@ -74,10 +74,8 @@ public class FeeApplicationRuleServiceImpl implements FeeApplicationRuleService 
                 .filter(rule -> rule.getFeeComponentId().equals(componentId))
                 .switchIfEmpty(Mono.error(new RuntimeException("Rule not found or does not belong to the component")))
                 .flatMap(existingRule -> {
-                    FeeApplicationRule updatedEntity = mapper.toEntity(ruleDTO);
-                    updatedEntity.setFeeApplicationRuleId(ruleId);
-                    updatedEntity.setFeeComponentId(componentId);
-                    return repository.save(updatedEntity);
+                    mapper.updateEntityFromDto(ruleDTO, existingRule);
+                    return repository.save(existingRule);
                 })
                 .map(mapper::toDto)
                 .onErrorMap(e -> new RuntimeException("Failed to update rule", e));
