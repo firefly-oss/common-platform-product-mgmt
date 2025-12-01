@@ -17,34 +17,28 @@
 
 package com.firefly.core.product.core.services.core.v1;
 
-import com.firefly.common.core.queries.PaginationRequest;
-import com.firefly.common.core.queries.PaginationResponse;
-import com.firefly.core.product.core.mappers.core.v1.ProductMapper;
-import com.firefly.core.product.interfaces.dtos.core.v1.ProductDTO;
-import com.firefly.core.product.interfaces.enums.core.v1.ProductStatusEnum;
-import com.firefly.core.product.interfaces.enums.core.v1.ProductTypeEnum;
-import com.firefly.core.product.models.entities.core.v1.Product;
-import com.firefly.core.product.models.repositories.product.v1.ProductRepository;
+import com.firefly.core.product.core.mappers.ProductMapper;
+import com.firefly.core.product.core.services.impl.ProductServiceImpl;
+import com.firefly.core.product.interfaces.dtos.ProductDTO;
+import com.firefly.core.product.interfaces.enums.ProductStatusEnum;
+import com.firefly.core.product.interfaces.enums.ProductTypeEnum;
+import com.firefly.core.product.models.entities.Product;
+import com.firefly.core.product.models.repositories.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceImplTest {
@@ -61,7 +55,8 @@ class ProductServiceImplTest {
     private Product product;
     private ProductDTO productDTO;
     private final UUID PRODUCT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
-    private final UUID SUBTYPE_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+    private final UUID CATEGORY_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440002");
+    private final UUID TENANT_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440003");
 
     @BeforeEach
     void setUp() {
@@ -72,7 +67,8 @@ class ProductServiceImplTest {
 
         product = new Product();
         product.setProductId(PRODUCT_ID);
-        product.setProductSubtypeId(SUBTYPE_ID);
+        product.setTenantId(TENANT_ID);
+        product.setProductCategoryId(CATEGORY_ID);
         product.setProductType(ProductTypeEnum.FINANCIAL);
         product.setProductName("Test Product");
         product.setProductCode("TP001");
@@ -85,7 +81,8 @@ class ProductServiceImplTest {
 
         productDTO = ProductDTO.builder()
                 .productId(PRODUCT_ID)
-                .productSubtypeId(SUBTYPE_ID)
+                .tenantId(TENANT_ID)
+                .productCategoryId(CATEGORY_ID)
                 .productType(ProductTypeEnum.FINANCIAL)
                 .productName("Test Product")
                 .productCode("TP001")
@@ -98,39 +95,8 @@ class ProductServiceImplTest {
                 .build();
     }
 
-    @Test
-    void getAllProducts_Success() {
-        // Arrange
-        // Mock PaginationRequest
-        PaginationRequest paginationRequest = Mockito.mock(PaginationRequest.class);
-
-        // Mock Pageable
-        Pageable pageable = Mockito.mock(Pageable.class);
-
-        // Mock PaginationRequest behavior
-        doReturn(pageable).when(paginationRequest).toPageable();
-
-        // Set up repository and mapper mocks
-        when(repository.findAllBy(pageable)).thenReturn(Flux.just(product));
-        when(repository.count()).thenReturn(Mono.just(1L));
-        when(mapper.toDto(product)).thenReturn(productDTO);
-
-        // Act & Assert
-        StepVerifier.create(service.getAllProducts(paginationRequest))
-                .expectNextMatches(response -> {
-                    // Verify response contains our DTO
-                    List<ProductDTO> content = response.getContent();
-                    return content != null && 
-                           content.size() == 1 && 
-                           content.get(0).equals(productDTO);
-                })
-                .verifyComplete();
-
-        // Verify interactions
-        verify(repository).findAllBy(pageable);
-        verify(repository).count();
-        verify(mapper).toDto(product);
-    }
+    // Note: filterProducts test is not included because it uses FilterUtils which is a static utility
+    // that works directly with the database and cannot be easily mocked in unit tests.
 
     @Test
     void createProduct_Success() {
@@ -157,9 +123,9 @@ class ProductServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.createProduct(productDTO))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Failed to create product"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().equals("Database error"))
                 .verify();
 
         verify(mapper).toEntity(productDTO);
@@ -168,13 +134,13 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void getProduct_Success() {
+    void getProductById_Success() {
         // Arrange
         when(repository.findById(PRODUCT_ID)).thenReturn(Mono.just(product));
         when(mapper.toDto(product)).thenReturn(productDTO);
 
         // Act & Assert
-        StepVerifier.create(service.getProduct(PRODUCT_ID))
+        StepVerifier.create(service.getProductById(PRODUCT_ID))
                 .expectNext(productDTO)
                 .verifyComplete();
 
@@ -183,15 +149,15 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void getProduct_NotFound() {
+    void getProductById_NotFound() {
         // Arrange
         when(repository.findById(PRODUCT_ID)).thenReturn(Mono.empty());
 
         // Act & Assert
-        StepVerifier.create(service.getProduct(PRODUCT_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to retrieve product"))
+        StepVerifier.create(service.getProductById(PRODUCT_ID))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Product not found with ID"))
                 .verify();
 
         verify(repository).findById(PRODUCT_ID);
@@ -231,13 +197,13 @@ class ProductServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.updateProduct(PRODUCT_ID, productDTO))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to update product"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Product not found with ID"))
                 .verify();
 
         verify(repository).findById(PRODUCT_ID);
-        verify(mapper, never()).toEntity(any());
+        verify(mapper, never()).updateEntityFromDto(any(), any());
         verify(repository, never()).save(any());
         verify(mapper, never()).toDto(any());
     }
@@ -246,30 +212,80 @@ class ProductServiceImplTest {
     void deleteProduct_Success() {
         // Arrange
         when(repository.findById(PRODUCT_ID)).thenReturn(Mono.just(product));
-        when(repository.delete(product)).thenReturn(Mono.empty());
+        when(repository.deleteById(PRODUCT_ID)).thenReturn(Mono.empty());
 
         // Act & Assert
         StepVerifier.create(service.deleteProduct(PRODUCT_ID))
                 .verifyComplete();
 
         verify(repository).findById(PRODUCT_ID);
-        verify(repository).delete(product);
+        verify(repository).deleteById(PRODUCT_ID);
     }
 
     @Test
-    void deleteProduct_Error() {
+    void deleteProduct_NotFound() {
         // Arrange
-        when(repository.findById(PRODUCT_ID)).thenReturn(Mono.just(product));
-        when(repository.delete(product)).thenReturn(Mono.error(new RuntimeException("Database error")));
+        when(repository.findById(PRODUCT_ID)).thenReturn(Mono.empty());
 
         // Act & Assert
         StepVerifier.create(service.deleteProduct(PRODUCT_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Failed to delete product"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Product not found with ID"))
                 .verify();
 
         verify(repository).findById(PRODUCT_ID);
-        verify(repository).delete(product);
+        verify(repository, never()).deleteById(any(UUID.class));
+    }
+
+    @Test
+    void createProduct_MissingTenantId() {
+        // Arrange
+        ProductDTO dtoWithoutTenant = ProductDTO.builder()
+                .productCategoryId(CATEGORY_ID)
+                .productType(ProductTypeEnum.FINANCIAL)
+                .productName("Test Product")
+                .productCode("TP001")
+                .productDescription("Test Description")
+                .productStatus(ProductStatusEnum.ACTIVE)
+                .build();
+
+        // Act & Assert
+        StepVerifier.create(service.createProduct(dtoWithoutTenant))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Tenant ID is required"))
+                .verify();
+
+        verify(mapper, never()).toEntity(any());
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    void getProductsByTenantId_Success() {
+        // Arrange
+        when(repository.findByTenantId(TENANT_ID)).thenReturn(reactor.core.publisher.Flux.just(product));
+        when(mapper.toDto(product)).thenReturn(productDTO);
+
+        // Act & Assert
+        StepVerifier.create(service.getProductsByTenantId(TENANT_ID))
+                .expectNext(productDTO)
+                .verifyComplete();
+
+        verify(repository).findByTenantId(TENANT_ID);
+        verify(mapper).toDto(product);
+    }
+
+    @Test
+    void getProductsByTenantId_Empty() {
+        // Arrange
+        when(repository.findByTenantId(TENANT_ID)).thenReturn(reactor.core.publisher.Flux.empty());
+
+        // Act & Assert
+        StepVerifier.create(service.getProductsByTenantId(TENANT_ID))
+                .verifyComplete();
+
+        verify(repository).findByTenantId(TENANT_ID);
+        verify(mapper, never()).toDto(any());
     }
 }

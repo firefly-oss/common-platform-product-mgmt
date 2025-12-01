@@ -17,33 +17,26 @@
 
 package com.firefly.core.product.core.services.relationship.v1;
 
-import com.firefly.common.core.queries.PaginationRequest;
-import com.firefly.common.core.queries.PaginationResponse;
-import com.firefly.core.product.core.mappers.relationship.v1.ProductRelationshipMapper;
-import com.firefly.core.product.interfaces.dtos.relationship.v1.ProductRelationshipDTO;
-import com.firefly.core.product.interfaces.enums.relationship.v1.RelationshipTypeEnum;
-import com.firefly.core.product.models.entities.relationship.v1.ProductRelationship;
-import com.firefly.core.product.models.repositories.relationship.v1.ProductRelationshipRepository;
+import com.firefly.core.product.core.mappers.ProductRelationshipMapper;
+import com.firefly.core.product.core.services.impl.ProductRelationshipServiceImpl;
+import com.firefly.core.product.interfaces.dtos.ProductRelationshipDTO;
+import com.firefly.core.product.interfaces.enums.RelationshipTypeEnum;
+import com.firefly.core.product.models.entities.ProductRelationship;
+import com.firefly.core.product.models.repositories.ProductRelationshipRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductRelationshipServiceImplTest {
@@ -88,39 +81,8 @@ class ProductRelationshipServiceImplTest {
                 .build();
     }
 
-    @Test
-    void getAllRelationships_Success() {
-        // Arrange
-        // Mock PaginationRequest
-        PaginationRequest paginationRequest = Mockito.mock(PaginationRequest.class);
-
-        // Mock Pageable
-        Pageable pageable = Mockito.mock(Pageable.class);
-
-        // Mock PaginationRequest behavior
-        doReturn(pageable).when(paginationRequest).toPageable();
-
-        // Set up repository and mapper mocks
-        when(repository.findByProductId(eq(PRODUCT_ID), eq(pageable))).thenReturn(Flux.just(relationship));
-        when(repository.countByProductId(PRODUCT_ID)).thenReturn(Mono.just(1L));
-        when(mapper.toDto(relationship)).thenReturn(relationshipDTO);
-
-        // Act & Assert
-        StepVerifier.create(service.getAllRelationships(PRODUCT_ID, paginationRequest))
-                .expectNextMatches(response -> {
-                    // Verify response contains our DTO
-                    List<ProductRelationshipDTO> content = response.getContent();
-                    return content != null && 
-                           content.size() == 1 && 
-                           content.get(0).equals(relationshipDTO);
-                })
-                .verifyComplete();
-
-        // Verify interactions
-        verify(repository).findByProductId(eq(PRODUCT_ID), eq(pageable));
-        verify(repository).countByProductId(PRODUCT_ID);
-        verify(mapper).toDto(relationship);
-    }
+    // Note: filterRelationships test is not included because it uses FilterUtils which is a static utility
+    // that works directly with the database and cannot be easily mocked in unit tests.
 
     @Test
     void createRelationship_Success() {
@@ -160,9 +122,9 @@ class ProductRelationshipServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.createRelationship(PRODUCT_ID, requestDTO))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Error occurred while creating the relationship"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().equals("Database error"))
                 .verify();
 
         // Verify interactions
@@ -172,13 +134,13 @@ class ProductRelationshipServiceImplTest {
     }
 
     @Test
-    void getRelationship_Success() {
+    void getRelationshipById_Success() {
         // Arrange
         when(repository.findById(RELATIONSHIP_ID)).thenReturn(Mono.just(relationship));
         when(mapper.toDto(relationship)).thenReturn(relationshipDTO);
 
         // Act & Assert
-        StepVerifier.create(service.getRelationship(PRODUCT_ID, RELATIONSHIP_ID))
+        StepVerifier.create(service.getRelationshipById(PRODUCT_ID, RELATIONSHIP_ID))
                 .expectNext(relationshipDTO)
                 .verifyComplete();
 
@@ -188,15 +150,15 @@ class ProductRelationshipServiceImplTest {
     }
 
     @Test
-    void getRelationship_NotFound() {
+    void getRelationshipById_NotFound() {
         // Arrange
         when(repository.findById(RELATIONSHIP_ID)).thenReturn(Mono.empty());
 
         // Act & Assert
-        StepVerifier.create(service.getRelationship(PRODUCT_ID, RELATIONSHIP_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Error occurred while retrieving the relationship"))
+        StepVerifier.create(service.getRelationshipById(PRODUCT_ID, RELATIONSHIP_ID))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Relationship not found with ID"))
                 .verify();
 
         // Verify interactions
@@ -205,7 +167,7 @@ class ProductRelationshipServiceImplTest {
     }
 
     @Test
-    void getRelationship_WrongProduct() {
+    void getRelationshipById_WrongProduct() {
         // Arrange
         ProductRelationship relationshipFromDifferentProduct = new ProductRelationship();
         relationshipFromDifferentProduct.setProductRelationshipId(RELATIONSHIP_ID);
@@ -214,10 +176,10 @@ class ProductRelationshipServiceImplTest {
         when(repository.findById(RELATIONSHIP_ID)).thenReturn(Mono.just(relationshipFromDifferentProduct));
 
         // Act & Assert
-        StepVerifier.create(service.getRelationship(PRODUCT_ID, RELATIONSHIP_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Error occurred while retrieving the relationship"))
+        StepVerifier.create(service.getRelationshipById(PRODUCT_ID, RELATIONSHIP_ID))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         // Verify interactions
@@ -234,17 +196,10 @@ class ProductRelationshipServiceImplTest {
                 .description("Upgrade product relationship")
                 .build();
 
-        ProductRelationship updatedEntity = new ProductRelationship();
-        updatedEntity.setProductRelationshipId(RELATIONSHIP_ID);
-        updatedEntity.setProductId(PRODUCT_ID);
-        updatedEntity.setRelatedProductId(RELATED_PRODUCT_ID);
-        updatedEntity.setRelationshipType(RelationshipTypeEnum.UPGRADE);
-        updatedEntity.setDescription("Upgrade product relationship");
-
         when(repository.findById(RELATIONSHIP_ID)).thenReturn(Mono.just(relationship));
-        when(mapper.toEntity(updateRequest)).thenReturn(updatedEntity);
-        when(repository.save(any(ProductRelationship.class))).thenReturn(Mono.just(updatedEntity));
-        when(mapper.toDto(updatedEntity)).thenReturn(updateRequest);
+        doNothing().when(mapper).updateEntityFromDto(updateRequest, relationship);
+        when(repository.save(relationship)).thenReturn(Mono.just(relationship));
+        when(mapper.toDto(relationship)).thenReturn(updateRequest);
 
         // Act & Assert
         StepVerifier.create(service.updateRelationship(PRODUCT_ID, RELATIONSHIP_ID, updateRequest))
@@ -253,9 +208,9 @@ class ProductRelationshipServiceImplTest {
 
         // Verify interactions
         verify(repository).findById(RELATIONSHIP_ID);
-        verify(mapper).toEntity(updateRequest);
-        verify(repository).save(any(ProductRelationship.class));
-        verify(mapper).toDto(any(ProductRelationship.class));
+        verify(mapper).updateEntityFromDto(updateRequest, relationship);
+        verify(repository).save(relationship);
+        verify(mapper).toDto(relationship);
     }
 
     @Test
@@ -271,14 +226,14 @@ class ProductRelationshipServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.updateRelationship(PRODUCT_ID, RELATIONSHIP_ID, updateRequest))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Error occurred while mapping the updated relationship"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Relationship not found with ID"))
                 .verify();
 
         // Verify interactions
         verify(repository).findById(RELATIONSHIP_ID);
-        verify(mapper, never()).toEntity(any());
+        verify(mapper, never()).updateEntityFromDto(any(), any());
         verify(repository, never()).save(any());
         verify(mapper, never()).toDto(any());
     }
@@ -300,14 +255,14 @@ class ProductRelationshipServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.updateRelationship(PRODUCT_ID, RELATIONSHIP_ID, updateRequest))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Error occurred while mapping the updated relationship"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         // Verify interactions
         verify(repository).findById(RELATIONSHIP_ID);
-        verify(mapper, never()).toEntity(any());
+        verify(mapper, never()).updateEntityFromDto(any(), any());
         verify(repository, never()).save(any());
         verify(mapper, never()).toDto(any());
     }
@@ -316,7 +271,7 @@ class ProductRelationshipServiceImplTest {
     void deleteRelationship_Success() {
         // Arrange
         when(repository.findById(RELATIONSHIP_ID)).thenReturn(Mono.just(relationship));
-        when(repository.delete(relationship)).thenReturn(Mono.empty());
+        when(repository.deleteById(RELATIONSHIP_ID)).thenReturn(Mono.empty());
 
         // Act & Assert
         StepVerifier.create(service.deleteRelationship(PRODUCT_ID, RELATIONSHIP_ID))
@@ -324,7 +279,7 @@ class ProductRelationshipServiceImplTest {
 
         // Verify interactions
         verify(repository).findById(RELATIONSHIP_ID);
-        verify(repository).delete(relationship);
+        verify(repository).deleteById(RELATIONSHIP_ID);
     }
 
     @Test
@@ -334,14 +289,14 @@ class ProductRelationshipServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deleteRelationship(PRODUCT_ID, RELATIONSHIP_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Error occurred while deleting the relationship"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Relationship not found with ID"))
                 .verify();
 
         // Verify interactions
         verify(repository).findById(RELATIONSHIP_ID);
-        verify(repository, never()).delete(any());
+        verify(repository, never()).deleteById(any(UUID.class));
     }
 
     @Test
@@ -355,13 +310,13 @@ class ProductRelationshipServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deleteRelationship(PRODUCT_ID, RELATIONSHIP_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Error occurred while deleting the relationship"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         // Verify interactions
         verify(repository).findById(RELATIONSHIP_ID);
-        verify(repository, never()).delete(any());
+        verify(repository, never()).deleteById(any(UUID.class));
     }
 }

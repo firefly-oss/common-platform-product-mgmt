@@ -17,31 +17,25 @@
 
 package com.firefly.core.product.core.services.localization.v1;
 
-import com.firefly.common.core.queries.PaginationRequest;
-import com.firefly.common.core.queries.PaginationResponse;
-import com.firefly.core.product.core.mappers.localization.v1.ProductLocalizationMapper;
-import com.firefly.core.product.interfaces.dtos.localization.v1.ProductLocalizationDTO;
-import com.firefly.core.product.models.entities.localization.v1.ProductLocalization;
-import com.firefly.core.product.models.repositories.localization.v1.ProductLocalizationRepository;
+import com.firefly.core.product.core.mappers.ProductLocalizationMapper;
+import com.firefly.core.product.core.services.impl.ProductLocalizationServiceImpl;
+import com.firefly.core.product.interfaces.dtos.ProductLocalizationDTO;
+import com.firefly.core.product.models.entities.ProductLocalization;
+import com.firefly.core.product.models.repositories.ProductLocalizationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductLocalizationServiceImplTest {
@@ -83,39 +77,8 @@ class ProductLocalizationServiceImplTest {
                 .build();
     }
 
-    @Test
-    void getAllLocalizations_Success() {
-        // Arrange
-        // Mock PaginationRequest
-        PaginationRequest paginationRequest = Mockito.mock(PaginationRequest.class);
-
-        // Mock Pageable
-        Pageable pageable = Mockito.mock(Pageable.class);
-
-        // Mock PaginationRequest behavior
-        doReturn(pageable).when(paginationRequest).toPageable();
-
-        // Set up repository and mapper mocks
-        when(repository.findAllByProductId(eq(PRODUCT_ID), eq(pageable))).thenReturn(Flux.just(localization));
-        when(repository.countByProductId(PRODUCT_ID)).thenReturn(Mono.just(1L));
-        when(mapper.toDto(localization)).thenReturn(localizationDTO);
-
-        // Act & Assert
-        StepVerifier.create(service.getAllLocalizations(PRODUCT_ID, paginationRequest))
-                .expectNextMatches(response -> {
-                    // Verify response contains our DTO
-                    List<ProductLocalizationDTO> content = response.getContent();
-                    return content != null && 
-                           content.size() == 1 && 
-                           content.get(0).equals(localizationDTO);
-                })
-                .verifyComplete();
-
-        // Verify interactions
-        verify(repository).findAllByProductId(eq(PRODUCT_ID), eq(pageable));
-        verify(repository).countByProductId(PRODUCT_ID);
-        verify(mapper).toDto(localization);
-    }
+    // Note: filterLocalizations test is not included because it uses FilterUtils which is a static utility
+    // that works directly with the database and cannot be easily mocked in unit tests.
 
     @Test
     void createLocalization_Success() {
@@ -155,9 +118,9 @@ class ProductLocalizationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.createLocalization(PRODUCT_ID, requestDTO))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to create localization"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().equals("Database error"))
                 .verify();
 
         // Verify interactions
@@ -189,9 +152,9 @@ class ProductLocalizationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.getLocalizationById(PRODUCT_ID, LOCALIZATION_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to fetch localization by ID"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Localization not found with ID"))
                 .verify();
 
         // Verify interactions
@@ -210,9 +173,9 @@ class ProductLocalizationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.getLocalizationById(PRODUCT_ID, LOCALIZATION_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to fetch localization by ID"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         // Verify interactions
@@ -229,23 +192,10 @@ class ProductLocalizationServiceImplTest {
                 .localizedDescription("Description du Produit Test")
                 .build();
 
-        ProductLocalization existingLocalization = new ProductLocalization();
-        existingLocalization.setProductLocalizationId(LOCALIZATION_ID);
-        existingLocalization.setProductId(PRODUCT_ID);
-        existingLocalization.setLanguageCode("en-US");
-        existingLocalization.setLocalizedName("Old Name");
-        existingLocalization.setLocalizedDescription("Old Description");
-
-        ProductLocalization updatedLocalization = new ProductLocalization();
-        updatedLocalization.setProductLocalizationId(LOCALIZATION_ID);
-        updatedLocalization.setProductId(PRODUCT_ID);
-        updatedLocalization.setLanguageCode("fr-FR");
-        updatedLocalization.setLocalizedName("Nom du Produit Test");
-        updatedLocalization.setLocalizedDescription("Description du Produit Test");
-
-        when(repository.findById(LOCALIZATION_ID)).thenReturn(Mono.just(existingLocalization));
-        when(repository.save(any(ProductLocalization.class))).thenReturn(Mono.just(updatedLocalization));
-        when(mapper.toDto(updatedLocalization)).thenReturn(updateRequest);
+        when(repository.findById(LOCALIZATION_ID)).thenReturn(Mono.just(localization));
+        doNothing().when(mapper).updateEntityFromDto(updateRequest, localization);
+        when(repository.save(localization)).thenReturn(Mono.just(localization));
+        when(mapper.toDto(localization)).thenReturn(updateRequest);
 
         // Act & Assert
         StepVerifier.create(service.updateLocalization(PRODUCT_ID, LOCALIZATION_ID, updateRequest))
@@ -254,8 +204,9 @@ class ProductLocalizationServiceImplTest {
 
         // Verify interactions
         verify(repository).findById(LOCALIZATION_ID);
-        verify(repository).save(any(ProductLocalization.class));
-        verify(mapper).toDto(any(ProductLocalization.class));
+        verify(mapper).updateEntityFromDto(updateRequest, localization);
+        verify(repository).save(localization);
+        verify(mapper).toDto(localization);
     }
 
     @Test
@@ -271,9 +222,9 @@ class ProductLocalizationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.updateLocalization(PRODUCT_ID, LOCALIZATION_ID, updateRequest))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Localization not found for update"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Localization not found with ID"))
                 .verify();
 
         // Verify interactions
@@ -299,9 +250,9 @@ class ProductLocalizationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.updateLocalization(PRODUCT_ID, LOCALIZATION_ID, updateRequest))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Localization not found for update"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         // Verify interactions
@@ -314,7 +265,7 @@ class ProductLocalizationServiceImplTest {
     void deleteLocalization_Success() {
         // Arrange
         when(repository.findById(LOCALIZATION_ID)).thenReturn(Mono.just(localization));
-        when(repository.delete(localization)).thenReturn(Mono.empty());
+        when(repository.deleteById(LOCALIZATION_ID)).thenReturn(Mono.empty());
 
         // Act & Assert
         StepVerifier.create(service.deleteLocalization(PRODUCT_ID, LOCALIZATION_ID))
@@ -322,7 +273,7 @@ class ProductLocalizationServiceImplTest {
 
         // Verify interactions
         verify(repository).findById(LOCALIZATION_ID);
-        verify(repository).delete(localization);
+        verify(repository).deleteById(LOCALIZATION_ID);
     }
 
     @Test
@@ -332,14 +283,14 @@ class ProductLocalizationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deleteLocalization(PRODUCT_ID, LOCALIZATION_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to delete localization"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Localization not found with ID"))
                 .verify();
 
         // Verify interactions
         verify(repository).findById(LOCALIZATION_ID);
-        verify(repository, never()).delete(any());
+        verify(repository, never()).deleteById(any(UUID.class));
     }
 
     @Test
@@ -353,13 +304,13 @@ class ProductLocalizationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deleteLocalization(PRODUCT_ID, LOCALIZATION_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to delete localization"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         // Verify interactions
         verify(repository).findById(LOCALIZATION_ID);
-        verify(repository, never()).delete(any());
+        verify(repository, never()).deleteById(any(UUID.class));
     }
 }

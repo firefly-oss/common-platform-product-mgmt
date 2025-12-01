@@ -17,31 +17,25 @@
 
 package com.firefly.core.product.core.services.documentation.v1;
 
-import com.firefly.common.core.queries.PaginationRequest;
-import com.firefly.common.core.queries.PaginationResponse;
-import com.firefly.core.product.core.mappers.documentation.v1.ProductDocumentationRequirementMapper;
-import com.firefly.core.product.interfaces.dtos.documentation.v1.ProductDocumentationRequirementDTO;
-import com.firefly.core.product.interfaces.enums.documentation.v1.ContractingDocTypeEnum;
-import com.firefly.core.product.models.entities.documentation.v1.ProductDocumentationRequirement;
-import com.firefly.core.product.models.repositories.documentation.v1.ProductDocumentationRequirementRepository;
+import com.firefly.core.product.core.mappers.ProductDocumentationRequirementMapper;
+import com.firefly.core.product.core.services.impl.ProductDocumentationRequirementServiceImpl;
+import com.firefly.core.product.interfaces.dtos.ProductDocumentationRequirementDTO;
+import com.firefly.core.product.interfaces.enums.ContractingDocTypeEnum;
+import com.firefly.core.product.models.entities.ProductDocumentationRequirement;
+import com.firefly.core.product.models.repositories.ProductDocumentationRequirementRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 import java.util.UUID;
+
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ProductDocumentationRequirementServiceImplTest {
@@ -78,31 +72,8 @@ public class ProductDocumentationRequirementServiceImplTest {
         dto.setDescription("Identification document");
     }
 
-    @Test
-    void getAllDocumentationRequirements_ShouldReturnPaginatedList() {
-        // Arrange
-        Pageable pageable = PageRequest.of(0, 10);
-
-        // Mock PaginationRequest
-        PaginationRequest paginationRequest = Mockito.mock(PaginationRequest.class);
-
-        // Mock PaginationRequest behavior
-        doReturn(pageable).when(paginationRequest).toPageable();
-
-        when(repository.findByProductId(eq(productId), eq(pageable)))
-                .thenReturn(Flux.just(entity));
-        when(repository.countByProductId(productId))
-                .thenReturn(Mono.just(1L));
-        when(mapper.toDto(entity)).thenReturn(dto);
-
-        // Act & Assert
-        StepVerifier.create(service.getAllDocumentationRequirements(productId, paginationRequest))
-                .expectNextMatches(response -> 
-                    response.getContent().size() == 1 &&
-                    response.getContent().get(0).getProductDocRequirementId().equals(requirementId) &&
-                    response.getTotalElements() == 1)
-                .verifyComplete();
-    }
+    // Note: filterDocumentationRequirements test is not included because it uses FilterUtils which is a static utility
+    // that works directly with the database and cannot be easily mocked in unit tests.
 
     @Test
     void createDocumentationRequirement_ShouldCreateAndReturnDTO() {
@@ -118,13 +89,13 @@ public class ProductDocumentationRequirementServiceImplTest {
     }
 
     @Test
-    void getDocumentationRequirement_ShouldReturnDTO() {
+    void getDocumentationRequirementById_ShouldReturnDTO() {
         // Arrange
         when(repository.findById(requirementId)).thenReturn(Mono.just(entity));
         when(mapper.toDto(entity)).thenReturn(dto);
 
         // Act & Assert
-        StepVerifier.create(service.getDocumentationRequirement(productId, requirementId))
+        StepVerifier.create(service.getDocumentationRequirementById(productId, requirementId))
                 .expectNext(dto)
                 .verifyComplete();
     }
@@ -146,7 +117,7 @@ public class ProductDocumentationRequirementServiceImplTest {
     void updateDocumentationRequirement_ShouldUpdateAndReturnDTO() {
         // Arrange
         when(repository.findById(requirementId)).thenReturn(Mono.just(entity));
-        when(mapper.toEntity(dto)).thenReturn(entity);
+        doNothing().when(mapper).updateEntityFromDto(dto, entity);
         when(repository.save(entity)).thenReturn(Mono.just(entity));
         when(mapper.toDto(entity)).thenReturn(dto);
 
@@ -160,7 +131,7 @@ public class ProductDocumentationRequirementServiceImplTest {
     void deleteDocumentationRequirement_ShouldDeleteAndReturnVoid() {
         // Arrange
         when(repository.findById(requirementId)).thenReturn(Mono.just(entity));
-        when(repository.delete(entity)).thenReturn(Mono.empty());
+        when(repository.deleteById(requirementId)).thenReturn(Mono.empty());
 
         // Act & Assert
         StepVerifier.create(service.deleteDocumentationRequirement(productId, requirementId))
@@ -168,14 +139,14 @@ public class ProductDocumentationRequirementServiceImplTest {
     }
 
     @Test
-    void getMandatoryDocumentationRequirements_ShouldReturnMandatoryRequirements() {
+    void filterMandatoryDocumentationRequirements_ShouldReturnMandatoryRequirements() {
         // Arrange
         when(repository.findByProductIdAndIsMandatory(productId, true))
                 .thenReturn(Flux.just(entity));
         when(mapper.toDto(entity)).thenReturn(dto);
 
         // Act & Assert
-        StepVerifier.create(service.getMandatoryDocumentationRequirements(productId))
+        StepVerifier.create(service.filterMandatoryDocumentationRequirements(productId))
                 .expectNext(dto)
                 .verifyComplete();
     }

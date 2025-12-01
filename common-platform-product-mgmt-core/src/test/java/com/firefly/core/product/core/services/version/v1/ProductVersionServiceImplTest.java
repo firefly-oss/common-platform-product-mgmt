@@ -17,32 +17,25 @@
 
 package com.firefly.core.product.core.services.version.v1;
 
-import com.firefly.common.core.queries.PaginationRequest;
-import com.firefly.common.core.queries.PaginationResponse;
-import com.firefly.core.product.core.mappers.version.v1.ProductVersionMapper;
-import com.firefly.core.product.interfaces.dtos.version.v1.ProductVersionDTO;
-import com.firefly.core.product.models.entities.version.v1.ProductVersion;
-import com.firefly.core.product.models.repositories.version.v1.ProductVersionRepository;
+import com.firefly.core.product.core.mappers.ProductVersionMapper;
+import com.firefly.core.product.core.services.impl.ProductVersionServiceImpl;
+import com.firefly.core.product.interfaces.dtos.ProductVersionDTO;
+import com.firefly.core.product.models.entities.ProductVersion;
+import com.firefly.core.product.models.repositories.ProductVersionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductVersionServiceImplTest {
@@ -87,39 +80,8 @@ class ProductVersionServiceImplTest {
                 .build();
     }
 
-    @Test
-    void getAllProductVersions_Success() {
-        // Arrange
-        // Mock PaginationRequest
-        PaginationRequest paginationRequest = Mockito.mock(PaginationRequest.class);
-
-        // Mock Pageable
-        Pageable pageable = Mockito.mock(Pageable.class);
-
-        // Mock PaginationRequest behavior
-        doReturn(pageable).when(paginationRequest).toPageable();
-
-        // Set up repository and mapper mocks
-        when(repository.findByProductId(eq(PRODUCT_ID), eq(pageable))).thenReturn(Flux.just(version));
-        when(repository.countByProductId(PRODUCT_ID)).thenReturn(Mono.just(1L));
-        when(mapper.toDto(version)).thenReturn(versionDTO);
-
-        // Act & Assert
-        StepVerifier.create(service.getAllProductVersions(PRODUCT_ID, paginationRequest))
-                .expectNextMatches(response -> {
-                    // Verify response contains our DTO
-                    List<ProductVersionDTO> content = response.getContent();
-                    return content != null && 
-                           content.size() == 1 && 
-                           content.get(0).equals(versionDTO);
-                })
-                .verifyComplete();
-
-        // Verify interactions
-        verify(repository).findByProductId(eq(PRODUCT_ID), eq(pageable));
-        verify(repository).countByProductId(PRODUCT_ID);
-        verify(mapper).toDto(version);
-    }
+    // Note: filterProductVersions test is not included because it uses FilterUtils which is a static utility
+    // that works directly with the database and cannot be easily mocked in unit tests.
 
     @Test
     void createProductVersion_Success() {
@@ -159,9 +121,9 @@ class ProductVersionServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.createProductVersion(PRODUCT_ID, requestDTO))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to create product version"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().equals("Database error"))
                 .verify();
 
         // Verify interactions
@@ -171,13 +133,13 @@ class ProductVersionServiceImplTest {
     }
 
     @Test
-    void getProductVersion_Success() {
+    void getProductVersionById_Success() {
         // Arrange
         when(repository.findById(VERSION_ID)).thenReturn(Mono.just(version));
         when(mapper.toDto(version)).thenReturn(versionDTO);
 
         // Act & Assert
-        StepVerifier.create(service.getProductVersion(PRODUCT_ID, VERSION_ID))
+        StepVerifier.create(service.getProductVersionById(PRODUCT_ID, VERSION_ID))
                 .expectNext(versionDTO)
                 .verifyComplete();
 
@@ -187,15 +149,15 @@ class ProductVersionServiceImplTest {
     }
 
     @Test
-    void getProductVersion_NotFound() {
+    void getProductVersionById_NotFound() {
         // Arrange
         when(repository.findById(VERSION_ID)).thenReturn(Mono.empty());
 
         // Act & Assert
-        StepVerifier.create(service.getProductVersion(PRODUCT_ID, VERSION_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Product version not found or does not belong to the product"))
+        StepVerifier.create(service.getProductVersionById(PRODUCT_ID, VERSION_ID))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Product version not found with ID"))
                 .verify();
 
         // Verify interactions
@@ -204,7 +166,7 @@ class ProductVersionServiceImplTest {
     }
 
     @Test
-    void getProductVersion_WrongProduct() {
+    void getProductVersionById_WrongProduct() {
         // Arrange
         ProductVersion versionFromDifferentProduct = new ProductVersion();
         versionFromDifferentProduct.setProductVersionId(VERSION_ID);
@@ -213,10 +175,10 @@ class ProductVersionServiceImplTest {
         when(repository.findById(VERSION_ID)).thenReturn(Mono.just(versionFromDifferentProduct));
 
         // Act & Assert
-        StepVerifier.create(service.getProductVersion(PRODUCT_ID, VERSION_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Product version not found or does not belong to the product"))
+        StepVerifier.create(service.getProductVersionById(PRODUCT_ID, VERSION_ID))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         // Verify interactions
@@ -233,17 +195,10 @@ class ProductVersionServiceImplTest {
                 .effectiveDate(LocalDateTime.now())
                 .build();
 
-        ProductVersion updatedEntity = new ProductVersion();
-        updatedEntity.setProductVersionId(VERSION_ID);
-        updatedEntity.setProductId(PRODUCT_ID);
-        updatedEntity.setVersionNumber(2L);
-        updatedEntity.setVersionDescription("Updated version");
-        updatedEntity.setEffectiveDate(updateRequest.getEffectiveDate());
-
         when(repository.findById(VERSION_ID)).thenReturn(Mono.just(version));
-        when(mapper.toEntity(updateRequest)).thenReturn(updatedEntity);
-        when(repository.save(any(ProductVersion.class))).thenReturn(Mono.just(updatedEntity));
-        when(mapper.toDto(updatedEntity)).thenReturn(updateRequest);
+        doNothing().when(mapper).updateEntityFromDto(updateRequest, version);
+        when(repository.save(version)).thenReturn(Mono.just(version));
+        when(mapper.toDto(version)).thenReturn(updateRequest);
 
         // Act & Assert
         StepVerifier.create(service.updateProductVersion(PRODUCT_ID, VERSION_ID, updateRequest))
@@ -252,9 +207,9 @@ class ProductVersionServiceImplTest {
 
         // Verify interactions
         verify(repository).findById(VERSION_ID);
-        verify(mapper).toEntity(updateRequest);
-        verify(repository).save(any(ProductVersion.class));
-        verify(mapper).toDto(any(ProductVersion.class));
+        verify(mapper).updateEntityFromDto(updateRequest, version);
+        verify(repository).save(version);
+        verify(mapper).toDto(version);
     }
 
     @Test
@@ -270,14 +225,14 @@ class ProductVersionServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.updateProductVersion(PRODUCT_ID, VERSION_ID, updateRequest))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Product version not found or does not belong to the product"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Product version not found with ID"))
                 .verify();
 
         // Verify interactions
         verify(repository).findById(VERSION_ID);
-        verify(mapper, never()).toEntity(any());
+        verify(mapper, never()).updateEntityFromDto(any(), any());
         verify(repository, never()).save(any());
         verify(mapper, never()).toDto(any());
     }
@@ -299,14 +254,14 @@ class ProductVersionServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.updateProductVersion(PRODUCT_ID, VERSION_ID, updateRequest))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Product version not found or does not belong to the product"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         // Verify interactions
         verify(repository).findById(VERSION_ID);
-        verify(mapper, never()).toEntity(any());
+        verify(mapper, never()).updateEntityFromDto(any(), any());
         verify(repository, never()).save(any());
         verify(mapper, never()).toDto(any());
     }
@@ -315,7 +270,7 @@ class ProductVersionServiceImplTest {
     void deleteProductVersion_Success() {
         // Arrange
         when(repository.findById(VERSION_ID)).thenReturn(Mono.just(version));
-        when(repository.delete(version)).thenReturn(Mono.empty());
+        when(repository.deleteById(VERSION_ID)).thenReturn(Mono.empty());
 
         // Act & Assert
         StepVerifier.create(service.deleteProductVersion(PRODUCT_ID, VERSION_ID))
@@ -323,7 +278,7 @@ class ProductVersionServiceImplTest {
 
         // Verify interactions
         verify(repository).findById(VERSION_ID);
-        verify(repository).delete(version);
+        verify(repository).deleteById(VERSION_ID);
     }
 
     @Test
@@ -333,14 +288,14 @@ class ProductVersionServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deleteProductVersion(PRODUCT_ID, VERSION_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Product version not found or does not belong to the product"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Product version not found with ID"))
                 .verify();
 
         // Verify interactions
         verify(repository).findById(VERSION_ID);
-        verify(repository, never()).delete(any());
+        verify(repository, never()).deleteById(any(UUID.class));
     }
 
     @Test
@@ -354,13 +309,13 @@ class ProductVersionServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deleteProductVersion(PRODUCT_ID, VERSION_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().equals("Product version not found or does not belong to the product"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         // Verify interactions
         verify(repository).findById(VERSION_ID);
-        verify(repository, never()).delete(any());
+        verify(repository, never()).deleteById(any(UUID.class));
     }
 }

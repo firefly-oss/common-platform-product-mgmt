@@ -17,32 +17,26 @@
 
 package com.firefly.core.product.core.services.documentantion.v1;
 
-import com.firefly.common.core.queries.PaginationRequest;
-import com.firefly.core.product.core.mappers.documentation.v1.ProductDocumentationMapper;
-import com.firefly.core.product.core.services.documentation.v1.ProductDocumentationServiceImpl;
-import com.firefly.core.product.interfaces.dtos.documentation.v1.ProductDocumentationDTO;
-import com.firefly.core.product.interfaces.enums.documentation.v1.DocTypeEnum;
-import com.firefly.core.product.models.entities.documentation.v1.ProductDocumentation;
-import com.firefly.core.product.models.repositories.documentation.v1.ProductDocumentationRepository;
+import com.firefly.core.product.core.mappers.ProductDocumentationMapper;
+import com.firefly.core.product.core.services.impl.ProductDocumentationServiceImpl;
+import com.firefly.core.product.interfaces.dtos.ProductDocumentationDTO;
+import com.firefly.core.product.interfaces.enums.DocTypeEnum;
+import com.firefly.core.product.models.entities.ProductDocumentation;
+import com.firefly.core.product.models.repositories.ProductDocumentationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class ProductDocumentationServiceImplTest {
@@ -87,39 +81,8 @@ class ProductDocumentationServiceImplTest {
                 .build();
     }
 
-    @Test
-    void getAllDocumentations_Success() {
-        // Arrange
-        // Mock PaginationRequest
-        PaginationRequest paginationRequest = Mockito.mock(PaginationRequest.class);
-
-        // Mock Pageable
-        Pageable pageable = Mockito.mock(Pageable.class);
-
-        // Mock PaginationRequest behavior
-        doReturn(pageable).when(paginationRequest).toPageable();
-
-        // Set up repository and mapper mocks
-        when(repository.findByProductId(eq(PRODUCT_ID), eq(pageable))).thenReturn(Flux.just(documentation));
-        when(repository.countByProductId(PRODUCT_ID)).thenReturn(Mono.just(1L));
-        when(mapper.toDto(documentation)).thenReturn(documentationDTO);
-
-        // Act & Assert
-        StepVerifier.create(service.getAllDocumentations(PRODUCT_ID, paginationRequest))
-                .expectNextMatches(response -> {
-                    // Verify response contains our DTO
-                    List<ProductDocumentationDTO> content = response.getContent();
-                    return content != null && 
-                           content.size() == 1 && 
-                           content.get(0).equals(documentationDTO);
-                })
-                .verifyComplete();
-
-        // Verify interactions
-        verify(repository).findByProductId(eq(PRODUCT_ID), eq(pageable));
-        verify(repository).countByProductId(PRODUCT_ID);
-        verify(mapper).toDto(documentation);
-    }
+    // Note: filterDocumentations test is not included because it uses FilterUtils which is a static utility
+    // that works directly with the database and cannot be easily mocked in unit tests.
 
     @Test
     void createDocumentation_Success() {
@@ -149,9 +112,9 @@ class ProductDocumentationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.createDocumentation(PRODUCT_ID, documentationDTO))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to create documentation"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().equals("Database error"))
                 .verify();
 
         verify(mapper).toEntity(documentationDTO);
@@ -160,13 +123,13 @@ class ProductDocumentationServiceImplTest {
     }
 
     @Test
-    void getDocumentation_Success() {
+    void getDocumentationById_Success() {
         // Arrange
         when(repository.findById(DOC_ID)).thenReturn(Mono.just(documentation));
         when(mapper.toDto(documentation)).thenReturn(documentationDTO);
 
         // Act & Assert
-        StepVerifier.create(service.getDocumentation(PRODUCT_ID, DOC_ID))
+        StepVerifier.create(service.getDocumentationById(PRODUCT_ID, DOC_ID))
                 .expectNext(documentationDTO)
                 .verifyComplete();
 
@@ -175,15 +138,15 @@ class ProductDocumentationServiceImplTest {
     }
 
     @Test
-    void getDocumentation_NotFound() {
+    void getDocumentationById_NotFound() {
         // Arrange
         when(repository.findById(DOC_ID)).thenReturn(Mono.empty());
 
         // Act & Assert
-        StepVerifier.create(service.getDocumentation(PRODUCT_ID, DOC_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to retrieve documentation"))
+        StepVerifier.create(service.getDocumentationById(PRODUCT_ID, DOC_ID))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Documentation not found with ID"))
                 .verify();
 
         verify(repository).findById(DOC_ID);
@@ -191,7 +154,7 @@ class ProductDocumentationServiceImplTest {
     }
 
     @Test
-    void getDocumentation_WrongProduct() {
+    void getDocumentationById_WrongProduct() {
         // Arrange
         ProductDocumentation docFromDifferentProduct = new ProductDocumentation();
         docFromDifferentProduct.setProductDocumentationId(DOC_ID);
@@ -200,10 +163,10 @@ class ProductDocumentationServiceImplTest {
         when(repository.findById(DOC_ID)).thenReturn(Mono.just(docFromDifferentProduct));
 
         // Act & Assert
-        StepVerifier.create(service.getDocumentation(PRODUCT_ID, DOC_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to retrieve documentation"))
+        StepVerifier.create(service.getDocumentationById(PRODUCT_ID, DOC_ID))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         verify(repository).findById(DOC_ID);
@@ -213,44 +176,15 @@ class ProductDocumentationServiceImplTest {
     @Test
     void updateDocumentation_Success() {
         // Arrange
-        ProductDocumentation existingDoc = new ProductDocumentation();
-        existingDoc.setProductDocumentationId(DOC_ID);
-        existingDoc.setProductId(PRODUCT_ID);
-        existingDoc.setDocType(DocTypeEnum.BROCHURE); // Different doc type
-        existingDoc.setDocumentManagerRef(999L); // Different manager ref
-
-        // Create a DTO with the updated values
         ProductDocumentationDTO updateRequest = ProductDocumentationDTO.builder()
                 .docType(DocTypeEnum.TNC)
                 .documentManagerRef(DOC_MANAGER_REF)
                 .build();
 
-        when(repository.findById(DOC_ID)).thenReturn(Mono.just(existingDoc));
-
-        // Mock the first toDto call that happens inside the service
-        ProductDocumentationDTO existingDTO = ProductDocumentationDTO.builder()
-                .productDocumentationId(DOC_ID)
-                .productId(PRODUCT_ID)
-                .docType(DocTypeEnum.BROCHURE)
-                .documentManagerRef(999L)
-                .build();
-        when(mapper.toDto(existingDoc)).thenReturn(existingDTO);
-
-        // Mock the updated entity after setting new values
-        ProductDocumentation updatedEntity = new ProductDocumentation();
-        updatedEntity.setProductDocumentationId(DOC_ID);
-        updatedEntity.setProductId(PRODUCT_ID);
-        updatedEntity.setDocType(DocTypeEnum.TNC);
-        updatedEntity.setDocumentManagerRef(DOC_MANAGER_REF);
-
-        // Mock the toEntity call with the updated DTO
-        when(mapper.toEntity(any(ProductDocumentationDTO.class))).thenReturn(updatedEntity);
-
-        // Mock the save call
-        when(repository.save(any(ProductDocumentation.class))).thenReturn(Mono.just(updatedEntity));
-
-        // Mock the final toDto call
-        when(mapper.toDto(updatedEntity)).thenReturn(documentationDTO);
+        when(repository.findById(DOC_ID)).thenReturn(Mono.just(documentation));
+        doNothing().when(mapper).updateEntityFromDto(updateRequest, documentation);
+        when(repository.save(documentation)).thenReturn(Mono.just(documentation));
+        when(mapper.toDto(documentation)).thenReturn(documentationDTO);
 
         // Act & Assert
         StepVerifier.create(service.updateDocumentation(PRODUCT_ID, DOC_ID, updateRequest))
@@ -258,10 +192,9 @@ class ProductDocumentationServiceImplTest {
                 .verifyComplete();
 
         verify(repository).findById(DOC_ID);
-        verify(repository).save(any(ProductDocumentation.class));
-
-        // We can't verify the exact number of toDto calls because the implementation might vary
-        verify(mapper, atLeastOnce()).toDto(any(ProductDocumentation.class));
+        verify(mapper).updateEntityFromDto(updateRequest, documentation);
+        verify(repository).save(documentation);
+        verify(mapper).toDto(documentation);
     }
 
     @Test
@@ -271,9 +204,9 @@ class ProductDocumentationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.updateDocumentation(PRODUCT_ID, DOC_ID, documentationDTO))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to update documentation"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Documentation not found with ID"))
                 .verify();
 
         verify(repository).findById(DOC_ID);
@@ -292,9 +225,9 @@ class ProductDocumentationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.updateDocumentation(PRODUCT_ID, DOC_ID, documentationDTO))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to update documentation"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         verify(repository).findById(DOC_ID);
@@ -306,14 +239,14 @@ class ProductDocumentationServiceImplTest {
     void deleteDocumentation_Success() {
         // Arrange
         when(repository.findById(DOC_ID)).thenReturn(Mono.just(documentation));
-        when(repository.delete(documentation)).thenReturn(Mono.empty());
+        when(repository.deleteById(DOC_ID)).thenReturn(Mono.empty());
 
         // Act & Assert
         StepVerifier.create(service.deleteDocumentation(PRODUCT_ID, DOC_ID))
                 .verifyComplete();
 
         verify(repository).findById(DOC_ID);
-        verify(repository).delete(documentation);
+        verify(repository).deleteById(DOC_ID);
     }
 
     @Test
@@ -323,13 +256,13 @@ class ProductDocumentationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deleteDocumentation(PRODUCT_ID, DOC_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to delete documentation"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("Documentation not found with ID"))
                 .verify();
 
         verify(repository).findById(DOC_ID);
-        verify(repository, never()).delete(any());
+        verify(repository, never()).deleteById(any(UUID.class));
     }
 
     @Test
@@ -343,13 +276,13 @@ class ProductDocumentationServiceImplTest {
 
         // Act & Assert
         StepVerifier.create(service.deleteDocumentation(PRODUCT_ID, DOC_ID))
-                .expectErrorMatches(throwable -> 
-                    throwable instanceof RuntimeException && 
-                    throwable.getMessage().contains("Failed to delete documentation"))
+                .expectErrorMatches(throwable ->
+                    throwable instanceof RuntimeException &&
+                    throwable.getMessage().contains("does not belong to product"))
                 .verify();
 
         verify(repository).findById(DOC_ID);
-        verify(repository, never()).delete(any());
+        verify(repository, never()).deleteById(any(UUID.class));
     }
 
     // Helper method for assertions
