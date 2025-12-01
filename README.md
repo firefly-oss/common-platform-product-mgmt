@@ -7,20 +7,21 @@
 - [Architecture](#architecture)
   - [Modules](#modules)
   - [Technology Stack](#technology-stack)
-- [Data Model](#data-model)
+- [Entity Relationship Diagram](#entity-relationship-diagram)
+- [API Usage Overview](#api-usage-overview)
+  - [Products API](#products-api)
+  - [Product Categories API](#product-categories-api)
+  - [Product Configurations API](#product-configurations-api)
+  - [Product Versions API](#product-versions-api)
+  - [Product Relationships API](#product-relationships-api)
+  - [Product Localizations API](#product-localizations-api)
+  - [Product Documentation API](#product-documentation-api)
+  - [Product Documentation Requirements API](#product-documentation-requirements-api)
+- [FilterRequest and PaginationResponse](#filterrequest-and-paginationresponse)
 - [Quickstart](#quickstart)
   - [Prerequisites](#prerequisites)
   - [Local Development Setup](#local-development-setup)
   - [Docker Deployment](#docker-deployment)
-- [API Usage Guide](#api-usage-guide)
-  - [Step 1: Create a Product](#step-1-create-a-product)
-  - [Step 2: Add Product Features](#step-2-add-product-features)
-  - [Step 3: Define Product Pricing](#step-3-define-product-pricing)
-  - [Step 4: Set Product Lifecycle](#step-4-set-product-lifecycle)
-  - [Step 5: Create Product Relationships](#step-5-create-product-relationships)
-  - [Step 6: Add Localization](#step-6-add-localization)
-  - [Step 7: Create Product Bundles](#step-7-create-product-bundles)
-  - [Step 8: Define Documentation Requirements](#step-8-define-documentation-requirements)
 - [Configuration](#configuration)
 - [Development Guidelines](#development-guidelines)
   - [Code Style](#code-style)
@@ -32,123 +33,99 @@
 
 ## Overview
 
-The Common Platform Product Management Service is a mission-critical enterprise microservice component of the Firefly platform that functions as both a comprehensive Product Catalog and sophisticated Product Configuration Wizard. As the authoritative centralized repository for all product information across the Firefly ecosystem, it provides a single source of truth for product data throughout the entire product lifecycle, enabling seamless integration with other platform services.
+The Common Platform Product Management Service is a mission-critical enterprise microservice component of the Firefly CoreBanking platform. It serves as the authoritative centralized repository for all product information across the Firefly ecosystem, providing a single source of truth for product data with multi-tenancy support.
 
-### Product Catalog
+### Key Capabilities
 
-As an enterprise-grade Product Catalog, this service:
+- **Multi-Tenant Product Catalog**: Maintains a comprehensive inventory of all financial products with tenant isolation via `tenantId`
+- **Hierarchical Categorization**: Supports parent-child category relationships with automatic level calculation
+- **Flexible Configuration**: Key-value configuration system supporting PRICING, LIMITS, FEATURES, and CUSTOM types
+- **Product Versioning**: Track product versions with immutable change history
+- **Global Localization**: Multi-language product descriptions and region-specific variations
+- **Relationship Mapping**: Define relationships between products for cross-selling and upselling
+- **Documentation Management**: Manage product documentation and contracting requirements
 
-- Maintains a comprehensive inventory of all financial products offered by the institution with robust versioning capabilities
-- Provides detailed product specifications, features, pricing structures, eligibility criteria, and compliance parameters
-- Supports multi-language product descriptions and region-specific variations for global deployment and regulatory compliance
-- Enables sophisticated product discovery and comparison through rich categorization, tagging, and relationship mapping
-- Tracks product versions with immutable audit trails and maintains a complete history of changes over time for governance requirements
+The service is built using a reactive programming model with Spring WebFlux and Spring Data R2DBC, ensuring enterprise-grade performance and horizontal scalability.
 
-### Product Configuration Wizard
+## Features
 
-As an advanced Product Configuration Wizard, this service:
+- **Multi-Tenancy Support**: Each product is associated with a tenant via `tenantId` for platform isolation
+- **Hierarchical Product Categorization**: Multi-level category taxonomy with parent-child relationships
+- **Key-Value Configuration**: Flexible product configuration with typed categories (PRICING, LIMITS, FEATURES, CUSTOM)
+- **Product Versioning**: Track and manage different versions of products
+- **Product Relationships**: Define PRE_REQUISITE, COMPLIMENTARY, UPGRADE, and CROSS_SELL relationships
+- **Global Localization**: Support for product information in multiple languages
+- **Documentation Management**: Manage product documentation (TNC, BROCHURE, POLICY_DOC)
+- **Contracting Requirements**: Define required documentation for product contracting/opening phases
 
-- Guides product managers through a structured, workflow-driven process of creating and configuring new products
-- Enforces complex business rules, validation logic, and compliance requirements during product setup
-- Supports sophisticated product bundling, cross-selling strategies, and multi-dimensional relationship definitions
-- Manages the complete product lifecycle from conception and draft to active deployment to retirement and archival
-- Provides an extensible framework for enhancing products with custom attributes, behaviors, and integration points
+## Architecture
 
-The service is built using a reactive programming model with Spring WebFlux and leverages event-driven architecture principles, ensuring enterprise-grade performance, horizontal scalability, and operational resilience even under high-concurrency conditions. The non-blocking I/O model optimizes resource utilization and responsiveness, making it suitable for mission-critical financial applications.
+The service follows a domain-driven, hexagonal architecture with clear separation of concerns:
 
-## Enterprise Features
+### Modules
 
-- **Comprehensive Product Management**: Create, read, update, and delete product information with full audit trails and governance controls
-- **Intuitive Product Wizard**: Streamline product creation with a step-by-step wizard interface for faster configuration and deployment
-- **Hierarchical Product Categorization**: Implement multi-level product taxonomies with flexible categorization schemes and dynamic subtypes
-- **Strategic Product Bundling**: Design and manage sophisticated product bundles with configurable pricing strategies and promotional rules
-- **Feature-based Configuration**: Define and manage granular product features with conditional availability and eligibility rules
-- **Advanced Fee Management**: Configure complex fee structures, tiered pricing components, and conditional application rules
-- **Complete Lifecycle Governance**: Track and enforce product lifecycle states, transitions, and approval workflows with regulatory compliance
-- **Configurable Product Limits**: Define and enforce product-specific limits with temporal and conditional constraints
-- **Global Localization Framework**: Support for product information in multiple languages with region-specific regulatory content
-- **Dynamic Pricing Engine**: Manage sophisticated product pricing models including tiered, conditional, and currency-specific pricing
-- **Multi-dimensional Relationship Mapping**: Define and visualize complex relationships between products for cross-selling and upselling
-- **Enterprise Versioning System**: Track product versions with immutable change history and point-in-time reconstruction capabilities
-- **Integrated Documentation Management**: Centrally manage product-related documentation with version control and approval workflows
-- **Contracting Documentation Requirements**: Define and manage required documentation for product contracting/opening phases, supporting regulatory compliance and customer onboarding
+| Module | Description |
+|--------|-------------|
+| **common-platform-product-mgmt-core** | Business logic, service implementations, and MapStruct mappers |
+| **common-platform-product-mgmt-interfaces** | DTOs, interfaces, and enums for API contracts |
+| **common-platform-product-mgmt-models** | Database entities, R2DBC repositories, and Flyway migrations |
+| **common-platform-product-mgmt-web** | REST controllers with reactive endpoints |
+| **common-platform-product-mgmt-sdk** | OpenAPI specification and generated SDK |
 
-## Enterprise Architecture
+### Technology Stack
 
-The service follows a domain-driven, hexagonal architecture with clear separation of concerns, enabling maintainability, testability, and scalability:
+| Technology | Purpose |
+|------------|---------|
+| **Java 21** | Programming language with modern features |
+| **Spring Boot 3.x** | Application framework |
+| **Spring WebFlux** | Reactive web framework (Mono/Flux) |
+| **Spring Data R2DBC** | Reactive database access |
+| **PostgreSQL** | Relational database |
+| **Flyway** | Database migrations |
+| **MapStruct** | Entity-to-DTO mapping with `updateEntityFromDto()` |
+| **Lombok** | Boilerplate reduction (`@RequiredArgsConstructor`, `@Data`) |
+| **OpenAPI/Swagger** | API documentation |
+| **Maven** | Build and dependency management |
+| **Docker** | Containerization |
 
-### Modular Structure
+### Controller Patterns
 
-- **common-platform-product-mgmt-core**: Contains the domain model, business logic, and service implementations with rich domain behaviors
-- **common-platform-product-mgmt-interfaces**: Defines DTOs, interfaces, and enums for the service with comprehensive API contracts
-- **common-platform-product-mgmt-models**: Contains database entities, repository implementations, and data access patterns
-- **common-platform-product-mgmt-web**: Provides REST API controllers, validation, security, and web-specific configurations
+All controllers follow these patterns:
+- `@RestController` with `@RequestMapping` for base path
+- `@RequiredArgsConstructor` for constructor injection
+- `@Validated` for request validation
+- `@Valid @RequestBody` for request body validation
+- `POST /filter` endpoints with `FilterRequest<DTO>` for filtering/pagination
+- Reactive return types: `Mono<ResponseEntity<T>>` or `Flux<T>`
 
-### Product Wizard
+### Service Layer Patterns
 
-The Product Wizard functionality provides a streamlined, step-by-step approach to product creation:
+- Services use `FilterRequest<DTO>` and `FilterUtils` for filtering and pagination
+- MapStruct mappers with `toDto()`, `toEntity()`, and `updateEntityFromDto()` methods
+- Parent entity validation for all child entity operations
 
-1. **Intuitive Interface**: Guides users through the product creation process with a structured workflow
-2. **Template-based Initialization**: Start with pre-configured templates for common product types
-3. **Progressive Configuration**: Build products incrementally, from basic details to advanced features
-4. **State Management**: Save and resume wizard sessions at any point in the process
-5. **Comprehensive Creation**: Create not just the core product, but all related entities in a single workflow
-
-#### API Endpoints
-
-- `POST /api/v1/product-wizard/initialize`: Start a new product wizard
-- `POST /api/v1/product-wizard/initialize/{templateName}`: Start a wizard with a template
-- `POST /api/v1/product-wizard/process-step`: Process the current step and advance
-- `POST /api/v1/product-wizard/complete`: Complete the wizard and create the product
-- `GET /api/v1/product-wizard/{wizardId}`: Retrieve a saved wizard session
-- `POST /api/v1/product-wizard/save`: Save the current wizard state
-
-### Enterprise Technology Stack
-
-- **Java 21**: Enterprise-grade programming language with support for virtual threads and modern language features
-- **Spring Boot**: Production-ready application framework with comprehensive enterprise capabilities
-- **Spring WebFlux**: Reactive web framework for building non-blocking, event-driven applications
-- **Spring Data R2DBC**: Reactive data access framework for high-throughput database operations
-- **Flyway**: Database migration tool for versioned schema evolution and controlled deployments
-- **PostgreSQL**: Enterprise-class relational database with advanced data integrity features
-- **Maven**: Industry-standard build and dependency management tool with robust lifecycle management
-- **Docker**: Enterprise containerization platform for consistent deployment across environments
-- **Kubernetes**: Container orchestration for resilient, scalable deployments
-- **Swagger/OpenAPI**: Comprehensive API documentation with interactive testing capabilities
-- **Micrometer**: Application metrics collection for operational intelligence
-- **Resilience4j**: Fault tolerance library for building resilient applications
-
-## Data Model
+## Entity Relationship Diagram
 
 ```mermaid
 erDiagram
-    PRODUCT ||--o{ PRODUCT_FEATURE : has
-    PRODUCT ||--o{ PRODUCT_PRICING : has
-    PRODUCT ||--o{ PRODUCT_LIFECYCLE : has
-    PRODUCT ||--o{ PRODUCT_LIMIT : has
-    PRODUCT ||--o{ PRODUCT_LOCALIZATION : has
     PRODUCT ||--o{ PRODUCT_VERSION : has
+    PRODUCT ||--o{ PRODUCT_RELATIONSHIP : has
+    PRODUCT ||--o{ PRODUCT_LOCALIZATION : has
     PRODUCT ||--o{ PRODUCT_DOCUMENTATION : has
     PRODUCT ||--o{ PRODUCT_DOCUMENTATION_REQUIREMENT : has
-    PRODUCT ||--o{ PRODUCT_RELATIONSHIP : has
-    PRODUCT }|--|| PRODUCT_SUBTYPE : belongs_to
-    PRODUCT_SUBTYPE }|--|| PRODUCT_CATEGORY : belongs_to
-    PRODUCT_BUNDLE ||--o{ PRODUCT_BUNDLE_ITEM : contains
-    PRODUCT_BUNDLE_ITEM }|--|| PRODUCT : references
-    FEE_STRUCTURE ||--o{ FEE_COMPONENT : contains
-    PRODUCT ||--o{ PRODUCT_FEE_STRUCTURE : has
-    PRODUCT_FEE_STRUCTURE }|--|| FEE_STRUCTURE : references
-    PRODUCT_PRICING ||--o{ PRODUCT_PRICING_LOCALIZATION : has
-    FEE_COMPONENT ||--o{ FEE_APPLICATION_RULE : has
+    PRODUCT ||--o{ PRODUCT_CONFIGURATION : has
+    PRODUCT }o--|| PRODUCT_CATEGORY : belongs_to
+    PRODUCT_CATEGORY ||--o{ PRODUCT_CATEGORY : has_children
 
     PRODUCT {
         UUID productId PK
-        UUID productSubtypeId FK
-        ProductTypeEnum productType
+        UUID tenantId FK "Multi-tenancy support"
+        UUID productCategoryId FK
+        ProductTypeEnum productType "FINANCIAL, NON_FINANCIAL"
         String productName
         String productCode
         String productDescription
-        ProductStatusEnum productStatus
+        ProductStatusEnum productStatus "PROPOSED, ACTIVE, RETIRED, DRAFT"
         LocalDate launchDate
         LocalDate endDate
         LocalDateTime dateCreated
@@ -159,73 +136,38 @@ erDiagram
         UUID productCategoryId PK
         String categoryName
         String categoryDescription
-        UUID parentCategoryId FK
+        UUID parentCategoryId FK "Self-referencing for hierarchy"
+        Integer level "Auto-calculated: 0 for root, parent.level + 1 for children"
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
 
-    PRODUCT_SUBTYPE {
-        UUID productSubtypeId PK
-        UUID productCategoryId FK
-        String subtypeName
-        String subtypeDescription
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
-
-    PRODUCT_FEATURE {
-        UUID productFeatureId PK
+    PRODUCT_CONFIGURATION {
+        UUID productConfigurationId PK
         UUID productId FK
-        FeatureTypeEnum featureType
-        String featureName
-        String featureDescription
-        Boolean isMandatory
+        ProductConfigTypeEnum configType "PRICING, LIMITS, FEATURES, CUSTOM"
+        String configKey
+        String configValue
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
 
-    PRODUCT_PRICING {
-        UUID productPricingId PK
+    PRODUCT_VERSION {
+        UUID productVersionId PK
         UUID productId FK
-        PricingTypeEnum pricingType
-        BigDecimal amountValue
-        String amountUnit
-        String pricingCondition
-        LocalDate effectiveDate
-        LocalDate expiryDate
+        Long versionNumber
+        String versionDescription
+        LocalDateTime effectiveDate
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
 
-    PRODUCT_PRICING_LOCALIZATION {
-        UUID productPricingLocalizationId PK
-        UUID productPricingId FK
-        String currencyCode
-        BigDecimal localizedAmountValue
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
-
-    PRODUCT_LIFECYCLE {
-        UUID productLifecycleId PK
+    PRODUCT_RELATIONSHIP {
+        UUID productRelationshipId PK
         UUID productId FK
-        LifecycleStatusEnum lifecycleStatus
-        LocalDateTime statusStartDate
-        LocalDateTime statusEndDate
-        String reason
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
-
-    PRODUCT_LIMIT {
-        UUID productLimitId PK
-        UUID productId FK
-        LimitTypeEnum limitType
-        BigDecimal limitValue
-        String limitUnit
-        TimePeriodEnum timePeriod
-        LocalDate effectiveDate
-        LocalDate expiryDate
+        UUID relatedProductId FK
+        RelationshipTypeEnum relationshipType "PRE_REQUISITE, COMPLIMENTARY, UPGRADE, CROSS_SELL"
+        String description
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
@@ -240,20 +182,10 @@ erDiagram
         LocalDateTime dateUpdated
     }
 
-    PRODUCT_VERSION {
-        UUID productVersionId PK
-        UUID productId FK
-        UUID versionNumber
-        String versionDescription
-        LocalDateTime effectiveDate
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
-
     PRODUCT_DOCUMENTATION {
         UUID productDocumentationId PK
         UUID productId FK
-        DocTypeEnum docType
+        DocTypeEnum docType "TNC, BROCHURE, POLICY_DOC"
         Long documentManagerRef
         LocalDateTime dateAdded
         LocalDateTime dateCreated
@@ -263,769 +195,399 @@ erDiagram
     PRODUCT_DOCUMENTATION_REQUIREMENT {
         UUID productDocRequirementId PK
         UUID productId FK
-        ContractingDocTypeEnum docType
+        ContractingDocTypeEnum docType "IDENTIFICATION, TAX_IDENTIFICATION, PROOF_OF_ADDRESS, etc."
         Boolean isMandatory
         String description
         LocalDateTime dateCreated
         LocalDateTime dateUpdated
     }
-
-    PRODUCT_RELATIONSHIP {
-        UUID productRelationshipId PK
-        UUID productId FK
-        UUID relatedProductId FK
-        RelationshipTypeEnum relationshipType
-        String description
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
-
-    PRODUCT_BUNDLE {
-        UUID productBundleId PK
-        String bundleName
-        String bundleDescription
-        BundleStatusEnum bundleStatus
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
-
-    PRODUCT_BUNDLE_ITEM {
-        UUID productBundleItemId PK
-        UUID productBundleId FK
-        UUID productId FK
-        String specialConditions
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
-
-    FEE_STRUCTURE {
-        UUID feeStructureId PK
-        String feeStructureName
-        String feeStructureDescription
-        FeeStructureTypeEnum feeStructureType
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
-
-    FEE_COMPONENT {
-        UUID feeComponentId PK
-        UUID feeStructureId FK
-        FeeTypeEnum feeType
-        String feeDescription
-        BigDecimal feeAmount
-        FeeUnitEnum feeUnit
-        String applicableConditions
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
-
-    FEE_APPLICATION_RULE {
-        UUID feeApplicationRuleId PK
-        UUID feeComponentId FK
-        String ruleDescription
-        String ruleConditions
-        LocalDateTime effectiveDate
-        LocalDateTime expiryDate
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
-
-    PRODUCT_FEE_STRUCTURE {
-        UUID productFeeStructureId PK
-        UUID productId FK
-        UUID feeStructureId FK
-        LocalDate effectiveDate
-        LocalDate expiryDate
-        LocalDateTime dateCreated
-        LocalDateTime dateUpdated
-    }
 ```
 
-## Enterprise Quickstart Guide
+## API Usage Overview
 
-### System Prerequisites
+All filter endpoints use `POST` with `FilterRequest<DTO>` in the request body. This provides flexible filtering, sorting, and pagination capabilities.
 
-- **Java Development Kit**: JDK 21 or higher (LTS version recommended)
-- **Build System**: Maven 3.8 or higher with configured enterprise repository access
-- **Containerization**: Docker Desktop 4.x or higher with Kubernetes enabled
-- **Database**: PostgreSQL 14.x or higher (for local development)
-- **IDE**: IntelliJ IDEA Ultimate or Eclipse Enterprise Edition (recommended)
+### Products API
 
-### Local Development Environment Setup
+Base path: `/api/v1/products`
 
-1. **Clone the repository with access credentials**:
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/filter` | Filter products with pagination | `FilterRequest<ProductDTO>` | `PaginationResponse<ProductDTO>` |
+| `POST` | `/` | Create a new product | `ProductDTO` | `ProductDTO` (201) |
+| `GET` | `/{productId}` | Get product by ID | - | `ProductDTO` |
+| `PUT` | `/{productId}` | Update product | `ProductDTO` | `ProductDTO` |
+| `DELETE` | `/{productId}` | Delete product | - | 204 No Content |
+
+**ProductDTO Fields:**
+```json
+{
+  "productId": "UUID (read-only)",
+  "tenantId": "UUID (required)",
+  "productCategoryId": "UUID",
+  "productType": "FINANCIAL | NON_FINANCIAL",
+  "productName": "string",
+  "productCode": "string",
+  "productDescription": "string",
+  "productStatus": "PROPOSED | ACTIVE | RETIRED | DRAFT",
+  "launchDate": "LocalDate",
+  "endDate": "LocalDate",
+  "dateCreated": "LocalDateTime (read-only)",
+  "dateUpdated": "LocalDateTime (read-only)"
+}
+```
+
+### Product Categories API
+
+Base path: `/api/v1/categories`
+
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/filter` | Filter root categories | `FilterRequest<ProductCategoryDTO>` | `PaginationResponse<ProductCategoryDTO>` |
+| `POST` | `/` | Create a new category | `ProductCategoryDTO` | `ProductCategoryDTO` (201) |
+| `GET` | `/{categoryId}` | Get category by ID | - | `ProductCategoryDTO` |
+| `PUT` | `/{categoryId}` | Update category | `ProductCategoryDTO` | `ProductCategoryDTO` |
+| `DELETE` | `/{categoryId}` | Delete category | - | 204 No Content |
+
+**ProductCategoryDTO Fields:**
+```json
+{
+  "productCategoryId": "UUID (read-only)",
+  "categoryName": "string",
+  "categoryDescription": "string",
+  "parentCategoryId": "UUID (null for root categories)",
+  "level": "Integer (read-only, auto-calculated)",
+  "dateCreated": "LocalDateTime (read-only)",
+  "dateUpdated": "LocalDateTime (read-only)"
+}
+```
+
+### Product Configurations API
+
+Base path: `/api/v1/products/{productId}/configurations`
+
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/filter` | Filter configurations | `FilterRequest<ProductConfigurationDTO>` | `PaginationResponse<ProductConfigurationDTO>` |
+| `POST` | `/` | Create configuration | `ProductConfigurationDTO` | `ProductConfigurationDTO` (201) |
+| `GET` | `/{configId}` | Get by ID | - | `ProductConfigurationDTO` |
+| `GET` | `/by-key/{configKey}` | Get by key | - | `ProductConfigurationDTO` |
+| `GET` | `/by-type/{configType}` | Get all by type | - | `Flux<ProductConfigurationDTO>` |
+| `PUT` | `/{configId}` | Update configuration | `ProductConfigurationDTO` | `ProductConfigurationDTO` |
+| `DELETE` | `/{configId}` | Delete configuration | - | 204 No Content |
+
+**ProductConfigurationDTO Fields:**
+```json
+{
+  "productConfigurationId": "UUID (read-only)",
+  "productId": "UUID",
+  "configType": "PRICING | LIMITS | FEATURES | CUSTOM",
+  "configKey": "string",
+  "configValue": "string",
+  "dateCreated": "LocalDateTime (read-only)",
+  "dateUpdated": "LocalDateTime (read-only)"
+}
+```
+
+### Product Versions API
+
+Base path: `/api/v1/products/{productId}/versions`
+
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/filter` | Filter versions | `FilterRequest<ProductVersionDTO>` | `PaginationResponse<ProductVersionDTO>` |
+| `POST` | `/` | Create version | `ProductVersionDTO` | `ProductVersionDTO` (201) |
+| `GET` | `/{versionId}` | Get by ID | - | `ProductVersionDTO` |
+| `PUT` | `/{versionId}` | Update version | `ProductVersionDTO` | `ProductVersionDTO` |
+| `DELETE` | `/{versionId}` | Delete version | - | 204 No Content |
+
+**ProductVersionDTO Fields:**
+```json
+{
+  "productVersionId": "UUID (read-only)",
+  "productId": "UUID",
+  "versionNumber": "Long",
+  "versionDescription": "string",
+  "effectiveDate": "LocalDateTime",
+  "dateCreated": "LocalDateTime (read-only)",
+  "dateUpdated": "LocalDateTime (read-only)"
+}
+```
+
+### Product Relationships API
+
+Base path: `/api/v1/products/{productId}/relationships`
+
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/filter` | Filter relationships | `FilterRequest<ProductRelationshipDTO>` | `PaginationResponse<ProductRelationshipDTO>` |
+| `POST` | `/` | Create relationship | `ProductRelationshipDTO` | `ProductRelationshipDTO` (201) |
+| `GET` | `/{relationshipId}` | Get by ID | - | `ProductRelationshipDTO` |
+| `PUT` | `/{relationshipId}` | Update relationship | `ProductRelationshipDTO` | `ProductRelationshipDTO` |
+| `DELETE` | `/{relationshipId}` | Delete relationship | - | 204 No Content |
+
+**ProductRelationshipDTO Fields:**
+```json
+{
+  "productRelationshipId": "UUID (read-only)",
+  "productId": "UUID",
+  "relatedProductId": "UUID",
+  "relationshipType": "PRE_REQUISITE | COMPLIMENTARY | UPGRADE | CROSS_SELL",
+  "description": "string",
+  "dateCreated": "LocalDateTime (read-only)",
+  "dateUpdated": "LocalDateTime (read-only)"
+}
+```
+
+### Product Localizations API
+
+Base path: `/api/v1/products/{productId}/localizations`
+
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/filter` | Filter localizations | `FilterRequest<ProductLocalizationDTO>` | `PaginationResponse<ProductLocalizationDTO>` |
+| `POST` | `/` | Create localization | `ProductLocalizationDTO` | `ProductLocalizationDTO` (201) |
+| `GET` | `/{localizationId}` | Get by ID | - | `ProductLocalizationDTO` |
+| `PUT` | `/{localizationId}` | Update localization | `ProductLocalizationDTO` | `ProductLocalizationDTO` |
+| `DELETE` | `/{localizationId}` | Delete localization | - | 204 No Content |
+
+**ProductLocalizationDTO Fields:**
+```json
+{
+  "productLocalizationId": "UUID (read-only)",
+  "productId": "UUID",
+  "languageCode": "string (e.g., 'en', 'es', 'fr')",
+  "localizedName": "string",
+  "localizedDescription": "string",
+  "dateCreated": "LocalDateTime (read-only)",
+  "dateUpdated": "LocalDateTime (read-only)"
+}
+```
+
+### Product Documentation API
+
+Base path: `/api/v1/products/{productId}/documentation`
+
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/filter` | Filter documentation | `FilterRequest<ProductDocumentationDTO>` | `PaginationResponse<ProductDocumentationDTO>` |
+| `POST` | `/` | Create documentation | `ProductDocumentationDTO` | `ProductDocumentationDTO` (201) |
+| `GET` | `/{docId}` | Get by ID | - | `ProductDocumentationDTO` |
+| `PUT` | `/{docId}` | Update documentation | `ProductDocumentationDTO` | `ProductDocumentationDTO` |
+| `DELETE` | `/{docId}` | Delete documentation | - | 204 No Content |
+
+**ProductDocumentationDTO Fields:**
+```json
+{
+  "productDocumentationId": "UUID (read-only)",
+  "productId": "UUID",
+  "docType": "TNC | BROCHURE | POLICY_DOC",
+  "documentManagerRef": "Long",
+  "dateAdded": "LocalDateTime",
+  "dateCreated": "LocalDateTime (read-only)",
+  "dateUpdated": "LocalDateTime (read-only)"
+}
+```
+
+### Product Documentation Requirements API
+
+Base path: `/api/v1/products/{productId}/documentation-requirements`
+
+| Method | Endpoint | Description | Request Body | Response |
+|--------|----------|-------------|--------------|----------|
+| `POST` | `/filter` | Filter requirements | `FilterRequest<ProductDocumentationRequirementDTO>` | `PaginationResponse<ProductDocumentationRequirementDTO>` |
+| `POST` | `/` | Create requirement | `ProductDocumentationRequirementDTO` | `ProductDocumentationRequirementDTO` (201) |
+| `GET` | `/{requirementId}` | Get by ID | - | `ProductDocumentationRequirementDTO` |
+| `GET` | `/by-type/{docType}` | Get by document type | - | `ProductDocumentationRequirementDTO` |
+| `GET` | `/mandatory` | Get all mandatory | - | `Flux<ProductDocumentationRequirementDTO>` |
+| `PUT` | `/{requirementId}` | Update requirement | `ProductDocumentationRequirementDTO` | `ProductDocumentationRequirementDTO` |
+| `DELETE` | `/{requirementId}` | Delete requirement | - | 204 No Content |
+
+**ProductDocumentationRequirementDTO Fields:**
+```json
+{
+  "productDocRequirementId": "UUID (read-only)",
+  "productId": "UUID",
+  "docType": "IDENTIFICATION | TAX_IDENTIFICATION | PROOF_OF_ADDRESS | INCOME_VERIFICATION | BANK_STATEMENTS | POWER_OF_ATTORNEY | BUSINESS_REGISTRATION | ARTICLES_OF_INCORPORATION | COMPANY_BYLAWS | SIGNED_CONTRACT | REGULATORY_COMPLIANCE | CREDIT_REPORT | INSURANCE_POLICY | OTHER",
+  "isMandatory": "Boolean",
+  "description": "string",
+  "dateCreated": "LocalDateTime (read-only)",
+  "dateUpdated": "LocalDateTime (read-only)"
+}
+```
+
+## FilterRequest and PaginationResponse
+
+### FilterRequest Structure
+
+All filter endpoints accept a `FilterRequest<DTO>` object:
+
+```json
+{
+  "pageNumber": 0,
+  "pageSize": 10,
+  "sortBy": "dateCreated",
+  "sortDirection": "DESC",
+  "filters": {
+    "fieldName": "value"
+  }
+}
+```
+
+**Example - Filter products by status:**
+```bash
+curl -X POST http://localhost:8080/api/v1/products/filter \
+  -H "Content-Type: application/json" \
+  -d '{
+    "pageNumber": 0,
+    "pageSize": 20,
+    "sortBy": "productName",
+    "sortDirection": "ASC",
+    "filters": {
+      "productStatus": "ACTIVE"
+    }
+  }'
+```
+
+### PaginationResponse Structure
+
+All filter endpoints return a `PaginationResponse<DTO>`:
+
+```json
+{
+  "content": [
+    { /* DTO object */ },
+    { /* DTO object */ }
+  ],
+  "pageNumber": 0,
+  "pageSize": 20,
+  "totalElements": 42,
+  "totalPages": 3
+}
+```
+
+## Quickstart
+
+### Prerequisites
+
+- **Java 21** or higher
+- **Maven 3.8** or higher
+- **PostgreSQL 14.x** or higher
+- **Docker** (optional, for containerized deployment)
+
+### Local Development Setup
+
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/firefly-oss/common-platform-product-mgmt.git
    cd common-platform-product-mgmt
    ```
 
-2. **Configure database connection** in `application.yaml` or via environment variables:
+2. **Configure database connection**:
    ```bash
-   # Development database configuration
    export DB_HOST=localhost
    export DB_PORT=5432
    export DB_NAME=product_mgmt
    export DB_USERNAME=postgres
    export DB_PASSWORD=postgres
-   export DB_SSL_MODE=disable
-
-   # Optional: Configure logging and monitoring
-   export LOG_LEVEL=DEBUG
-   export ENABLE_METRICS=true
    ```
 
-3. **Build the project with tests**:
+3. **Build the project**:
    ```bash
    mvn clean install
    ```
 
-4. **Run the application with development profile**:
+4. **Run the application**:
    ```bash
-   java -jar common-platform-product-mgmt-web/target/common-platform-product-mgmt.jar --spring.profiles.active=dev
+   java -jar common-platform-product-mgmt-web/target/common-platform-product-mgmt.jar
    ```
 
-5. **Access the development interfaces**:
+5. **Access the API**:
    - Swagger UI: http://localhost:8080/swagger-ui.html
-   - API Documentation: http://localhost:8080/v3/api-docs
-   - Health Status: http://localhost:8080/actuator/health
-   - Metrics: http://localhost:8080/actuator/prometheus
+   - API Docs: http://localhost:8080/v3/api-docs
+   - Health: http://localhost:8080/actuator/health
 
-### Enterprise Docker Deployment
+### Docker Deployment
 
-1. **Build the optimized Docker image**:
+1. **Build the Docker image**:
    ```bash
-   docker build -t common-platform-product-mgmt:latest --build-arg PROFILE=prod .
+   docker build -t common-platform-product-mgmt:latest .
    ```
 
-2. **Run the Docker container with enterprise configuration**:
+2. **Run the container**:
    ```bash
    docker run -p 8080:8080 \
-     -e SPRING_PROFILES_ACTIVE=prod \
      -e DB_HOST=host.docker.internal \
      -e DB_PORT=5432 \
      -e DB_NAME=product_mgmt \
      -e DB_USERNAME=postgres \
      -e DB_PASSWORD=postgres \
-     -e DB_SSL_MODE=disable \
-     -e JAVA_OPTS="-Xms512m -Xmx1024m -XX:+UseG1GC" \
-     -e LOG_LEVEL=INFO \
-     --name product-mgmt-service \
-     --restart unless-stopped \
      common-platform-product-mgmt:latest
    ```
 
-### Kubernetes Deployment
+## Configuration
 
-1. **Apply the Kubernetes configuration**:
-   ```bash
-   kubectl apply -f k8s/product-mgmt-deployment.yaml
-   kubectl apply -f k8s/product-mgmt-service.yaml
-   kubectl apply -f k8s/product-mgmt-ingress.yaml
-   ```
+The service uses Spring Boot's configuration framework with environment-specific profiles.
 
-2. **Verify the deployment**:
-   ```bash
-   kubectl get pods -l app=product-mgmt
-   kubectl get services -l app=product-mgmt
-   ```
+### Environment Variables
 
-## Enterprise API Integration Guide
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DB_HOST` | PostgreSQL host | `localhost` |
+| `DB_PORT` | PostgreSQL port | `5432` |
+| `DB_NAME` | Database name | `product_mgmt` |
+| `DB_USERNAME` | Database username | `postgres` |
+| `DB_PASSWORD` | Database password | `postgres` |
+| `SPRING_PROFILES_ACTIVE` | Active Spring profile | `dev` |
 
-This section provides a comprehensive step-by-step guide to integrating with the Product Management API for common enterprise workflows. The examples below demonstrate the API usage patterns using both cURL for command-line testing and equivalent HTTP request formats for integration into client applications.
+### Configuration Files
 
-### Step 1: Product Hierarchy Establishment
+- `application.yaml` - Base configuration
+- `application-dev.yaml` - Development profile
+- `application-prod.yaml` - Production profile
 
-1. **Create a product category taxonomy**:
-   ```bash
-   # Request
-   curl -X POST http://localhost:8080/api/v1/categories \
-     -H "Content-Type: application/json" \
-     -d '{
-       "categoryName": "Banking Products",
-       "categoryDescription": "Financial products for banking customers",
-       "parentCategoryId": null
-     }'
+## Development Guidelines
 
-   # Response (201 Created)
-   # {
-   #   "productCategoryId": 1,
-   #   "categoryName": "Banking Products",
-   #   "categoryDescription": "Financial products for banking customers",
-   #   "parentCategoryId": null,
-   #   "dateCreated": "2023-01-01T00:00:00.000000",
-   #   "dateUpdated": "2023-01-01T00:00:00.000000"
-   # }
-   ```
+### Code Style
 
-2. **Create a product subtype with regulatory classification**:
-   ```bash
-   # Request
-   curl -X POST http://localhost:8080/api/v1/categories/{categoryId}/subtypes \
-     -H "Content-Type: application/json" \
-     -d '{
-       "subtypeName": "Savings Account",
-       "subtypeDescription": "Interest-bearing deposit accounts",
-       "productCategoryId": 1
-     }'
+- Follow Google Java Style Guide
+- Use Lombok annotations (`@Data`, `@RequiredArgsConstructor`, `@Builder`)
+- Use MapStruct for entity-to-DTO mapping
+- Follow reactive patterns with `Mono` and `Flux`
 
-   # Response (201 Created)
-   # {
-   #   "productSubtypeId": 1,
-   #   "productCategoryId": 1,
-   #   "subtypeName": "Savings Account",
-   #   "subtypeDescription": "Interest-bearing deposit accounts",
-   #   "dateCreated": "2023-01-01T00:00:00.000000",
-   #   "dateUpdated": "2023-01-01T00:00:00.000000"
-   # }
-   ```
+### Testing
 
-3. **Create the product with comprehensive attributes**:
-   ```bash
-   # Request
-   curl -X POST http://localhost:8080/api/v1/products \
-     -H "Content-Type: application/json" \
-     -d '{
-       "productSubtypeId": 1,
-       "productType": "FINANCIAL",
-       "productName": "Premium Savings Account",
-       "productCode": "PSA-001",
-       "productDescription": "High-interest savings account with premium benefits",
-       "productStatus": "ACTIVE",
-       "launchDate": "2023-01-01"
-     }'
-
-   # Response (201 Created)
-   # {
-   #   "productId": 1,
-   #   "productSubtypeId": 1,
-   #   "productType": "FINANCIAL",
-   #   "productName": "Premium Savings Account",
-   #   "productCode": "PSA-001",
-   #   "productDescription": "High-interest savings account with premium benefits",
-   #   "productStatus": "ACTIVE",
-   #   "launchDate": "2023-01-01",
-   #   "endDate": null,
-   #   "dateCreated": "2023-01-01T00:00:00.000000",
-   #   "dateUpdated": "2023-01-01T00:00:00.000000"
-   # }
-   ```
-
-### Step 2: Product Feature Configuration
-
-After establishing the product, configure its features to define capabilities and value propositions:
-
+Run all tests:
 ```bash
-# Request
-curl -X POST http://localhost:8080/api/v1/products/{productId}/features \
-  -H "Content-Type: application/json" \
-  -d '{
-    "featureType": "STANDARD",
-    "featureName": "Online Banking Access",
-    "featureDescription": "24/7 access to account via online banking",
-    "isMandatory": true
-  }'
-
-# Response (200 OK)
-# {
-#   "productFeatureId": 1,
-#   "productId": 1,
-#   "featureType": "STANDARD",
-#   "featureName": "Online Banking Access",
-#   "featureDescription": "24/7 access to account via online banking",
-#   "isMandatory": true,
-#   "dateCreated": "2023-01-01T00:00:00.000000",
-#   "dateUpdated": "2023-01-01T00:00:00.000000"
-# }
+mvn test
 ```
 
-### Step 3: Tiered Product Pricing Structure
-
-Implement sophisticated pricing structures for the product:
-
+Run specific test class:
 ```bash
-# Request - Base Pricing
-curl -X POST http://localhost:8080/api/v1/products/{productId}/pricing \
-  -H "Content-Type: application/json" \
-  -d '{
-    "pricingType": "INTEREST_RATE",
-    "amountValue": 3.25,
-    "amountUnit": "PERCENT_ANNUAL",
-    "pricingCondition": "Base interest rate for balances above minimum threshold",
-    "effectiveDate": "2023-06-01",
-    "expiryDate": "2024-05-31",
-    "tiers": [
-      {
-        "tierName": "Standard",
-        "minimumBalance": 25000,
-        "maximumBalance": 99999,
-        "rateValue": 3.25
-      },
-      {
-        "tierName": "Enhanced",
-        "minimumBalance": 100000,
-        "maximumBalance": 499999,
-        "rateValue": 3.50
-      },
-      {
-        "tierName": "Premium",
-        "minimumBalance": 500000,
-        "maximumBalance": null,
-        "rateValue": 3.75
-      }
-    ],
-    "approvalStatus": "PENDING_REVIEW",
-    "approvalWorkflowId": "WF-PRICING-2023-0042"
-  }'
-
-# Response (201 Created)
-# {
-#   "productPricingId": 1,
-#   "productId": 1,
-#   "pricingType": "TIERED_INTEREST_RATE",
-#   ...
-# }
+mvn test -Dtest=ProductServiceImplTest
 ```
 
-Implement multi-currency pricing localization:
+### Branching Strategy
 
-```bash
-# Request - Currency Localization
-curl -X POST http://localhost:8080/api/v1/products/{productId}/pricing/{pricingId}/localizations \
-  -H "Content-Type: application/json" \
-  -d '{
-    "currencyCode": "EUR",
-    "localizedAmountValue": 3.25,
-    "exchangeRatePolicy": "DAILY_SPOT",
-    "regulatoryDisclosures": {
-      "euMifidCompliant": true,
-      "consumerProtectionNotices": ["EU_DEPOSIT_GUARANTEE_SCHEME"]
-    }
-  }'
-
-# Response (201 Created)
-# {
-#   "productPricingLocalizationId": 1,
-#   "productPricingId": 1,
-#   "currencyCode": "EUR",
-#   "localizedAmountValue": 3.25,
-#   ...
-# }
-```
-
-### Step 4: Product Lifecycle Governance
-
-Implement comprehensive lifecycle management with approval workflows:
-
-```bash
-# Request - Lifecycle Status Change
-curl -X POST http://localhost:8080/api/v1/products/{productId}/lifecycle \
-  -H "Content-Type: application/json" \
-  -d '{
-    "lifecycleStatus": "PENDING_APPROVAL",
-    "statusStartDate": "2023-05-15T09:00:00",
-    "reason": "Product ready for compliance and risk review",
-    "approvalWorkflow": {
-      "workflowId": "WF-PROD-2023-0078",
-      "approvers": ["COMPLIANCE_OFFICER", "RISK_MANAGER", "PRODUCT_DIRECTOR"],
-      "requiredDocumentation": ["PRODUCT_SPECIFICATION", "RISK_ASSESSMENT", "COMPLIANCE_CHECKLIST"]
-    },
-    "auditTrail": {
-      "requestedBy": "john.smith@example.com",
-      "businessJustification": "Strategic product launch for Q3 2023"
-    }
-  }'
-
-# Response (201 Created)
-# {
-#   "productLifecycleId": 1,
-#   "productId": 1,
-#   "lifecycleStatus": "PENDING_APPROVAL",
-#   ...
-# }
-```
-
-Define regulatory and operational limits:
-
-```bash
-# Request - Product Limits
-curl -X POST http://localhost:8080/api/v1/products/{productId}/limits \
-  -H "Content-Type: application/json" \
-  -d '{
-    "limitType": "WITHDRAWAL_LIMIT",
-    "limitValue": 5000000,
-    "limitUnit": "EUR",
-    "timePeriod": "NONE",
-    "effectiveDate": "2023-06-01",
-    "expiryDate": null
-  }'
-
-# Response (200 OK)
-# {
-#   "productLimitId": 1,
-#   "productId": 1,
-#   "limitType": "WITHDRAWAL_LIMIT",
-#   "limitValue": 5000000,
-#   "limitUnit": "EUR",
-#   "timePeriod": "NONE",
-#   "effectiveDate": "2023-06-01",
-#   "expiryDate": null,
-#   "dateCreated": "2023-01-01T00:00:00.000000",
-#   "dateUpdated": "2023-01-01T00:00:00.000000"
-# }
-```
-
-### Step 5: Strategic Product Relationship Mapping
-
-Establish strategic product relationships for cross-selling and upselling opportunities:
-
-```bash
-# Request - Product Relationship
-curl -X POST http://localhost:8080/api/v1/products/{productId}/relationships \
-  -H "Content-Type: application/json" \
-  -d '{
-    "relatedProductId": 2,
-    "relationshipType": "COMPLIMENTARY",
-    "description": "Premium Savings Account complements Checking Account"
-  }'
-
-# Response (200 OK)
-# {
-#   "productRelationshipId": 1,
-#   "productId": 1,
-#   "relatedProductId": 2,
-#   "relationshipType": "COMPLIMENTARY",
-#   "description": "Premium Savings Account complements Checking Account",
-#   "dateCreated": "2023-01-01T00:00:00.000000",
-#   "dateUpdated": "2023-01-01T00:00:00.000000"
-# }
-```
-
-### Step 6: Global Localization Framework
-
-Implement comprehensive localization for global deployment:
-
-```bash
-# Request - Product Localization
-curl -X POST http://localhost:8080/api/v1/products/{productId}/localizations \
-  -H "Content-Type: application/json" \
-  -d '{
-    "languageCode": "es",
-    "localizedName": "Cuenta de Ahorro Premium",
-    "localizedDescription": "Cuenta de ahorro de alto interés con beneficios premium"
-  }'
-
-# Response (200 OK)
-# {
-#   "productLocalizationId": 1,
-#   "productId": 1,
-#   "languageCode": "es",
-#   "localizedName": "Cuenta de Ahorro Premium",
-#   "localizedDescription": "Cuenta de ahorro de alto interés con beneficios premium",
-#   "dateCreated": "2023-01-01T00:00:00.000000",
-#   "dateUpdated": "2023-01-01T00:00:00.000000"
-# }
-```
-
-### Step 7: Strategic Product Bundling
-
-Create sophisticated product bundles for comprehensive customer solutions:
-
-1. **Create the strategic bundle with tiered benefits**:
-   ```bash
-   # Request - Create Bundle
-   curl -X POST http://localhost:8080/api/v1/bundles \
-     -H "Content-Type: application/json" \
-     -d '{
-       "bundleName": "Premium Banking Package",
-       "bundleDescription": "Complete banking solution with savings and checking accounts",
-       "bundleStatus": "ACTIVE"
-     }'
-
-   # Response (201 Created)
-   # {
-   #   "productBundleId": 1,
-   #   "bundleName": "Premium Banking Package",
-   #   "bundleDescription": "Complete banking solution with savings and checking accounts",
-   #   "bundleStatus": "ACTIVE",
-   #   "dateCreated": "2023-01-01T00:00:00.000000",
-   #   "dateUpdated": "2023-01-01T00:00:00.000000"
-   # }
-   ```
-
-2. **Add products to the bundle with relationship rules**:
-   ```bash
-   # Request - Add Bundle Item
-   curl -X POST http://localhost:8080/api/v1/bundles/{bundleId}/items \
-     -H "Content-Type: application/json" \
-     -d '{
-       "productId": 1,
-       "specialConditions": "Premium Savings Account"
-     }'
-
-   # Response (201 Created)
-   # {
-   #   "productBundleItemId": 1,
-   #   "productBundleId": 1,
-   #   "productId": 1,
-   #   "specialConditions": "Premium Savings Account",
-   #   "dateCreated": "2023-01-01T00:00:00.000000",
-   #   "dateUpdated": "2023-01-01T00:00:00.000000"
-   # }
-   ```
-
- ### Step 8: Define Documentation Requirements
-
- Configure documentation requirements for the product contracting/opening phase to ensure regulatory compliance and streamline customer onboarding:
-
- 1. **Define required documentation for a product**:
-    ```bash
-    # Request - Create Documentation Requirement
-    curl -X POST http://localhost:8080/api/v1/products/{productId}/documentation-requirements \
-      -H "Content-Type: application/json" \
-      -d '{
-        "docType": "IDENTIFICATION",
-        "isMandatory": true,
-        "description": "Government-issued photo ID (passport, driver's license, or national ID card)"
-      }'
-
-    # Response (200 OK)
-    # {
-    #   "productDocRequirementId": 1,
-    #   "productId": 1,
-    #   "docType": "IDENTIFICATION",
-    #   "isMandatory": true,
-    #   "description": "Government-issued photo ID (passport, driver's license, or national ID card)",
-    #   "dateCreated": "2023-01-01T00:00:00.000000",
-    #   "dateUpdated": "2023-01-01T00:00:00.000000"
-    # }
-    ```
-
- 2. **Add multiple documentation requirements**:
-    ```bash
-    # Request - Create Tax Documentation Requirement
-    curl -X POST http://localhost:8080/api/v1/products/{productId}/documentation-requirements \
-      -H "Content-Type: application/json" \
-      -d '{
-        "docType": "TAX_IDENTIFICATION",
-        "isMandatory": true,
-        "description": "Tax identification number or certificate"
-      }'
-
-    # Request - Create Address Verification Requirement
-    curl -X POST http://localhost:8080/api/v1/products/{productId}/documentation-requirements \
-      -H "Content-Type: application/json" \
-      -d '{
-        "docType": "PROOF_OF_ADDRESS",
-        "isMandatory": true,
-        "description": "Utility bill or bank statement from the last 3 months"
-      }'
-    ```
-
- 3. **Retrieve all documentation requirements for a product**:
-    ```bash
-    # Request - Get All Documentation Requirements
-    curl -X GET http://localhost:8080/api/v1/products/{productId}/documentation-requirements
-
-    # Response (200 OK)
-    # {
-    #   "content": [
-    #     {
-    #       "productDocRequirementId": 1,
-    #       "productId": 1,
-    #       "docType": "IDENTIFICATION",
-    #       "isMandatory": true,
-    #       "description": "Government-issued photo ID (passport, driver's license, or national ID card)",
-    #       "dateCreated": "2023-01-01T00:00:00.000000",
-    #       "dateUpdated": "2023-01-01T00:00:00.000000"
-    #     },
-    #     {
-    #       "productDocRequirementId": 2,
-    #       "productId": 1,
-    #       "docType": "TAX_IDENTIFICATION",
-    #       "isMandatory": true,
-    #       "description": "Tax identification number or certificate",
-    #       "dateCreated": "2023-01-01T00:00:00.000000",
-    #       "dateUpdated": "2023-01-01T00:00:00.000000"
-    #     },
-    #     {
-    #       "productDocRequirementId": 3,
-    #       "productId": 1,
-    #       "docType": "PROOF_OF_ADDRESS",
-    #       "isMandatory": true,
-    #       "description": "Utility bill or bank statement from the last 3 months",
-    #       "dateCreated": "2023-01-01T00:00:00.000000",
-    #       "dateUpdated": "2023-01-01T00:00:00.000000"
-    #     }
-    #   ],
-    #   "totalElements": 3,
-    #   "totalPages": 1,
-    #   "pageNumber": 0,
-    #   "pageSize": 10
-    # }
-    ```
-
- 4. **Retrieve only mandatory documentation requirements**:
-    ```bash
-    # Request - Get Mandatory Documentation Requirements
-    curl -X GET http://localhost:8080/api/v1/products/{productId}/documentation-requirements/mandatory
-
-    # Response (200 OK)
-    # [
-    #   {
-    #     "productDocRequirementId": 1,
-    #     "productId": 1,
-    #     "docType": "IDENTIFICATION",
-    #     "isMandatory": true,
-    #     "description": "Government-issued photo ID (passport, driver's license, or national ID card)",
-    #     "dateCreated": "2023-01-01T00:00:00.000000",
-    #     "dateUpdated": "2023-01-01T00:00:00.000000"
-    #   },
-    #   {
-    #     "productDocRequirementId": 2,
-    #     "productId": 1,
-    #     "docType": "TAX_IDENTIFICATION",
-    #     "isMandatory": true,
-    #     "description": "Tax identification number or certificate",
-    #     "dateCreated": "2023-01-01T00:00:00.000000",
-    #     "dateUpdated": "2023-01-01T00:00:00.000000"
-    #   },
-    #   {
-    #     "productDocRequirementId": 3,
-    #     "productId": 1,
-    #     "docType": "PROOF_OF_ADDRESS",
-    #     "isMandatory": true,
-    #     "description": "Utility bill or bank statement from the last 3 months",
-    #     "dateCreated": "2023-01-01T00:00:00.000000",
-    #     "dateUpdated": "2023-01-01T00:00:00.000000"
-    #   }
-    # ]
-    ```
-
- 5. **Update an existing documentation requirement**:
-    ```bash
-    # Request - Update Documentation Requirement
-    curl -X PUT http://localhost:8080/api/v1/products/{productId}/documentation-requirements/{requirementId} \
-      -H "Content-Type: application/json" \
-      -d '{
-        "docType": "IDENTIFICATION",
-        "isMandatory": true,
-        "description": "Government-issued photo ID (passport or national ID card only)"
-      }'
-
-    # Response (200 OK)
-    # {
-    #   "productDocRequirementId": 1,
-    #   "productId": 1,
-    #   "docType": "IDENTIFICATION",
-    #   "isMandatory": true,
-    #   "description": "Government-issued photo ID (passport or national ID card only)",
-    #   "dateCreated": "2023-01-01T00:00:00.000000",
-    #   "dateUpdated": "2023-01-01T00:00:00.000000"
-    # }
-    ```
-
- 6. **Delete a documentation requirement**:
-    ```bash
-    # Request - Delete Documentation Requirement
-    curl -X DELETE http://localhost:8080/api/v1/products/{productId}/documentation-requirements/{requirementId}
-
-    # Response (204 No Content)
-    ```
-
- ## Enterprise Configuration Framework
-
-The service implements a hierarchical, environment-aware configuration framework leveraging Spring Boot's robust configuration capabilities. This enables seamless deployment across development, testing, staging, and production environments.
-
-### Configuration Parameters
-
-- **Database Connectivity**
-  - Connection pooling parameters with optimal sizing for different workloads
-  - Read/write splitting configuration for high-throughput scenarios
-  - Database encryption and security settings
-
-- **Security Framework**
-  - OAuth2/OIDC integration parameters
-  - API key management and rotation policies
-  - Role-based access control mappings
-  - Rate limiting and throttling thresholds
-
-- **Observability Stack**
-  - Structured logging configuration with correlation ID propagation
-  - Metrics collection endpoints and sampling rates
-  - Distributed tracing parameters
-  - Health check thresholds and alerting rules
-
-- **Caching Strategy**
-  - Multi-level cache configuration (L1/L2)
-  - Time-to-live and eviction policies by data domain
-  - Cache synchronization strategies
-
-- **Resilience Parameters**
-  - Circuit breaker thresholds and recovery policies
-  - Retry strategies with exponential backoff
-  - Bulkhead isolation configuration
-  - Timeout settings by operation type
-
-### Configuration Sources
-
-Configuration can be provided via a layered approach with increasing precedence:
-
-1. **Base Configuration**: `application.yaml` with default settings
-2. **Profile-specific Configuration**: `application-{profile}.yaml` for environment-specific settings
-3. **External Configuration**: Configuration server integration for centralized management
-4. **Environment Variables**: Runtime configuration for containerized deployments
-5. **JVM Arguments**: Command-line overrides for critical parameters
-6. **Cloud Platform Configuration**: Integration with cloud-native configuration services
-
-## Engineering Excellence Guidelines
-
-### Code Quality Standards
-
-- **Architecture Conformance**: Adhere to the hexagonal architecture pattern with clear domain boundaries
-- **Code Style**: Follow Google Java Style Guide with project-specific adaptations
-- **Naming Conventions**: Use domain-driven design terminology in code elements
-- **Documentation**: Maintain comprehensive Javadoc with business context and technical rationale
-- **Code Organization**: Follow the established package structure with feature-based organization
-- **Complexity Management**: Maintain cyclomatic complexity below 15 for all methods
-- **Static Analysis**: Address all SonarQube issues of severity 'Major' or above
-
-### Comprehensive Testing Strategy
-
-- **Unit Testing**: Minimum 90% code coverage for business logic with JUnit 5 and Mockito
-- **Integration Testing**: End-to-end test coverage for all API endpoints using TestContainers
-- **Contract Testing**: Consumer-driven contract tests with Spring Cloud Contract
-- **Performance Testing**: Load and stress tests with defined SLAs using JMeter or Gatling
-- **Security Testing**: Regular SAST and DAST scans integrated into the CI pipeline
-- **Chaos Testing**: Resilience verification through fault injection
-
-### Enterprise Branching Strategy
-
-- **main**: Production-ready code with signed commits and protected branch status
-- **release/{version}**: Release candidate branches for final QA and compliance verification
-- **develop**: Integration branch for feature development with automated CI checks
-- **feature/{ticket-id}-{description}**: Feature branches for active development
-- **hotfix/{ticket-id}-{description}**: Emergency fix branches for production issues
-- **experiment/{description}**: Exploratory implementation branches for proof-of-concept work
+- **main**: Production-ready code
+- **develop**: Integration branch
+- **feature/{ticket-id}-{description}**: Feature branches
+- **hotfix/{ticket-id}-{description}**: Emergency fixes
 
 ## Continuous Integration
 
-The project uses GitHub Actions for CI/CD. The workflow includes:
-- Building the project
-- Running tests
-- Building and publishing Docker images
+The project uses GitHub Actions for CI/CD:
+- Build and compile
+- Run unit tests
+- Build Docker images
+- Publish to container registry
 
 ## Deployment
 
-The service can be deployed in various environments:
-
-- **Development**: Deployed from the `develop` branch
-- **Production**: Deployed from the `main` branch
-
-Deployment Process:
-1. Changes are merged to the target branch
-2. CI/CD pipeline builds and tests the code
-3. Docker image is built and published to Azure Container Registry
-4. Kubernetes deployment is updated with the new image
+| Environment | Branch | Description |
+|-------------|--------|-------------|
+| Development | `develop` | Development environment |
+| Production | `main` | Production environment |
 
 ## Contributing
 
